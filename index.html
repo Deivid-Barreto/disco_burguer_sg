@@ -1,56 +1,73 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Disco Burguer</title>
-  <link rel="stylesheet" href="index.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disco Burguer - Home</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-  <header class="header">
-    <div class="logo">DISCO<br><span>BURGUER</span></div>
-    <nav class="nav">
-      <a href="#inicio">Início</a>
-      <a href="#cardapio">Cardápio</a>
-      <a href="#novidades">Novidades</a>
-      <a href="#quem-somos">Quem somos</a>
-      <a href="#local">Local</a>
-      <a href="#contato">Contato</a>
-      <a href="#cadastro" class="btn-cadastro">Cadastro</a>
+    <nav class="nav-public">
+        <div class="logo">DISCO <span>BURGUER</span></div>
+        <div class="nav-links">
+            <a href="index.html">Início</a>
+            <a href="html/cardapio.html">Cardápio</a>
+            <a href="html/sobre.html">Quem Somos</a>
+            <a href="html/localizacao.html">Localização</a>
+            <a href="html/contato.html">Contato</a>
+            <a href="html/login.html" class="btn-login">Login</a>
+            <a href="html/admin.html" class="btn-admin">Painel Admin</a>
+        </div>
     </nav>
-  </header>
 
-  <section class="hero">
-    <div class="sun"></div>
-    <div class="grid-floor"></div>
+    <section class="hero">
+        <h1>DISCO <span class="highlight">BURGUER</span></h1>
+        <p class="subtitle">O MELHOR HAMBÚRGUER DA CIDADE</p>
+        <a href="html/cardapio.html" class="btn-hero">VER CARDÁPIO</a>
+    </section>
 
-    <div class="hero-content">
-      <div class="hero-text">
-        <h1>DISCO<br><span class="highlight">BURGUER</span></h1>
-        <a href="#cardapio" class="btn-cardapio">VER CARDÁPIO &gt;</a>
-      </div>
-      <div class="hero-image">
-        <img src="https://via.placeholder.com/400x350?text=Hamb%C3%Barguer" alt="Hambúrguer Disco Burguer" />
-      </div>
-    </div>
-  </section>
+    <section class="avisos-section">
+        <h2>Acompanhe seu Pedido <span class="badge">Ao Vivo</span></h2>
+        <div class="avisos-container">
+            <div class="aviso-item">
+                <div class="aviso-mensagem">
+                    Mesa <span class="mesa-num">04</span> - Cliente: <span class="cliente">João</span>
+                </div>
+                <span class="aviso-status preparando">Preparando</span>
+                <span class="aviso-tempo">10 min</span>
+            </div>
+            <div class="aviso-item">
+                <div class="aviso-mensagem">
+                    Mesa <span class="mesa-num">02</span> - Cliente: <span class="cliente">Maria</span>
+                </div>
+                <span class="aviso-status pronto">Pronto</span>
+                <span class="aviso-tempo">Agora</span>
+            </div>
+        </div>
+    </section>
 
-  <section class="mais-pedidos">
-    <h2><span>OS MAIS PEDIDOS</span></h2>
+    <section class="inspiration-section">
+        <h2>SABOR INCOMPARÁVEL</h2>
+        <div class="tag">#100% ARTESANAL</div>
+        <p>Ingredientes selecionados e carne grelhada no fogo como deve ser.</p>
+    </section>
 
-    <div class="cards-container">
-      <div class="card card-rosa">
-        <img src="https://via.placeholder.com/200x150?text=Burguer+1" alt="Hambúrguer 1" />
-      </div>
-      <div class="card card-azul">
-        <img src="https://via.placeholder.com/200x150?text=Burguer+2" alt="Hambúrguer 2" />
-      </div>
-      <div class="card card-amarelo">
-        <img src="https://via.placeholder.com/200x150?text=Burguer+3" alt="Hambúrguer 3" />
-      </div>
-    </div>
-  </section>
+    <footer class="footer">
+        <div>
+            <div class="brand">DISCO <span>BURGUER</span></div>
+            <div class="address">Rua dos Hambúrgueres, 123 - Centro</div>
+        </div>
+        <div class="social">
+            <span class="hashtag">#DiscoBurguer</span>
+        </div>
+        <div class="footer-links">
+            <a href="html/sobre.html">Sobre</a>
+            <a href="html/contato.html">Contato</a>
+        </div>
+    </footer>
 
+    <script src="js/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disco Burguer - Login</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <div class="auth-page">
+        <div class="auth-box">
+            <div class="logo">DISCO <span>BURGUER</span></div>
+            <div class="sub-logo">ÁREA De login</div>
+            <h2>Entrar na Conta</h2>
+
+            <form action="../php/login.php" method="POST">
+                <input type="email" name="email" placeholder="E-mail" required>
+                <input type="password" name="senha" placeholder="Senha" required>
+                
+                <div class="checkbox-row">
+                    <input type="checkbox" id="lembrar">
+                    <label for="lembrar">Lembrar-me</label>
+                </div>
+
+                <div class="forgot-link">
+                    <a href="esqueci-senha.html">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn-auth">Entrar</button>
+            </form>
+
+           
+        </div>
+    </div>
+
+</body>
+</html>
