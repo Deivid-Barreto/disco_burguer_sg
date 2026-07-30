@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-    <link rel="stylesheet" href="../../css/sistema_web/logn.css">
+    <link rel="stylesheet" href="../../css/sistema_web/login.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,14 +15,14 @@
 <form method="POST">
 
 <label>Email:</label>
-<input name="email">
+<input name="email" required>
 
 <label>Senha:</label>
-<input type="password" name="senha">
+<input type="password" name="senha" required>
 
 <label>Escolha um cargo:</label>
 
-<select id="cargo" name="cargo">
+<select id="cargo" name="cargo" required>
   <option value="" selected disabled>Cargos</option>
   <option value="admin">Administrador</option>
   <option value="gar">Garçom</option>
