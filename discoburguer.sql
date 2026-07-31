@@ -1,23 +1,12 @@
--- Active: 1785276363383@@127.0.0.1@3306
 CREATE DATABASE IF NOT EXISTS `discoburguer`;
-USE `discoburguer`;
 
-CREATE TABLE IF NOT EXISTS `feedbacks` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `nota` TINYINT UNSIGNED NOT NULL CHECK (nota BETWEEN 1 AND 5),
-  `nome` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL UNIQUE,
-  `comentario` TEXT NOT NULL,
-  `data_envio` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `visivel` TINYINT(1) NOT NULL DEFAULT (0),
-   PRIMARY KEY (`id`)
-);
+USE `discoburguer`;
 
 CREATE TABLE IF NOT EXISTS `funcionarios` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(100) NOT NULL,
     `cargo` ENUM('Garcom', 'Cozinheiro', 'Administrador', 'Balconista') NOT NULL,
-    `ativo` TINYINT(1) NOT NULL DEFAULT (1),
+    `ativo` TINYINT(1) NOT NULL DEFAULT 1,
     `email` VARCHAR(255) NOT NULL UNIQUE,
     `senha` VARCHAR(255) NOT NULL,
     `numero_telefone` VARCHAR(20) NULL,
@@ -27,19 +16,22 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
 INSERT INTO `funcionarios` (nome, cargo, email, senha) VALUES 
 ('Administrador FIXO', 'Administrador', 'gerentearearestrita@discoburguer.com', SHA2('admin123', 256));
 
+
 CREATE TABLE IF NOT EXISTS `categorias` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(50) NOT NULL UNIQUE,
-  `principal` TINYINT(1) NOT NULL DEFAULT (0),
+  `principal` TINYINT(1) NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`)
 );
 
 INSERT INTO categorias (nome,principal) VALUES 
 ('burguers', 1),
- ('combos', 0),
-  ('shakes', 0),
-  ('bebidas', 0),
-  ('porcoes',0);
+('combos', 0),
+('shakes', 0),
+('bebidas', 0),
+('porcoes', 0);
+
+
 
 CREATE TABLE IF NOT EXISTS `produtos` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -48,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   `descricao` TEXT NOT NULL,
   `preco_venda` DECIMAL(10,2) NOT NULL,
   `imagemcaminho` VARCHAR(255) NULL,
-  `mostrar_no_cardapio` TINYINT(1) NOT NULL DEFAULT (0),
+  `mostrar_no_cardapio` TINYINT(1) NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -77,10 +69,14 @@ CREATE TRIGGER `trigger_checar_estoqueminimo`
 AFTER UPDATE ON `ingredientes`
 FOR EACH ROW
 BEGIN
-    IF NEW.quantidade_estoque <= NEW.estoque_minimo AND OLD.quantidade_estoque > NEW.estoque_minimo THEN
+    
+    DECLARE margem_seguranca DECIMAL(10,3) DEFAULT 10.000;
+
+    IF NEW.quantidade_estoque <= (NEW.estoque_minimo + margem_seguranca) 
+       AND OLD.quantidade_estoque > (NEW.estoque_minimo + margem_seguranca) THEN
         INSERT INTO alertas_estoque (ingrediente_id, mensagem) VALUES (
             NEW.id,
-            CONCAT('ATENÇÃO: O ingrediente "', NEW.nome, '" atingiu o estoque mínimo: ', NEW.quantidade_estoque, ' ', NEW.unidade_medida)
+            CONCAT('ATENÇÃO: O ingrediente "', NEW.nome, '" está próximo do mínimo. Atual: ', NEW.quantidade_estoque, ' ', NEW.unidade_medida)
         );
     END IF;
 END //
@@ -100,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `mesas` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `numero` INT NOT NULL UNIQUE,
   `status` ENUM('Livre', 'Em_atendimento') DEFAULT 'Livre',
-  `ativa` TINYINT(1) NOT NULL DEFAULT (1),
+  `ativa` TINYINT(1) NOT NULL DEFAULT 1,
    PRIMARY KEY (`id`)
 );
 
@@ -110,11 +106,26 @@ CREATE TABLE IF NOT EXISTS `pedidos` (
   `atendente_id` INT NOT NULL,
   `nome_cliente` VARCHAR(200) NOT NULL,
   `eh_delivery` TINYINT(1) NOT NULL DEFAULT 0,
+  `codigo_recibo` VARCHAR(50) NOT NULL UNIQUE,
   `status` ENUM('Aberto', 'Finalizado', 'Cancelado') DEFAULT 'Aberto',
   `data_pedido` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`mesa_id`) REFERENCES `mesas` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
    FOREIGN KEY (`atendente_id`) REFERENCES `funcionarios` (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `feedbacks` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nota` TINYINT UNSIGNED NOT NULL CHECK (nota BETWEEN 1 AND 5),
+  `pedido_id` INT NOT NULL,
+  `nome` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
+  `comentario` TEXT NOT NULL,
+  `data_envio` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `notificado` TINYINT(1) NOT NULL DEFAULT 0,
+  `visivel` TINYINT(1) NOT NULL DEFAULT 0,
+   PRIMARY KEY (`id`),
+   FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `itens_pedido` (
@@ -144,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
   `item_pedido_id` INT NULL, 
   `tipo` ENUM('Devolução', 'Cancelamento', 'Troca') NOT NULL,
   `motivo` TEXT NOT NULL,
-  `retornou_estoque` TINYINT(1) NOT NULL DEFAULT(0),
+  `retornou_estoque` TINYINT(1) NOT NULL DEFAULT 0,
   `data_ocorrencia` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
