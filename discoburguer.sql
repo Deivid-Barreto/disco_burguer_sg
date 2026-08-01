@@ -41,6 +41,8 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   `preco_venda` DECIMAL(10,2) NOT NULL,
   `imagemcaminho` VARCHAR(255) NULL,
   `mostrar_no_cardapio` TINYINT(1) NOT NULL DEFAULT 0,
+  `eh_revenda` TINYINT(1) NOT NULL DEFAULT 0,
+  `eh_combo` TINYINT(1) NOT NULL DEFAULT 0,
    PRIMARY KEY (`id`),
    FOREIGN KEY (`categoria_id`) REFERENCES `categorias` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -92,6 +94,15 @@ CREATE TABLE IF NOT EXISTS `receitas` (
    FOREIGN KEY (`ingrediente_id`) REFERENCES `ingredientes` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS `combo_itens` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `combo_id` INT NOT NULL,
+    `produto_filho_id` INT NOT NULL,
+    `quantidade` INT NOT NULL DEFAULT 1,
+     FOREIGN KEY (`combo_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+     FOREIGN KEY (`produto_filho_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS `mesas` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `numero` INT NOT NULL UNIQUE,
@@ -119,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `feedbacks` (
   `nota` TINYINT UNSIGNED NOT NULL CHECK (nota BETWEEN 1 AND 5),
   `pedido_id` INT NOT NULL,
   `nome` VARCHAR(255) NOT NULL,
-  `email` VARCHAR(255) NOT NULL UNIQUE,
+  `email` VARCHAR(255) NOT NULL,
   `comentario` TEXT NOT NULL,
   `data_envio` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `notificado` TINYINT(1) NOT NULL DEFAULT 0,
