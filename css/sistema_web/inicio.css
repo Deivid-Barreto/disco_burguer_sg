@@ -15,10 +15,16 @@ html, body {
 }
 
 #container {
+    justify-content: space-around;
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
+}
+
+div {
+
+   padding: 20px;
 }
 
 #nav-links {
@@ -35,4 +41,25 @@ html, body {
 
 .link {
     color: white;
+}
+
+button {
+    background-color: #b8a928;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #ff4d5a;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
 }
