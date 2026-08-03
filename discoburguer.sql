@@ -95,10 +95,11 @@ CREATE TABLE IF NOT EXISTS `receitas` (
 );
 
 CREATE TABLE IF NOT EXISTS `combo_itens` (
-    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `id` INT NOT NULL AUTO_INCREMENT,
     `combo_id` INT NOT NULL,
     `produto_filho_id` INT NOT NULL,
     `quantidade` INT NOT NULL DEFAULT 1,
+     PRIMARY KEY (`id`),
      FOREIGN KEY (`combo_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
      FOREIGN KEY (`produto_filho_id`) REFERENCES `produtos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
