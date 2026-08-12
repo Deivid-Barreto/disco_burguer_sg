@@ -1,0 +1,59 @@
+.hero {
+    background-image: url(../../../img/fundo_inicio.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height: 650px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+
+.titulo-inicio {
+    
+    text-align: left;
+   
+}
+
+.titulo-inicio h1 {
+    color: white;
+    font-size: clamp(2.5rem, 5vw, 4.2rem); 
+    line-height: 1.1;
+    margin-bottom: 20px;
+}
+.titulo-inicio button {
+    background: transparent;
+    margin-top: 20px;
+    color: white;
+    border: 2px solid #a020f0;
+    padding: 12px 35px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow:
+        0 0 5px #a020f0,
+        0 0 15px #a020f0,
+        0 0 30px #a020f0;
+}
+
+.titulo-inicio button:hover {
+    background: rgba(180, 70, 255, 0.35);
+    color: white;
+    box-shadow:
+        0 0 10px #d946ef,
+        0 0 25px #d946ef,
+        0 0 50px #d946ef;
+} 
+.burguer-inicio {
+    
+  
+}
+
+.burguer-inicio img {
+
+    width: clamp(180px, 30vw, 400px); 
+    height: auto; 
+}
