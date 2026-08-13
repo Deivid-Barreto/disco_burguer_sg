@@ -1,5 +1,5 @@
 .hero {
-    background-image: url(../../../img/fundo_inicio.png);
+    background-image: url(../../img/teste.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -12,13 +12,15 @@
 }
 
 
+
 .titulo-inicio {
     
-    text-align: left;
+   
    
 }
 
 .titulo-inicio h1 {
+    text-align: left;
     color: white;
     font-size: clamp(2.5rem, 5vw, 4.2rem); 
     line-height: 1.1;
@@ -26,10 +28,14 @@
 }
 .titulo-inicio button {
     background: transparent;
-    margin-top: 20px;
     color: white;
     border: 2px solid #a020f0;
-    padding: 12px 35px;
+    
+    width: clamp(130px,40vw,180px);
+    height: 50px;
+
+
+
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
@@ -54,6 +60,6 @@
 
 .burguer-inicio img {
 
-    width: clamp(180px, 30vw, 400px); 
-    height: auto; 
+    width: clamp(148px, 40vw, 400px); 
+    height: auto;   
 }
