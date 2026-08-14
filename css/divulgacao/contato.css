@@ -2,3 +2,13 @@ body{
 
     background-color: white;
 }
+
+ main {
+       position: absolute;
+   }
+
+   #card {
+       top: 5vh;
+       left: 28vh;
+       background-color: blue;
+   }
