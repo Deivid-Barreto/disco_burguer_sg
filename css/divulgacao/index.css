@@ -19,6 +19,7 @@
     font-size: clamp(2.5rem, 5vw, 4.2rem);
     line-height: 1.1;
     margin-bottom: 20px;
+    
 }
 
 .button-hero {
@@ -59,10 +60,16 @@
 
 
 .Mais-Pedidos{
-width:100%;
-display: flex;
-justify-content: center;
+
 padding: 20px 20px;
 
+
+}
+
+
+.cards-MP{
+
+    display: flex;
+    justify-content: center;
 
 }
