@@ -27,24 +27,25 @@ header{
     color: black;
 }
 
-.button_pedir button
+.button_header button
 
 {
     font-weight: 600;
     color: white;
-    width: clamp(80px,18vw,100px);
-    height:clamp(30px,3vw,40px) ;
+   width: clamp(80px, 22vw, 100px);
+    height: 40px;
     display: block;
-    font-size: clamp(2px, 1.7vh, 2vh );
+    font-size: clamp(0.7rem, 3.2vw, 0.95rem);
     border-radius: 12px;
     background:linear-gradient(90deg, #FFD84D 0%, #FFB347 50%, #FF9F43 100%);
 
 }
 
-.icone_inicio img{
+.icone_header img{
 
     margin:0;
-    width: clamp(100px, 20vh, 300px);
+    width: clamp(100px, 14vw, 150px);
+    height: auto;
    
 }
 
@@ -52,9 +53,6 @@ header{
 .icone-fechar {
     display: none;
     
-    
-    
-
 }
 
 

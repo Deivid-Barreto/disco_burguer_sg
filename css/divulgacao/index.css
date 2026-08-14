@@ -1,41 +1,32 @@
+/*Hero*/
+
 .hero {
     background-image: url(../../img/teste.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
-    min-height: 650px; 
+    min-height: 650px;
     display: flex;
-    align-items: center;
     justify-content: center;
-    
+
 }
 
 
-
-.titulo-inicio {
-    
-   
-   
-}
-
-.titulo-inicio h1 {
+.titulo-hero {
     text-align: left;
     color: white;
-    font-size: clamp(2.5rem, 5vw, 4.2rem); 
+    font-size: clamp(2.5rem, 5vw, 4.2rem);
     line-height: 1.1;
     margin-bottom: 20px;
 }
-.titulo-inicio button {
+
+.button-hero {
     background: transparent;
     color: white;
     border: 2px solid #a020f0;
-    
-    width: clamp(130px,40vw,180px);
+    width: clamp(130px, 40vw, 180px);
     height: 50px;
-
-
-
     font-weight: bold;
     cursor: pointer;
     transition: 0.3s;
@@ -45,21 +36,33 @@
         0 0 30px #a020f0;
 }
 
-.titulo-inicio button:hover {
+.button-hero:hover {
     background: rgba(180, 70, 255, 0.35);
     color: white;
     box-shadow:
         0 0 10px #d946ef,
         0 0 25px #d946ef,
         0 0 50px #d946ef;
-} 
-.burguer-inicio {
-    
-  
 }
 
-.burguer-inicio img {
 
-    width: clamp(148px, 40vw, 400px); 
-    height: auto;   
+
+.img-burger-hero{
+
+
+    width: clamp(140px, 40vw, 400px);
+    height: clamp(90px, 20vw, 220px);
+}
+
+
+/*Mais pedidos*/
+
+
+.Mais-Pedidos{
+width:100%;
+display: flex;
+justify-content: center;
+padding: 20px 20px;
+
+
 }
