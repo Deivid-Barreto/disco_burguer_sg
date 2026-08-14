@@ -9,20 +9,23 @@
         
 <div class="container">
 
-<h2>Cadastro de novo item</h2>
+
+<h2>Cadastro de novo produto</h2>
 
 <form method="POST">
 
+<label for="revenda">Revenda</label>
+<input type="radio" name="revenda" value="1">
+
+<label for="combo">Combo</label>
+<input type="radio" name="combo" value="1">
+
 <label>Nome:</label>
-<input type="nome" name="nome" required>
+<input type="text" name="nome" required>
 
 <label>Categoria:</label>
 <select name="categoria_id" required>
-    <option value="1">Burguers</option>
-    <option value="2">Combos</option>
-    <option value="3">Shakes</option>
-    <option value="4">Bebidas</option>
-    <option value="5">Porções</option>
+    <option value=""></option>
 </select>
 
 <label>Descrição:</label>
@@ -39,8 +42,6 @@
 <input type="radio" id="sim" name="mostrar_no_cardapio" value="1">
 <label for="sim">Sim</label><br>
 
-<input type="radio" id="nao" name="mostrar_no_cardapio" value="0">
-<label for="nao">Não</label><br>
 
 <button>Entrar</button>
 </form>
