@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Disco Burguer-inicio</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/divulgacao/index.css">
+  <link rel="stylesheet" href="css/header.css">
+</head>
+
+<body>
+
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid p-0 align-items-center">
+
+        <a class="navbar-brand icone_header order-1" href="#">
+          <img src="img/icone.png" alt="Logo">
+        </a>
+
+        <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">
+          <button type="button" class="">Pedir agora!</button>
+        </div>
+
+        <button class="navbar-toggler order-3" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="icone-menu">☰</span>
+          <span class="icone-fechar">✕</span>
+        </button>
+
+        <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
+            <li class="nav-item ">
+              <a class="nav-link" href="index.html">Inicio</a>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Cardápio
+              </a>
+
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Hambúrgueres</a></li>
+                <li><a class="dropdown-item" href="#">Bebidas</a></li>
+                <li><a class="dropdown-item" href="#">Combos</a></li>
+                <li><a class="dropdown-item" href="#">Milkshakes</a></li>
+                <li><a class="dropdown-item" href="#">Acompanhamentos</a></li>
+              </ul>
+
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="html/divulgacao/novidades.html">Novidades</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="html/divulgacao/sobre.html">Quem Somos</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="html/divulgacao/local.html">Local</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="html/divulgacao/contato.html">Contato</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
