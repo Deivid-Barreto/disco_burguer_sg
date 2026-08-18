@@ -3,9 +3,19 @@ body {
     background-color: white;
 }
 
-main {
-    position: absolute;
+.informacoes{
+
+    display: flex;
+    justify-content: center;
+    
 }
 
+.formulario{
+
+    display: flex;
+    justify-content: center;
+
+
+}
 
 
