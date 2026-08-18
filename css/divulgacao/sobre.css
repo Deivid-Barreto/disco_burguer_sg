@@ -1,4 +1,12 @@
-body{
+.img-grupo{
 
-    background-color: white;
+width: 600px;
+height: auto;
 }
+.div-sobre{
+
+    display: flex;
+    justify-content: center;
+    
+}
+
