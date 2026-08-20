@@ -19,7 +19,7 @@
       <div class="container-fluid p-0 align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
-          <img src="img/icone.png" alt="Logo">
+          <img src="/../img/icone.png" alt="Logo">
         </a>
 
         <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">

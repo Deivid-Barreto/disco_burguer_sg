@@ -11,7 +11,7 @@
 </head>
 <header>
     <?php
-    include "header.php";
+    include __DIR__ . "/../header.php";
     ?>
 </header>
 <body>
