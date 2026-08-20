@@ -1,7 +1,26 @@
 body {
 
-    background-color: white;
+    background-color:violet;
 }
+
+.card-img-top{
+
+    width: 100px;
+    height: auto;
+}
+
+.img-contato{
+
+display: flex;
+align-items: center;
+}
+
+.text-contato{
+
+    display: flex;
+    flex-direction: column;
+}
+
 
 
 
