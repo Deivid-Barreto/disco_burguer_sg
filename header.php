@@ -55,16 +55,16 @@
 
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="divulgacao/novidades.php">Novidades</a>
+              <a class="nav-link" href="novidades.php">Novidades</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="divulgacao/sobre.php">Quem Somos</a>
+              <a class="nav-link" href="sobre.php">Quem Somos</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="divulgacao/local.php">Local</a>
+              <a class="nav-link" href="local.php">Local</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="divulgacao/contato.php">Contato</a>
+              <a class="nav-link" href="contato.php">Contato</a>
             </li>
           </ul>
         </div>
