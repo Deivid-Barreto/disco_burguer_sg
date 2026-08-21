@@ -8,8 +8,8 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/divulgacao/index.css">
-  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="/../css/divulgacao/index.css">
+  <link rel="stylesheet" href="/../css/header.css">
 </head>
 
 <body>
@@ -36,7 +36,7 @@
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
             <li class="nav-item ">
-              <a class="nav-link" href="index.html">Inicio</a>
+              <a class="nav-link" href="/../index.html">Inicio</a>
             </li>
 
             <li class="nav-item dropdown">
