@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+
+<h2>Cadastro de novo item</h2>
+
+<form method="POST">
+
+<label>Nome</label>
+<input type="nome" name="nome" required>
+
+<label>Código</label>
+<input type="number" name="codigo" required>
+
+<label>Quantidade em estoque</label>
+<input type="number" id="quant_estoque" name="quant_estoque" step="0.01" min="0" placeholder="0" required> 
+
+<label>Quantidade mínima em estoque</label>
+<input type="number" id="quant__min_estoque" name="quant_min_estoque" step="0.01" min="0" placeholder="0" required>
+
+<label>Unidade de medida:</label>
+
+<select id="uni_medida" name="uni_medida" required>
+  <option value="g">Gramas</option>
+  <option value="un">Unidade</option>
+</select>
+
+<button>Entrar</button>
+</form>
+</div>
+</body>
+</html>
