@@ -126,7 +126,7 @@ footer{
 
 .row-footer{
 
-    padding: 30px;
+    padding: 10px;
 }
 
 
@@ -139,12 +139,13 @@ footer{
 }
 .icone-footer img{
 
-    width: 100px;
-    height: 100px;
+    width: 200px;
+    height: 150px;
 }
 
 .local-footer{
   
+    gap: 10px;
     display: flex;
     justify-content: center;
 }
@@ -160,21 +161,57 @@ footer{
     font-style: italic;
     margin-top: 5px;
     color: white;
-    font-size: 18px;
+    font-size:  25px;
 }
 
-.contato-footer{
 
-    gap: 3px;
-    display: flex;
-    align-items: center;
+
+
+
+
+
+
+
+
+
+
+
+.contato-img{
+
+    display: flex;  
+    align-items:center ;
+    justify-content: center;
+    gap: 5px;
+    
 
 }
-.contato-footer img{
 
-    width: 100px;
+.contato-img img{
+
+    width: 40px;
     height: auto;
 }
+
+.contato-footer h3{
+
+    font-style: italic;
+    font-size: 10px;
+    text-align: center;
+    color: gold;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .menu-footer{
 
@@ -187,6 +224,7 @@ footer{
 
 .menu-footer a{
 
+    font-size: 24px;
     color: white;
     font-style: italic;
     text-decoration: none;
