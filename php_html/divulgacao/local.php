@@ -34,47 +34,49 @@
 
       <div class="row">
 
+        <div class="col-6 card">
 
-        <div class="col-6">
-
-          <div class="local">
-
-            <div class="text-contato">
-              <h3>Rua Fagundes N.80</h3>
-              <h3>Liberdade - São Paulo</h3>
-              <h5 class="card-title">Horário de Funcionamento</h5>
-              <p class="card-title">Segunda á sexta: 11h ás 23h</p>
-              <p class="card-title">Sábado á domingo: 12h ás 00h</p>
+          <div class="text-contato">
+            <h3>Rua Fagundes N.80</h3>
+            <h3>Liberdade - São Paulo</h3>
+            <h5 class="card-title">Horário de Funcionamento</h5>
+            <p class="card-title">Segunda á sexta: 11h ás 23h</p>
+            <p class="card-title">Sábado á domingo: 12h ás 00h</p>
 
 
-              <a href="https://www.google.com/maps/dir//R.+Fagundes,+80+-+Liberdade,
-              +São+Paulo+-+SP,+01508-030/data=!4m6!4m5!1m1!4e2!1m2!1m1!1s0x94ce59a5e
-              36e2a11:0x602492a8496ab7cc?sa=X&ved=1t:707&ictx=111"
-                target="_blank"
-                rel="noopener noreferrer">
-                <button>Como chegar</button>
-              </a>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Fagundes,+80,+Liberdade,+São+Paulo,+SP,+01508-030"
+              target="_blank"
+              rel="noopener noreferrer">
+              <button>Como chegar</button>
+            </a>
 
-              <button>Whatsapp</button>
-
-            </div>
+            <button>Whatsapp</button>
 
           </div>
 
         </div>
 
-        <div class="col-6">
+        <div class="col-6 card"">
 
-          <img class="img-grupo" src="../img/sobre.pn">
+          <iframe
+
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.247535300889!2d-46.64132752730844!3d-23.559551614652044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59a5e36e2a11%3A0x602492a8496ab7cc!2sR.%20Fagundes%2C%2080%20-%20Liberdade%2C%20S%C3%A3o%20Paulo%20-%20SP%2C%2001508-030!5e0!3m2!1spt-BR!2sbr!4v1787604470440!5m2!1spt-BR!2sbr"
+          width="600"
+          height="450"
+          style="border:0;" allowfullscreen="" loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin">
+
+          </iframe>
+
+
 
         </div>
-
-
 
       </div>
 
     </section>
 
+  </div>
 
 </main>
 
