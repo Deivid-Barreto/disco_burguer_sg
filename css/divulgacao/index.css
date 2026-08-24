@@ -139,8 +139,8 @@ footer{
 }
 .icone-footer img{
 
-    width: 200px;
-    height: 150px;
+    width: 150px;
+    height: 100px;
 }
 
 .local-footer{
@@ -161,20 +161,8 @@ footer{
     font-style: italic;
     margin-top: 5px;
     color: white;
-    font-size:  25px;
+    font-size:  23px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 .contato-img{
 
@@ -188,29 +176,18 @@ footer{
 
 .contato-img img{
 
-    width: 40px;
+    width: 60px;
+    padding-bottom: 5px;
     height: auto;
 }
 
 .contato-footer h3{
 
     font-style: italic;
-    font-size: 10px;
+    font-size: 15px;
     text-align: center;
     color: gold;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .menu-footer{
@@ -224,7 +201,7 @@ footer{
 
 .menu-footer a{
 
-    font-size: 24px;
+    font-size: 16px;
     color: white;
     font-style: italic;
     text-decoration: none;

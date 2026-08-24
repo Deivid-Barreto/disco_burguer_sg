@@ -55,7 +55,7 @@
 
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="novidades.php">Novidades</a>
+              <a class="nav-link" href="novidades.php">Feedback</a>
             </li>
             <li class="nav-item ">
               <a class="nav-link" href="sobre.php">Quem Somos</a>
