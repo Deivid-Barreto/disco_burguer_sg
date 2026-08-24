@@ -7,8 +7,8 @@
   <title>Disco Burguer - Quem Somos</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="/../../css/divulgacao/index.css">
-  <link rel="stylesheet" href="/../../css/header.css">
+  <link rel="stylesheet" href="../../css/divulgacao/local.css">
+
 </head>
 <header>
   <?php
@@ -45,7 +45,16 @@
               <h5 class="card-title">Horário de Funcionamento</h5>
               <p class="card-title">Segunda á sexta: 11h ás 23h</p>
               <p class="card-title">Sábado á domingo: 12h ás 00h</p>
-              <button>Como chegar</button>
+
+
+              <a href="https://www.google.com/maps/dir//R.+Fagundes,+80+-+Liberdade,
+              +São+Paulo+-+SP,+01508-030/data=!4m6!4m5!1m1!4e2!1m2!1m1!1s0x94ce59a5e
+              36e2a11:0x602492a8496ab7cc?sa=X&ved=1t:707&ictx=111"
+                target="_blank"
+                rel="noopener noreferrer">
+                <button>Como chegar</button>
+              </a>
+
               <button>Whatsapp</button>
 
             </div>
