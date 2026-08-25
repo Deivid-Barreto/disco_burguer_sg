@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Contatos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="../../css/divulgacao/contato.css">
+    <link rel="stylesheet" href="../../css/divulgacao/contato.css">
 
 </head>
 
@@ -21,7 +21,7 @@
         <section class="contato">
             <div class="row">
                 <div class="col-6">
-                    <div class="card" style="width: 18rem;">
+                    <div class="card">
                         <form action="" method="POST">
 
                             <label>Nome:</label>
@@ -34,9 +34,10 @@
                             <input type="tel" name="telefone" required>
 
                             <label>Comentário:</label>
-                            <textarea type="text" name="comentario" required></textarea>
+                            <textarea name="comentario" required></textarea>
 
                             <button>Enviar</button>
+                        </form>
                     </div>
                 </div>
 
@@ -44,7 +45,7 @@
 
 
 
-                <div class="col-6 ">
+                <div class="col-6 card">
 
                     <div class="img-contato">
                         <img src="../../img/whats.jpeg" class="card-img-top " alt="">
@@ -57,22 +58,47 @@
 
                     </div>
 
-                    <img src="../../img/email.jpeg" class="card-img-top" alt="">
-                    <h3 class="card-title">E-mail</h3>
-                    <h5 class="card-title">burguerdisco@gmail.com</h5>
+                    <div class="img-email">
+                        <img src="../../img/email.jpeg" class="card-img-top" alt="">
 
-                    <img src="../../img/insta.png" class="card-img-top" alt="">
-                    <h3 class="card-title">Instagram</h3>
-                    <h5 class="card-title">@Disco_Burguer</h5>
+                        <div class="text-email">
+                            <h1>E-mail</h1>
+                            <h5>burguerdisco@gmail.com</h5>
+                        </div>
 
-                    <img src="../../img/relogio.png" class="card-img-top" alt="">
-                    <h3 class="card-title">Horário de Funcionamento</h3>
-                    <h5 class="card-title">Segunda á sexta: 11h ás 23h</h5>
-                    <h5 class="card-title">Sábado á domingo: 12h ás 00h</h5>
+                    </div>
 
-                    <img src="../../img/localizacao.jpg" class="card-img-top" alt="">
-                    <h3 class="card-title">Localização</h3>
-                    <h5 class="card-title">Rua Fagundes N. 80, Liberdade - São Paulo</h5>
+
+                    <div class="img-insta">
+                        <img src="../../img/insta.png" class="card-img-top" alt="">
+
+                        <div class="text-insta">
+                            <h1 class="card-title">Instagram</h1>
+                            <h5 class="card-title">@Disco_Burguer</h5>
+                        </div>
+
+                    </div>
+
+                    <div class="img-relogio">
+                        <img src="../../img/relogio.png" class="card-img-top" alt="">
+
+                        <div class="text-relogio">
+                            <h1 class="card-title">Horário de Funcionamento</h1>
+                            <h5 class="card-title">Segunda á sexta: 11h ás 23h</h5>
+                            <h5 class="card-title">Sábado á domingo: 12h ás 00h</h5>
+                        </div>
+
+                    </div>
+
+                    <div class="img-local">
+                        <img src="../../img/localizacao.jpg" class="card-img-top" alt="">
+
+                        <div class="text-local">
+                            <h1 class="card-title">Localização</h1>
+                            <h5 class="card-title">Rua Fagundes N. 80, Liberdade - São Paulo</h5>
+                        </div>
+
+                    </div>  
 
                 </div>
             </div>
