@@ -37,11 +37,12 @@
         <div class="col-6 card">
 
           <div class="text-contato">
+
             <h3>Rua Fagundes N.80</h3>
             <h3>Liberdade - São Paulo</h3>
-            <h5 class="card-title">Horário de Funcionamento</h5>
-            <p class="card-title">Segunda á sexta: 11h ás 23h</p>
-            <p class="card-title">Sábado á domingo: 12h ás 00h</p>
+            <h5>Horário de Funcionamento</h5>
+            <p>Segunda á sexta: 11h ás 23h</p>
+            <p>Sábado á domingo: 12h ás 00h</p>
 
 
             <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Fagundes,+80,+Liberdade,+São+Paulo,+SP,+01508-030"
@@ -50,7 +51,11 @@
               <button>Como chegar</button>
             </a>
 
-            <button>Whatsapp</button>
+            <a href="https://wa.me/5511984688318"
+              target="_blank"
+              rel="noopener noreferrer">
+              <button type="button">WhatsApp</button>
+            </a>
 
           </div>
 
