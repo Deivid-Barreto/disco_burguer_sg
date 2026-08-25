@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="../../css/divulgacao/sobre.css">
 
 </head>
+<body>
+    
+</body>
 <header>
     <?php
     include __DIR__ . "/../../header.php";
@@ -42,7 +45,7 @@
 
                     <div class="col-12">
                     
-                    <h3>Nossa Missão</h3>
+                    <h3 class="sub">Nossa Missão</h3>
 
                     </div>
 
