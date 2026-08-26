@@ -67,19 +67,20 @@ background-size: cover;
 background-position: center;
 background-repeat: no-repeat;
 text-align: center;
+display: flex;
+justify-content: center;
 width: 100%;
 height: 900px;
 background-size: 100% 100%;
-padding: 20px 20px;
 
 
 }
 
 .Mais-Pedidos h2{
-    
+
     color: white;
-    font-size: 40px;
-    padding-top: 5px;
+    font-size: 80px;
+   
 }
 
 .Mais-Pedidos h3{
@@ -87,19 +88,15 @@ padding: 20px 20px;
     color: white;
 
 }
+.cards-mp h2{
 
-
-.cards-mp{
-
-    
-    display: flex;
-    justify-content: center;
-
+    font-size: 60px;
 }
+
+
 
 .cards-mp img{
 
- 
  width: 400px;
  height: 400px;
 }
