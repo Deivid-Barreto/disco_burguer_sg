@@ -36,7 +36,7 @@
 
                     <div  class="col-6 titulo-sobre">
 
-                        <img class="img-bola_cristal" src="../../img/icone.png" alt="">
+                        <img class="img-bola_cristal" src="../../img/globo.png" alt="">
                     </div>
 
                 </div>
