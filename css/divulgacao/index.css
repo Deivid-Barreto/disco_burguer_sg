@@ -16,12 +16,38 @@
 
 
 .titulo-hero {
-    text-align: left;
-    color: white;
-    font-size: clamp(2.5rem, 5vw, 4.2rem);
-    line-height: 1.1;
-    margin-bottom: 20px;
     
+  padding-bottom: 20px;
+  font-family: 'Oswald', 'Anton', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.95;
+  letter-spacing: 2px;
+  margin: 0;
+  display: flex;
+  flex-direction: column
+    
+}
+
+.neon-disco {
+  color: #ffbdf2; 
+  text-shadow:
+    0 0 5px #ff66d4,
+    0 0 10px #ff66d4,
+    0 0 20px #ff00ab,
+    0 0 40px #ff00ab,
+    0 0 80px #d80093;
+}
+
+.neon-burguer {
+  color: #cceeff; 
+  text-shadow:
+    0 0 5px #00d2ff,
+    0 0 10px #00d2ff,
+    0 0 20px #00aaff,
+    0 0 40px #0088ff,
+    0 0 80px #0055ff;
 }
 
 .button-hero {
@@ -51,8 +77,6 @@
 
 
 .img-burger-hero{
-
-
     width: clamp(140px, 40vw, 400px);
     height: clamp(90px, 20vw, 220px);
 }
@@ -77,19 +101,20 @@ background-size: 100% 100%;
 }
 
 .Mais-Pedidos h2{
-
-    color: white;
+    color: gold;
     font-size: 80px;
    
 }
 
 .Mais-Pedidos h3{
-    
+    padding: 10px;
     color: white;
 
 }
 .cards-mp h2{
 
+    padding-bottom: 10px;
+    color: white;
     font-size: 60px;
 }
 
@@ -98,7 +123,7 @@ background-size: 100% 100%;
 .cards-mp img{
 
  width: 400px;
- height: 400px;
+ height: 500px;
 }
 
 
