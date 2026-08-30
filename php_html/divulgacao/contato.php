@@ -7,6 +7,9 @@
     <title>Contatos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../css/divulgacao/contato.css">
+    <link rel="stylesheet" href="/../css/header.css">
+    <link rel="stylesheet" href="/../css/footer.css">
+
 
 </head>
 
@@ -102,9 +105,17 @@
 
                 </div>
             </div>
-        </section>\s
+        </section>
 
     </main>
+
+    <footer>
+
+     <?php
+        include __DIR__ . "../../../footer.php";
+        ?>
+    </footer>
+
 </body>
 
 </html>

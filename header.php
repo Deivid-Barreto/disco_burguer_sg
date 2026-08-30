@@ -1,25 +1,11 @@
-<!doctype html>
-<html lang="pt-br">
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Disco Burguer-inicio</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="/../css/divulgacao/index.css">
-  <link rel="stylesheet" href="/../css/header.css">
-</head>
 
-<body>
-
-  <header>
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid p-0 align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
-          <img src="/../../img/icone-disco-burguer.png" alt="Logo">
+          <img src=" /../../img/icone-disco-burguer.png" alt="Logo">
         </a>
 
         <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">
@@ -36,42 +22,32 @@
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
             <li class="nav-item ">
-              <a class="nav-link" href="/../index.html">Inicio</a>
-            </li>
-
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Cardápio
-              </a>
-
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Hambúrgueres</a></li>
-                <li><a class="dropdown-item" href="#">Bebidas</a></li>
-                <li><a class="dropdown-item" href="#">Combos</a></li>
-                <li><a class="dropdown-item" href="#">Milkshakes</a></li>
-                <li><a class="dropdown-item" href="#">Acompanhamentos</a></li>
-              </ul>
-
+              <a class="nav-link" href="index.html">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="novidades.php">Feedback</a>
+              <a class="nav-link" href="php_html/divulgacao/cardapio.php">Cardápio</a>
+            </li>
+           
+            <li class="nav-item">
+              <a class="nav-link" href="php_html/divulgacao/novidades.php">Feedback</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="sobre.php">Quem Somos</a>
+              <a class="nav-link" href="php_html/divulgacao/sobre.php">Quem Somos</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="local.php">Local</a>
+              <a class="nav-link" href="php_html/divulgacao/local.php">Local</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="contato.php">Contato</a>
+              <a class="nav-link" href="php_html/divulgacao/contato.php">Contato</a>
             </li>
           </ul>
         </div>
 
       </div>
     </nav>
-  </header>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"></script>
+    
+ 
+ 
+  
+
+    

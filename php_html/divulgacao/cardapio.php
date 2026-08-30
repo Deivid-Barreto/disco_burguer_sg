@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,27 @@
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="stylesheet" href="/../css/divulgacao/index.css">
   <link rel="stylesheet" href="/../css/header.css">
+  <link rel="stylesheet" href="/../css/footer.css">
 </head>
-<header>
-    <?php
-    include __DIR__ . "/../header.php";
-    ?>
-</header>
 <body>
+<header>
+     <?php
+        include __DIR__ . "/../../header.php";
+        ?>
+</header>
+
+<main>
+
+</main>
+
+<footer>
+<?php    
+ include __DIR__ . "/../../footer.php";
+ ?>
+
+</footer>
     
+
+
 </body>
 </html>
