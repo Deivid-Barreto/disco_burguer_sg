@@ -1,7 +1,5 @@
-.contato {
-
-    padding: 10vw 20px 20px;
-    background-color: aqua;
+.contato{  
+    background-color: blanchedalmond;
 }
 
 .card form {
@@ -20,15 +18,5 @@
     height: 40px;
 }
 
-.card form textarea {
-    display: block;
-    width: 100%;
-    height: 120px;
-    resize: vertical;
-    margin-top: 5px;
-}
 
-.card form button {
-    width: 100px;
-    margin-top: 10px;
-}
+

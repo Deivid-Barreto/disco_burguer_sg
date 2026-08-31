@@ -22,9 +22,22 @@
     <main>
 
         <section class="contato">
+            <div class="row div-contato">
+
+                <div class="col-12 titulo-contato">
+
+                    <h1>Contatos</h1>
+
+                </div>
+
+            </div>
             <div class="row">
                 <div class="col-6">
                     <div class="card">
+
+                        <h3>Envie uma mensagem</h3>
+                        <h4>Preencha os campos abaixo e estraremos em contato o mais breve possível</h4>
+
                         <form action="" method="POST">
 
                             <label>Nome:</label>
@@ -101,7 +114,7 @@
                             <h5 class="card-title">Rua Fagundes N. 80, Liberdade - São Paulo</h5>
                         </div>
 
-                    </div>  
+                    </div>
 
                 </div>
             </div>
@@ -111,7 +124,7 @@
 
     <footer>
 
-     <?php
+        <?php
         include __DIR__ . "../../../footer.php";
         ?>
     </footer>
