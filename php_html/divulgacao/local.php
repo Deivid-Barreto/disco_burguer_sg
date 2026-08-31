@@ -52,15 +52,13 @@
 
 
             <a href="https://www.google.com/maps/dir/?api=1&destination=Rua+Fagundes,+80,+Liberdade,+São+Paulo,+SP,+01508-030"
-              target="_blank"
-              rel="noopener noreferrer">
+              target="_blank" rel="noopener noreferrer">
               <button>Como chegar</button>
             </a>
 
             <a href="https://wa.me/5511984688318"
-              target="_blank"
-              rel="noopener noreferrer">
-              <button type="button">WhatsApp</button>
+              target="_blank" rel="noopener noreferrer">
+              <button>WhatsApp</button>
             </a>
 
           </div>
