@@ -40,7 +40,7 @@
 
       <div class="row">
 
-        <div class="col-6 card">
+        <div class="col-6 card-contato">
 
           <div class="text-contato">
 

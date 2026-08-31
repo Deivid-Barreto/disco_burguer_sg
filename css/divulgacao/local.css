@@ -18,5 +18,22 @@
 
 }
 
+.row{
+    justify-content: center;
+}
 
+.card{
+    background-color:#390a33;
+    color: black;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 5%;
+}
 
+.card-contato{
+    background-color:#390a33;
+    color: black;
+    width: fit-content;
+    border-radius: 5%;
+    margin-right: 5%;
+}
