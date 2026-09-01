@@ -1,5 +1,41 @@
+<?php
+require_once "conexao.php"; 
+
+//fazer pag de carregamento, se der errado!!
+$mensagem_sucesso = "";
+$mensagem_erro = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+    $nome        = $_POST['nome']; 
+    $categoria   = $_POST['categoria'];
+    $preco_venda        = $_POST['preco_venda']; 
+    $make_or_buy = ['make_or_buy']; 
+    $categoria   = $_POST['categoria'];
+    $descricao   = $_POST['descricao'];
+    // $imagem_caminho = $_POST['imagem_caminho'];
+    
+    
+    $sql = "INSERT INTO produtos (categorias, nome, descricao, preco_venda, visivel, make_or_buy) VALUES (?, ?, ?, ?, ?, ?)";
+            
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("sssds", $categoria, $nome, $descricao, $preco_venda, $make_or_buy);
+        
+        if ($stmt->execute()) {
+            $mensagem_sucesso = "Produto cadastrado com sucesso!";
+        } else {
+            $mensagem_erro = "Erro ao gravar no banco: " . $stmt->error;
+        }
+        $stmt->close();
+    } else {
+        $mensagem_erro = "Erro na preparação do banco: " . $conn->error;
+    }
+}
+?>
+
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
@@ -25,19 +61,23 @@
                 </div>
 
                 <div id="tipo">
-                    <label for="tipo">Qual é o tipo de produto a ser cadastrado?</label>
+                    <label for="tipo">Qual é o tipo de estoque do pruduto?</label>
                     <select name="make_or_buy" id="tipo">
-                         <option value="">Carregando tipos..</option>
+                         <option value="produto_acabado">Produto acabado</option>
+                         <option value="revenda">Revenda</option>
                     </select>
-                    <input type="hidden" name="tipo_id_hiden" value="">
                 </div>
 
                 <div>
-                    <label for="select_categoria">Categoria:</label>
+                    <label for="select_categoria">Categoria alimentícia:</label>
                     <select name="categoria" id="select_categoria" required>
-                        <option value="">Carregando categorias...</option>
+                        <option value="hamburguer">Hamburguer</option>
+                        <option value="porcoes">Porções</option>
+                        <option value="bebidas">Bebidas</option>
+                        <option value="combos">Combo</option>
+                        <option value="sobremesa_gelada">Sobremesa gelada</option>
+                        <option value="extras">Extra</option>
                     </select>
-                    <input type="hidden" name="categoria_id_hidden" value="">
                 </div>
 
                 <div>
@@ -49,7 +89,7 @@
 
                 <div>
                     <label for="imagem">Foto:</label>
-                    <input type="file" id="imagem" name="imagemcaminho" required>
+                    <input type="file" id="imagem" name="imagem_caminho" required>
                 </div>
 
                 <div>
@@ -70,24 +110,6 @@
     </main>
 
     <script>
-         document.addEventListener("DOMContentLoaded", function() {
-            const selectElement = document.getElementById("select_categoria");
-            fetch("get_enum.php")
-                .then(response => response.json())
-                .then(categorias => {
-                    selectElement.innerHTML = '<option value="">-- Escolha uma opção --</option>';
-                    categorias.forEach(opcao => {
-                        const option = document.createElement("option");
-                        option.value = opcao;
-                        option.textContent = opcao;
-                        selectElement.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error("Erro ao carregar ENUM:", error);
-                    selectElement.innerHTML = '<option value="">Erro ao carregar opções</option>';
-                });
-        });
     </script>
 
 
