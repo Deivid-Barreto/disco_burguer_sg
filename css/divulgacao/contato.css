@@ -1,6 +1,31 @@
 .contato{  
-    background-color: blanchedalmond;
+
+    padding: 10vw 20px  20px;
+    background-image: url(../../img/teste.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height:900px;
 }
+
+.titulo-cotato{
+    
+    color: whitesmoke;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3%;
+    font-size: 80px;
+}
+
+h1{
+    color: aqua;
+}
+
+.row{
+    justify-content: center;
+}
+
 
 .card form {
     display: flex;
@@ -14,8 +39,6 @@
 
 .card form input {
     display: block;
-    width: 100%;
-    height: 40px;
 }
 
 
