@@ -1,4 +1,38 @@
 body{
 
     background-color: white;
+    
+}
+
+main{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+}
+
+
+.button-cardapio{
+
+    display: flex;
+    justify-content: center;
+    text-align: center;
+
+}
+
+.itens-cardapio{
+
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.hamburgueres h2{
+
+   
+    text-align: left;
+
+
 }
