@@ -1,5 +1,5 @@
 <?php
-require_once "conexao.php"; 
+include '../../php/conexao.php'; 
 
 //fazer pag de carregamento, se der errado!!
 $mensagem_sucesso = "";
@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $nome        = $_POST['nome']; 
     $categoria   = $_POST['categoria'];
-    $preco_venda        = $_POST['preco_venda']; 
+    $preco_venda = $_POST['preco_venda']; 
     $make_or_buy = ['make_or_buy']; 
     $categoria   = $_POST['categoria'];
     $descricao   = $_POST['descricao'];
@@ -17,20 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     
     $sql = "INSERT INTO produtos (categorias, nome, descricao, preco_venda, visivel, make_or_buy) VALUES (?, ?, ?, ?, ?, ?)";
-            
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("sssds", $categoria, $nome, $descricao, $preco_venda, $make_or_buy);
-        
-        if ($stmt->execute()) {
-            $mensagem_sucesso = "Produto cadastrado com sucesso!";
-        } else {
-            $mensagem_erro = "Erro ao gravar no banco: " . $stmt->error;
-        }
-        $stmt->close();
-    } else {
-        $mensagem_erro = "Erro na preparação do banco: " . $conn->error;
-    }
-}
+}        
+
 ?>
 
 
@@ -45,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <main>
-        <form method="POST">
+        <form method="POST" action="cadastro_produto.php">
             <section>
                 <h2>Cadastro de novo produto</h2>
                 
@@ -87,11 +75,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 
 
-                <div>
+            <!--    <div>
                     <label for="imagem">Foto:</label>
                     <input type="file" id="imagem" name="imagem_caminho" required>
                 </div>
-
+            -->
                 <div>
                     <label for="sim">Este item é visível no cardpio?</label>
                         <input type="radio" id="sim" name="visivel" value="1">
