@@ -10,14 +10,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nome        = $_POST['nome']; 
     $categoria   = $_POST['categoria'];
     $preco_venda = $_POST['preco_venda']; 
-    $make_or_buy = ['make_or_buy']; 
-    $categoria   = $_POST['categoria'];
+    $make_or_buy = $_POST['make_or_buy']; 
+    $visivel   = $_POST['visivel'];
     $descricao   = $_POST['descricao'];
     // $imagem_caminho = $_POST['imagem_caminho'];
     
     
     $sql = "INSERT INTO produtos (categorias, nome, descricao, preco_venda, visivel, make_or_buy) VALUES (?, ?, ?, ?, ?, ?)";
-}        
+    $stmt = $conexao->prepare($sql);
+    $stmt->bind_param("sssdis", $categoria, $nome, $descricao, $preco_venda, $visivel, $make_or_buy);
+
+    if ($stmt->execute()) {
+        $id_produto = $conexao->insert_id;
+        
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            
+            $arquivo = $_FILES['foto'];
+            $extensao = pathinfo($arquivo['name'], PATHINFO_EXTENSION);
+            
+            // Padrão de nome usando o ID gerado para ficar único
+            $novo_nome = "produto_" . $id_produto . "_" . bin2hex(random_bytes(4)) . "." . $extensao;
+            $pasta_destino = "../../img/produtos/"; // Ajuste o caminho da pasta conforme sua estrutura
+            $caminho_completo = $pasta_destino . $novo_nome;
+
+            if (move_uploaded_file($arquivo['tmp_name'], $caminho_completo)) {
+                
+                // 4. Faz o UPDATE na coluna `imagem_caminho` que vimos no seu comando CREATE TABLE
+                $sql_update = "UPDATE produtos SET imagem_caminho = ? WHERE id = ?";
+                $stmt_update = $conexao->prepare($sql_update);
+                $stmt_update->bind_param("si", $caminho_completo, $id_produto);
+                $stmt_update->execute();
+                $stmt_update->close();
+                
+                $mensagem_sucesso = "Produto cadastrado e imagem salva com sucesso!";
+            } 
+}   
+
+$stmt->close();
+
+}
+
+}
 
 ?>
 
@@ -44,13 +77,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <div>
                     <label for="preco_venda">Preço:</label>
-                    <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" placeholder="0,00"
+                    <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" placeholder="0.00"
                         required>
                 </div>
 
                 <div id="tipo">
                     <label for="tipo">Qual é o tipo de estoque do pruduto?</label>
-                    <select name="make_or_buy" id="tipo">
+                    <select name="make_or_buy" id="tipo" required>
                          <option value="produto_acabado">Produto acabado</option>
                          <option value="revenda">Revenda</option>
                     </select>
@@ -75,11 +108,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 
 
-            <!--    <div>
+            <!--  <div>
                     <label for="imagem">Foto:</label>
                     <input type="file" id="imagem" name="imagem_caminho" required>
-                </div>
-            -->
+                </div> -->
+            
+
                 <div>
                     <label for="sim">Este item é visível no cardpio?</label>
                         <input type="radio" id="sim" name="visivel" value="1">
