@@ -5,13 +5,15 @@ body{
 }
 
 main{
-    background-image: url(../../img/ChatGPT\ Image\ 2\ de\ set.\ de\ 2026\,\ 08_56_54.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: 100%;
+    
+    
+    
+  
     height: 800px;
+    display: flex;
     justify-content: center;
+    flex-direction: column;
+    
 
 
    
@@ -20,25 +22,55 @@ main{
 }
 
 
-.button-cardapio{
+.inicio-cardapio h1{
 
-    display: flex;
-    justify-content: center;
-    text-align: center;
+    font-size: 100px;
+    padding-bottom: 10px;
+
+  
+    
+   
+    
 
 }
 
-.itens-cardapio{
+.inicio-cardapio button{
 
-  display: flex;
-  justify-content: center;
-  text-align: center;
+    margin-bottom: 10pxs;
+
 }
 
-.hamburgueres h2{
+
+
+.hamburguers h2{
+
+    font-size:60px;
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
    
-    text-align: left;
+    
 
 
+}
+.itens-cardapio h2{
+
+    font-size: 40px
+
+}
+
+.itens-cardapio h3{
+
+    font-size: 20px;
+}
+
+
+.itens-cardapio img{
+
+    width: 300px;
+    height: 300px;
+
+    
+ 
 }

@@ -20,12 +20,12 @@
 <main>
 
 
-
+<div class="container-fluid">
 <div class="row">
-<div class="col-12">
+<div class="col-12 inicio-cardapio text-center">
 <h1 >Cardápio</h1>
 
-<div class="button-cardapio">
+<div class="">
 <button>Hamburguers</button>
 <button>Combos</button>
 <button>Shakes</button>
@@ -35,9 +35,9 @@
 </div> 
 </div>
 
-<section class="Hamburguers">
+<section class="hamburguers">
 
-<h2>burguers</h2>
+<h2 >burguers</h2>
 
 
 <div class="row itens-cardapio">
@@ -46,12 +46,13 @@
 
 <div class="col-2">
  
-<img src="" alt="">
+<img src="../../img/fundo_cardapio.png" alt="">
 </div>
 
 <div class="col-8">
 
-<h3>hamburguer de salshiha </h3>
+<h2>hamburguer de salshiha </h2>
+<h3>VEM COM UMA DELICIOSA salshiha SUCULENTA E CREMEOSA</h3>
 </div>
 
 <div class="col-2">
@@ -64,7 +65,7 @@
 
   
 </section>
-
+</div>
 </main>
 
 
