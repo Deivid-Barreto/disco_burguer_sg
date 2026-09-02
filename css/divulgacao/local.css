@@ -1,49 +1,81 @@
 .local{
-
-    padding: 10vw 20px  20px;
+    padding: 6vw 20px 60px;
     background-image: url(../../img/teste.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     width: 100%;
-    min-height:900px;
+    min-height: auto;
 }
 
 .titulo-local{
-
-    color: whitesmoke;
+    color: #ffdd57;
     display: flex;
     justify-content: center;
     margin-bottom: 3%;
+    text-shadow:
+        0 0 10px rgba(255, 221, 87, 0.8),
+        0 0 25px rgba(255, 150, 40, 0.6),
+        0 0 45px rgba(255, 100, 20, 0.4);
 }
 
 h1{
-    font-size: 80px;
+    font-size: 60px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
 }
 
 .row{
+    display: flex;
     justify-content: center;
 }
 
 .card-info{
-    background-color:#390a33;
-    color: black;
+    background-color: #2e0854;
+    color: #ffffff;
     width: fit-content;
-    border-radius: 20px;
-    margin-right: 3%;
-    display: flex;
-    
+    padding: 40px 45px;
+    border-radius: 24px;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: 0 0 25px rgba(255, 46, 166, 0.25);
+}
+
+.text-contato h3{
+    font-style: italic;
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.text-contato h5{
+    color: #ffb347;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f12c5f;
+    display: inline-block;
+}
+
+.text-contato p{
+    color: #ffb347;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
 }
 
 .card-local{
-    background-color:#390a33;
+    background-color: #2e0854;
     color: black;
     width: fit-content;
-    border-radius: 20px;
     overflow: hidden;
-    padding: 0;
-    margin: 0;
-    line-height: 0;
+    border-radius: 24px;
+    border: 3px solid #7a1fa2;
+    box-shadow: 0 0 25px rgba(122, 31, 162, 0.4);
 }
 
 iframe{
@@ -53,9 +85,34 @@ iframe{
 #btn-chegar{
     background-color: #f12c5f;
     border-radius: 9px;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    padding: 12px 0;
+    margin-top: 20px;
+    transition: 0.2s ease;
+}
+#btn-chegar:hover{
+    background-color: #d81f4c;
 }
 
 #btn-whats{
     background-color: #009456;
     border-radius: 9px;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    padding: 12px 0;
+    margin-top: 12px;
+    transition: 0.2s ease;
+}
+#btn-whats:hover{
+    background-color: #00753f;
+}
+
+@media (max-width: 768px){
+    h1{ font-size: 40px; }
+    .card-info, .card-local{
+        max-width: 100%;
+    }
 }
