@@ -5,12 +5,18 @@ body{
 }
 
 main{
-
-    display: flex;
+    background-image: url(../../img/ChatGPT\ Image\ 2\ de\ set.\ de\ 2026\,\ 08_56_54.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: 100%;
+    height: 800px;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
+
+
+   
+    
+
 }
 
 
