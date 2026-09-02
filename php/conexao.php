@@ -9,10 +9,8 @@ $conn->set_charset("utf8mb4");
 
 if ($conn->connect_error) {
     die("Falha na conexão: " . $conn->connect_error);
+    // pag de carregamento p sempre
 }
-
-
-echo"oiii";
 
 
 ?>
