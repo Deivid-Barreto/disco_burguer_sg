@@ -37,32 +37,39 @@
 
 <section class="hamburguers">
 
-<h2 >burguers</h2>
 
+
+<div class="container">
+  <h2 >burguers</h2>
 
 <div class="row itens-cardapio">
 
 
 
-<div class="col-2">
+<div class="col-2 m-0">
  
-<img src="../../img/fundo_cardapio.png" alt="">
+<img src="../../img/whats.jpeg" alt="">
 </div>
 
-<div class="col-8">
+<div class="col-6 text-itens-cardapio p-0">
 
-<h2>hamburguer de salshiha </h2>
+<h2 >hamburguer de salshiha </h2>
 <h3>VEM COM UMA DELICIOSA salshiha SUCULENTA E CREMEOSA</h3>
 </div>
 
-<div class="col-2">
+<div class="col-2 preco-itens-cardapio">
 
-<button>ola</button>
+<h3>R$</h3>
+<h2>36,90</h2>
+
 </div>
 
+<div class="col-2 ">
 
+<button class="button-itens-cardapio" >ola</button>
 </div>
-
+</div>
+</div>
   
 </section>
 </div>
