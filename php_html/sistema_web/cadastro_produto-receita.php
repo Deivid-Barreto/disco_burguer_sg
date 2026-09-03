@@ -194,99 +194,66 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
     <script>
-        
-        document.addEventListener('DOMContentLoaded', carregarInsumos);
-
         async function carregarInsumos() {
-            const container = document.getElementById('lista_insumos');
-            try {
-                const response = await fetch('cadastro_produto.php?action=buscar_estoque');
-                const res = await response.json();
+    const container = document.getElementById('lista_insumos');
+    try {
+        const response = await fetch('cadastro_produto.php?action=buscar_estoque');
+        const res = await response.json();
 
-                if (!res.sucesso || res.dados.length === 0) {
-                    container.innerHTML = '<p class="erro">Atenção: Nenhum insumo cadastrado na tabela estoque. Cadastre insumos antes de continuar.</p>';
-                    return;
-                }
-
-                let html = '<p>Selecione os ingredientes e informe a quantidade usada por porção:</p>';
-                res.dados.forEach(insumo => {
-                    html += `
-                        <div class="item-ingrediente">
-                            <input type="checkbox" 
-                                   name="ingredientes[]" 
-                                   value="${insumo.id}" 
-                                   id="ing_${insumo.id}" 
-                                   onchange="toggleQuantidade(this, ${insumo.id})">
-                            
-                            <label for="ing_${insumo.id}">
-                                ${insumo.nome} (${insumo.unidade_medida})
-                            </label>
-
-                            <input type="number" 
-                                   step="0.01" 
-                                   min="0.01" 
-                                   name="quantidades[${insumo.id}]" 
-                                   id="qtd_${insumo.id}" 
-                                   placeholder="Qtd usada" 
-                                   class="qtd-input">
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-
-            } catch (err) {
-                container.innerHTML = '<p class="erro">Erro ao carregar lista de estoque.</p>';
-            }
+        if (!res.sucesso || res.dados.length === 0) {
+            container.innerHTML = '<p class="erro">Atenção: Nenhum insumo cadastrado no estoque.</p>';
+            return;
         }
 
-        
-        function alternarSessaoReceita() {
-            const selectTipo = document.getElementById('tipo');
-            const secaoReceita = document.getElementById('secao_receita');
-            secaoReceita.style.display = (selectTipo.value === 'produto_acabado') ? 'block' : 'none';
-        }
-
-        
-        function toggleQuantidade(checkbox, idInsumo) {
-            const campoQtd = document.getElementById('qtd_' + idInsumo);
-            if (checkbox.checked) {
-                campoQtd.style.display = 'inline-block';
-                campoQtd.required = true;
-            } else {
-                campoQtd.style.display = 'none';
-                campoQtd.required = false;
-                campoQtd.value = '';
-            }
-        }
+     
+        let html = `
+            <table class="tabela-ingredientes">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Usar?</th>
+                        <th>Ingrediente</th>
+                        <th>Unid. Medida</th>
+                        <th>Quantidade Utilizada</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
 
        
-        document.getElementById('formProduto').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const divMsg = document.getElementById('mensagem');
-            divMsg.innerHTML = '';
-
-            const formData = new FormData(this);
-
-            try {
-                const response = await fetch('cadastro_produto.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const res = await response.json();
-
-                if (res.sucesso) {
-                    divMsg.innerHTML = `<p class="sucesso">${res.mensagem}</p>`;
-                    this.reset();
-                    document.getElementById('secao_receita').style.display = 'none';
-                } else {
-                    divMsg.innerHTML = `<p class="erro">${res.mensagem}</p>`;
-                }
-            } catch (err) {
-                divMsg.innerHTML = '<p class="erro">Erro ao processar o formulário.</p>';
-            }
+        res.dados.forEach(insumo => {
+            html += `
+                <tr>
+                    <td style="text-align: center;">
+                        <input type="checkbox" 
+                               name="ingredientes[]" 
+                               value="${insumo.id}" 
+                               id="ing_${insumo.id}" 
+                               onchange="toggleQuantidade(this, ${insumo.id})">
+                    </td>
+                    <td>
+                        <label for="ing_${insumo.id}">${insumo.nome}</label>
+                    </td>
+                    <td>${insumo.unidade_medida}</td>
+                    <td>
+                        <input type="number" 
+                               step="0.01" 
+                               min="0.01" 
+                               name="quantidades[${insumo.id}]" 
+                               id="qtd_${insumo.id}" 
+                               placeholder="Digite a qtd" 
+                               class="qtd-input">
+                    </td>
+                </tr>
+            `;
         });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+
+    } catch (err) {
+        container.innerHTML = '<p class="erro">Erro ao carregar lista de estoque.</p>';
+    }
+}
     </script>
 </body>
 </html>
