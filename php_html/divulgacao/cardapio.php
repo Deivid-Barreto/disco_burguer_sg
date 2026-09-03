@@ -51,7 +51,7 @@
 <img src="../../img/whats.jpeg" alt="">
 </div>
 
-<div class="col-6 text-itens-cardapio p-0">
+<div class="col-6 text-itens-cardapio ">
 
 <h2 >hamburguer de salshiha </h2>
 <h3>VEM COM UMA DELICIOSA salshiha SUCULENTA E CREMEOSA</h3>
@@ -64,7 +64,7 @@
 
 </div>
 
-<div class="col-2 ">
+<div class="col-2 div-button-itens-cardapio ">
 
 <button class="button-itens-cardapio" >ola</button>
 </div>

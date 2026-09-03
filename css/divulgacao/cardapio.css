@@ -4,7 +4,7 @@ body{
     
 }
 
-main{
+main{ 
     
     
     
@@ -79,15 +79,15 @@ main{
 
 .itens-cardapio h3{
 
-    font-size: 20px;
+    font-size:18px;
 }
 
 
 .itens-cardapio img{
 
-    gap: 3px;
+    
     width: 200px;
-    height: 200px;
+    height: 150px;
 
     
  
@@ -103,15 +103,24 @@ main{
 
 .button-itens-cardapio{
 
+    
     background-color: pink;
     padding: 10px ;
     margin-bottom: 30px;
-    width: 150px;
+    width: 100px;
 
 }
 
 .preco-itens-cardapio{
 
+    gap: 5px;
     display: flex;
     align-items: center;
+}
+
+.div-button-itens-cardapio{
+
+    display: flex;
+    align-items: center;
+
 }
