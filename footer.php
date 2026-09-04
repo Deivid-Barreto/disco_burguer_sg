@@ -39,12 +39,12 @@
       </div>
 
       <div class="col-3 menu-footer">
-        <a href="">Início</a>
-        <a href="">Cardápio</a>
-        <a href="">Feedback</a>
-        <a href="">Quem somos</a>
-        <a href="">Local</a>
-        <a href="">Contato</a>
+        <a href="../../index.html">Início</a>
+        <a href="cardapio.php">Cardápio</a>
+        <a href="feedback.php">Feedback</a>
+        <a href="sobre.php">Quem somos</a>
+        <a href="local.php">Local</a>
+        <a href="contato.php">Contato</a>
       </div>
     </div>
 

@@ -37,7 +37,7 @@
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
             <li class="nav-item ">
-              <a class="nav-link" href="index.html">Inicio</a>
+              <a class="nav-link" href="../../index.html">Inicio</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="cardapio.php">Cardápio</a>
