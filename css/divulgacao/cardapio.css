@@ -1,126 +1,115 @@
-body{
-
-    background-color: white;
-    
-}
-
-main{ 
-    
-    
-    
-  
-    height: 800px;
+main {
+    background-color: black;
+    min-height: 800px;
     display: flex;
     justify-content: center;
     flex-direction: column;
-    
-
-
-   
-    
-
+    padding-bottom: 30px;
 }
 
+/*TITULO-CARDAPIO*/
 
-.inicio-cardapio h1{
 
+.inicio-cardapio h1 {
+    padding-top: 15vh;
     font-size: 100px;
     padding-bottom: 10px;
-
-  
+    color: yellow;
     
-   
-    
-
 }
 
-.inicio-cardapio button{
+.inicio-cardapio button {
 
-    margin-bottom: 10pxs;
-
-}
-
-
-
-.hamburguers h2{
-
-    font-size:60px;
-    padding-left: 20px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-
-   
-    
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: transparent;
+  border: 2px solid #a832a8;
+  border-radius: 3px;
+  padding: 20px 20px;
+ 
+  transition: all 0.3s ease;
+  cursor: pointer;
 
 
 }
-
-.itens-cardapio{
-
-  background-color: #0d0614; 
-  border: 4px solid #a832a8;
-  border-radius: 15px;      
-  padding: 15px;              
-  box-shadow: 0 0 10px rgba(168, 50, 168, 0.3);
-
+.btn-filtro:hover, 
+.btn-filtro.ativo {
+  background-color: #a832a8;
+  color: #ffffff;
+  box-shadow: 0 0 12px #a832a8;
     
-  
 }
 
 
+/*SECTION-HAMBURGUERS*/
 
-.itens-cardapio h2{
+.titulo-section {
+    color: white;
+    font-size: 3.0rem;
+    font-weight: bold;
+    font-family: 'Oswald', 'Anton', sans-serif;
+    text-transform: uppercase;
+    line-height: 0.95;
+    letter-spacing: 2px;
 
-    
+    text-shadow:
+        0 0 5px #ff007f,
+        0 0 10px #ff007f,
+        0 0 20px #a832a8,
+        0 0 40px #a832a8;
+}
+
+.itens-cardapio {
+
+    background-color: #0d0614;
+    border: 4px solid #a832a8;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(168, 50, 168, 0.3);
+}
+
+.itens-cardapio img {
+    width: 170px;
+    height: 140px;
+}
+
+
+.text-itens-cardapio {
+
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+}
+
+.itens-cardapio h2 {
+    color: white;
     padding: 0;
     font-size: 40px
-
 }
 
-.itens-cardapio h3{
-
-    font-size:18px;
+.itens-cardapio h3 {
+    color: white;
+    font-size: 18px;
 }
 
-
-.itens-cardapio img{
-
-    
-    width: 200px;
-    height: 150px;
-
-    
- 
-}
-
-.text-itens-cardapio{
-
-   display: flex;
-   align-items: start;
-   flex-direction: column;
-}
-
-
-.button-itens-cardapio{
-
-    
-    background-color: pink;
-    padding: 10px ;
-    margin-bottom: 30px;
-    width: 100px;
-
-}
-
-.preco-itens-cardapio{
-
+.preco-itens-cardapio {
     gap: 5px;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
-.div-button-itens-cardapio{
+.div-button-itens-cardapio {
 
     display: flex;
+    justify-content: center;
     align-items: center;
 
+}
+
+.button-itens-cardapio {
+    background-color: pink;
+    padding: 10px;
+    width: 100px;
 }
