@@ -38,7 +38,7 @@
 
                 <div class="row justify-content-center">
 
-                    <div class="col-11 col-md-8 col-lg-6">
+                    <div class="col-12">
 
                         <form class="card-feedback" id="form-feedback" method="post" action="processa_feedback.php">
 
@@ -101,7 +101,6 @@
     </main>
 
     <footer>
-
 
     </footer>
 

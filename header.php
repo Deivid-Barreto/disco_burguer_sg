@@ -44,7 +44,7 @@
             </li>
            
             <li class="nav-item">
-              <a class="nav-link" href="novidades.php">Feedback</a>
+              <a class="nav-link" href="feedback.php">Feedback</a>
             </li>
             <li class="nav-item ">
               <a class="nav-link" href="sobre.php">Quem Somos</a>
