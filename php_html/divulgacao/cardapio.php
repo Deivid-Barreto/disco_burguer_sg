@@ -34,7 +34,7 @@ $hamburgueres = [
   <title>Document</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="../../css/divulgacao/cardapio.css">
+<link rel="stylesheet" href="../../css/divulgacao/cardapio.css?v=<?php echo time(); ?>">
   <link rel="stylesheet" href="/../css/header.css">
   <link rel="stylesheet" href="/../css/footer.css">
 </head>
@@ -109,41 +109,6 @@ $hamburgueres = [
 
   </footer>
 
-<section class="hamburguers">
-
-
-
-        <div class="container ">
-          <h2 class="titulo-section">burguers</h2>
-
-          <div class="row itens-cardapio">
-
-            <div class="col-2 m-0">
-
-              <img src="../../img/whats.jpeg" alt="">
-            </div>
-
-            <div class="col-6 text-itens-cardapio ">
-
-              <h2>hamburguer de salshiha </h2>
-              <h3>VEM COM UMA DELICIOSA salshiha SUCULENTA E CREMEOSA</h3>
-            </div>
-
-            <div class="col-2 preco-itens-cardapio">
-
-              <h3>R$</h3>
-              <h2>36,90</h2>
-
-            </div>
-
-            <div class="col-2 div-button-itens-cardapio ">
-
-              <button class="button-itens-cardapio">ola</button>
-            </div>
-          </div>
-        </div>
-
-      </section> modifica esse html pra funcionar no array
 
 </body>
 
