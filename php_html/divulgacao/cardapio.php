@@ -20,6 +20,38 @@ $hamburgueres = [
         "imagem" => "../../img/whats.jpeg"
     ]
 ];
+
+
+$combos = [
+  [
+      "nome" => "2 burgers + 1 fritas grande",
+      "descrição" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
+      "preço" => "R$ 60,00",
+      "imagem" => "../../img/whats.jpeg"
+
+  ],
+  [
+    "nome" => "2 burgers + 1 fritas grande",
+    "descrição" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
+    "preço" => "R$ 60,00",
+    "imagem" => "../../img/whats.jpeg"
+
+],
+[
+  "nome" => "2 burgers + 1 fritas grande",
+  "descrição" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
+  "preço" => "R$ 60,00",
+  "imagem" => "../../img/whats.jpeg"
+
+],
+[
+  "nome" => "2 burgers + 1 fritas grande",
+  "descrição" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
+  "preço" => "R$ 60,00",
+  "imagem" => "../../img/whats.jpeg"
+
+]
+];
 ?>
 
 
@@ -93,13 +125,50 @@ $hamburgueres = [
             </div>
           <?php endforeach; ?>
 
-        </div>
+       
 
       </section>
+
+
+      <section class="combos">
+
+      <h2 class="titulo-section"></h2>
+      <div class="container ">
+          <h2 class="titulo-section">burguers</h2>
+
+          <?php foreach ($hamburgueres as $lanche): ?>
+            <div class="row itens-cardapio">
+
+              <div class="col-2 m-0">
+                <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>">
+              </div>
+
+              <div class="col-6 text-itens-cardapio ">
+                <h2><?php echo htmlspecialchars($lanche['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($lanche['descricao']); ?></h3>
+              </div>
+
+              <div class="col-2 preco-itens-cardapio">
+                <h3>R$</h3>
+                <h2><?php echo htmlspecialchars($lanche['preco']); ?></h2>
+              </div>
+
+              <div class="col-2 div-button-itens-cardapio ">
+                <button class="button-itens-cardapio">ola</button>
+              </div>
+
+            </div>
+          <?php endforeach; ?>
+
+
+      </section>
+
+     
+      
   </main>
 
 
-
+ </div>
 
 
   <footer>

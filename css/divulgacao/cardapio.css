@@ -1,5 +1,5 @@
 main {
-    background-color: white;
+    background-color: black;
     min-height: 800px;
     display: flex;
     justify-content: center;
@@ -11,7 +11,7 @@ main {
 
 
 .inicio-cardapio h1 {
-    padding-top: 15vh;
+    padding-top: 18vh;
     font-size: 100px;
     padding-bottom: 10px;
     color: yellow;
