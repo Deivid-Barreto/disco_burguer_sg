@@ -1,45 +1,386 @@
-.contato{  
+/* ===== Disco Burguer — Página de Contato (tema neon/synthwave) ===== */
 
-    padding: 10vw 20px  20px;
-    background-image: url(../../img/teste.png);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100%;
-    min-height:900px;
+:root {
+    --bg-noite: #0c0821;
+    --bg-noite-2: #150a2e;
+    --rosa: #ff2fa0;
+    --rosa-forte: #ff5f9e;
+    --laranja: #ff8a3d;
+    --ciano: #33e6ff;
+    --amarelo-sol: #ffd76b;
+    --texto-claro: #f2f0fb;
+    --texto-suave: #b8b3d6;
+    --borda-neon: rgba(255, 47, 160, 0.55);
 }
 
-.titulo-cotato{
-    
-    color: whitesmoke;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-noite);
+}
+
+/* ---------- Seção geral ---------- */
+
+.contato {
+    position: relative;
+    overflow: hidden;
+    padding: 90px 20px 60px;
+    min-height: 900px;
+    background: linear-gradient(180deg, #150a2e 0%, #1a0f38 35%, #0c0821 100%);
+}
+
+.cena-fundo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.sol {
+    position: absolute;
+    top: -180px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 620px;
+    height: 620px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, var(--amarelo-sol) 0%, var(--laranja) 55%, transparent 75%);
+    opacity: 0.55;
+    filter: blur(1px);
+}
+
+.sol::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 18px,
+        var(--bg-noite) 19px,
+        var(--bg-noite) 26px
+    );
+    -webkit-mask-image: linear-gradient(180deg, transparent 30%, black 55%);
+    mask-image: linear-gradient(180deg, transparent 30%, black 55%);
+}
+
+.grade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 45%;
+    background-image:
+        linear-gradient(rgba(255, 47, 160, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(51, 230, 255, 0.28) 1px, transparent 1px);
+    background-size: 60px 60px;
+    transform: perspective(300px) rotateX(55deg);
+    transform-origin: bottom;
+    opacity: 0.6;
+}
+
+.container-contato {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+.titulo-contato {
+    text-align: center;
+    font-family: 'Righteous', 'Poppins', sans-serif;
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    letter-spacing: 2px;
+    color: var(--amarelo-sol);
+    text-shadow:
+        0 0 8px rgba(255, 215, 107, 0.8),
+        0 0 24px rgba(255, 138, 61, 0.6),
+        0 0 48px rgba(255, 138, 61, 0.35);
+    margin-bottom: 48px;
+}
+
+/* ---------- Layout em grade ---------- */
+
+.grid-contato {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 28px;
+    align-items: start;
+}
+
+@media (max-width: 900px) {
+    .grid-contato {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ---------- Painéis (base compartilhada) ---------- */
+
+.painel {
+    background: rgba(15, 9, 36, 0.75);
+    border: 1px solid var(--borda-neon);
+    border-radius: 18px;
+    box-shadow: 0 0 24px rgba(255, 47, 160, 0.18), inset 0 0 30px rgba(255, 47, 160, 0.04);
+    backdrop-filter: blur(6px);
+}
+
+/* ---------- Painel do formulário ---------- */
+
+.painel-form {
+    padding: 32px 34px;
+}
+
+.painel-cabecalho {
     display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 26px;
+}
+
+.icone-cabecalho {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-bottom: 3%;
-    font-size: 80px;
+    color: var(--rosa-forte);
+    background: rgba(255, 47, 160, 0.12);
 }
 
-h1{
-    color: aqua;
+.painel-cabecalho h2 {
+    color: var(--texto-claro);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 4px;
 }
 
-.row{
-    justify-content: center;
+.painel-cabecalho p {
+    color: var(--texto-suave);
+    font-size: 0.92rem;
+    margin: 0;
 }
 
-
-.card form {
+.form-contato {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+}
+
+.linha-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 560px) {
+    .linha-form {
+        grid-template-columns: 1fr;
+    }
+}
+
+.campo {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.campo-icone {
+    position: absolute;
+    left: 16px;
+    color: var(--rosa-forte);
+    display: flex;
+}
+
+.campo-icone-topo {
+    top: 16px;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 47, 160, 0.35);
+    border-radius: 10px;
+    padding: 13px 16px 13px 44px;
+    color: var(--texto-claro);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+}
+
+.campo select {
+    color: var(--texto-suave);
+    cursor: pointer;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: #7a7599;
+}
+
+.campo input:focus,
+.campo select:focus,
+.campo textarea:focus {
+    border-color: var(--rosa-forte);
+    box-shadow: 0 0 0 3px rgba(255, 47, 160, 0.18);
+}
+
+.campo-mensagem textarea {
+    min-height: 130px;
+    resize: vertical;
+    padding-top: 16px;
+}
+
+.contador {
+    position: absolute;
+    right: 14px;
+    bottom: 10px;
+    font-size: 0.75rem;
+    color: #6f6a90;
+}
+
+.botao-enviar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #fff;
+    background: linear-gradient(90deg, var(--rosa) 0%, var(--laranja) 100%);
+    box-shadow: 0 6px 24px rgba(255, 47, 160, 0.4);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.botao-enviar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(255, 47, 160, 0.55);
+}
+
+/* ---------- Coluna de informações ---------- */
+
+.lista-info {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.painel-info {
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.painel-link {
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.painel-link:hover {
+    border-color: var(--rosa-forte);
+    transform: translateY(-2px);
+}
+
+.info-icone {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icone-whats {
+    color: #34d17a;
+    background: rgba(52, 209, 122, 0.12);
+}
+
+.icone-email,
+.icone-relogio,
+.icone-local {
+    color: var(--rosa-forte);
+    background: rgba(255, 47, 160, 0.12);
+}
+
+.info-texto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+}
+
+.info-texto strong {
+    color: var(--texto-claro);
+    font-size: 1.02rem;
+}
+
+.info-destaque {
+    color: var(--rosa-forte);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.info-legenda {
+    color: var(--texto-suave);
+    font-size: 0.82rem;
+}
+
+.info-seta {
+    color: var(--rosa-forte);
+    font-size: 1.4rem;
+    align-self: center;
+}
+
+.linha-horario {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--texto-suave);
+    font-size: 0.85rem;
+}
+
+.linha-horario span:first-child {
+    color: var(--texto-claro);
+}
+
+.painel-endereco {
+    flex-wrap: wrap;
+}
+
+.botao-mapa {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--rosa-forte);
+    color: var(--rosa-forte);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
 }
 
-.card form label {
-    display: block;
+.botao-mapa:hover {
+    background: var(--rosa-forte);
+    color: #fff;
 }
-
-.card form input {
-    display: block;
-}
-
-
-
