@@ -35,11 +35,10 @@ h1{
 .card-info{
     background-color: #2e0854;
     color: #ffffff;
-    width: fit-content;
-    padding: 40px 45px;
-    border-radius: 24px;
+    display: flex;
     justify-content: center;
-    flex-direction: column;
+    border-radius: 24px;
+    margin: 25px;
     box-shadow: 0 0 25px rgba(255, 46, 166, 0.25);
 }
 
@@ -85,6 +84,8 @@ iframe{
 #btn-chegar{
     background-color: #f12c5f;
     border-radius: 9px;
+    width: fit-content;
+    display: flex;
     color: #fff;
     font-weight: 700;
     border: none;
@@ -99,6 +100,7 @@ iframe{
 #btn-whats{
     background-color: #009456;
     border-radius: 9px;
+    width: 100px;
     color: #fff;
     font-weight: 700;
     border: none;

@@ -40,7 +40,7 @@
 
       <div class="row">
 
-        <div class="col-6 card-info">
+        <div class="col-3 card-info">
 
           <div class="text-contato">
 
@@ -58,14 +58,14 @@
 
             <a href="https://wa.me/5511984688318"
               target="_blank" rel="noopener noreferrer">
-              <button  id="btn-whats" >WhatsApp</button>
+              <button  id="btn-whats">WhatsApp</button>
             </a>
 
           </div>
 
         </div>
 
-        <div class="col-6 card-local">
+        <div class="col-5 card-local">
 
          <iframe
 
