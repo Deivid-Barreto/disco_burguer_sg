@@ -35,7 +35,7 @@
 
                     </div>
 
-                    <div  class="col-6 titulo-sobre">
+                    <div  class="col-6 bola">
 
                         <img class="img-bola_cristal" src="../../img/globo.png" alt="">
                     </div>
@@ -44,9 +44,9 @@
 
                 <div class="row">
 
-                    <div class="col-12">
+                    <div class="col-12 text-center">
                     
-                    <h3 class="sub">Nossa Missão</h3>
+                    
 
                     </div>
 
@@ -55,11 +55,11 @@
                 <div class="row">
 
                     
-                    <div class="col-6">
+                    <div class="col-6 texto-sobre">
                     
-
+                    <h3 class="sub text-center">Nossa Missão</h3>
                         
-                        <p>A ideia da Disco Burguer surgiu quando dois integrantes do grupo, Gabriel e Nathaly,
+                        A ideia da Disco Burguer surgiu quando dois integrantes do grupo, Gabriel e Nathaly,
                             decidiram procurar objetos antigos na casa dos pais de Nathaly. Durante essa busca,
                             encontraram uma coleção de discos de vinil dos anos 80, juntamente com uma vitrola ainda em
                             pleno funcionamento.
@@ -81,14 +81,7 @@
                             O nome “Disco” foi escolhido por representar os discos de vinil, um dos maiores símbolos
                             culturais da década de 1980. Mais do que um objeto musical, o disco simboliza conexão,
                             memória afetiva, celebração e a cultura das discotecas, que marcaram a época com dança,
-                            expressão e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
-                            presente em um ambiente dinâmico e envolvente.
-
-                            A proposta da empresa é oferecer mais do que hambúrgueres: proporcionar uma verdadeira
-                            viagem ao passado, em um ambiente onde as novas gerações possam vivenciar a atmosfera que
-                            marcou a juventude de seus pais, agora reinterpretada de forma moderna e atualizada.
-                            A Disco Burguer nasce com o propósito de transformar refeições em experiências, estimulando
-                            a interação social, a memória afetiva e o entretenimento.</p>
+                            expressão 
 
                     </div>
 
@@ -97,7 +90,17 @@
                         <img class="img-grupo" src="../../img/sobre.png">
 
                     </div>
+                    <div class="col-12 final-texto">
 
+e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
+                            presente em um ambiente dinâmico e envolvente.
+
+                            A proposta da empresa é oferecer mais do que hambúrgueres: proporcionar uma verdadeira
+                            viagem ao passado, em um ambiente onde as novas gerações possam vivenciar a atmosfera que
+                            marcou a juventude de seus pais, agora reinterpretada de forma moderna e atualizada.
+                            A Disco Burguer nasce com o propósito de transformar refeições em experiências, estimulando
+                            a interação social, a memória afetiva e o entretenimento.
+</div>
 
 
                 </div>

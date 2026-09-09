@@ -25,10 +25,24 @@ width: 500px;
 height: 500px;
 }
 .titulo-sobre{
+display: flex;
+justify-content: center;
+flex-direction: column;
+    text-align: center;
+    color: white;
+    
+}
+.bola{
 
     text-align: center;
     color: white;
     
+}
+.texto-sobre{
+    font-size: larger;
+}
+.final-texto{
+    font-size: larger;
 }
 .img-bola_cristal{
 
