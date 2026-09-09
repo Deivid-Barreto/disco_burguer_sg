@@ -1,115 +1,155 @@
-main {
-    background-color: black;
-    min-height: 800px;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    padding-bottom: 30px;
+
+html {
+  scroll-behavior: smooth;
 }
 
-/*TITULO-CARDAPIO*/
-
+main {
+  background-color: #0b021a; 
+  min-height: 800px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
 
 .inicio-cardapio h1 {
-    padding-top: 18vh;
-    font-size: 100px;
-    padding-bottom: 10px;
-    color: yellow;
-    
+  padding-top: 20vh;
+  font-size: 90px;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  
+
+  background: linear-gradient(180deg, #ffe600 0%, #00d2ff 50%, #ff007f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+ 
+  filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.6));
+  letter-spacing: 5px;
 }
 
-.inicio-cardapio button {
 
+.menu-categorias {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  background-color: #12032b;
+  padding: 12px 25px;
+  border-radius: 50px;
+  border: 2px solid #a832a8;
+  width: fit-content;
+  margin: 0 auto 5vh auto;
+  box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
+ position: fixed;
+}
+
+
+.btn-categoria {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   color: #ffffff;
+  text-decoration: none;
   background-color: transparent;
-  border: 2px solid #a832a8;
-  border-radius: 3px;
-  padding: 20px 20px;
- 
+  padding: 12px 25px;
+  border-radius: 30px;
   transition: all 0.3s ease;
   cursor: pointer;
-
-
-}
-.btn-filtro:hover, 
-.btn-filtro.ativo {
-  background-color: #a832a8;
-  color: #ffffff;
-  box-shadow: 0 0 12px #a832a8;
-    
+  border: 1px solid transparent;
 }
 
+.btn-categoria:hover {
+  color: white;
+}
 
-/*SECTION-HAMBURGUERS*/
+ 
+.btn-categoria.active {
+  background: linear-gradient(180deg, #ffea00 0%, #ff007f 100%);
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 0 20px #ff007f, inset 0 0 8px #ffe600;
+  border: 1px solid #ffe600;
+  transform: scale(1.05);
+}
+
 
 .titulo-section {
-    color: white;
-    font-size: 3.0rem;
-    font-weight: bold;
-    font-family: 'Oswald', 'Anton', sans-serif;
-    text-transform: uppercase;
-    line-height: 0.95;
-    letter-spacing: 2px;
-
-    text-shadow:
-        0 0 5px #ff007f,
-        0 0 10px #ff007f,
-        0 0 20px #a832a8,
-        0 0 40px #a832a8;
+  padding: 40px 0px 10px 0px;
+  color: white;
+  font-size: 3.0rem;
+  font-weight: bold;
+  font-family: 'Oswald', 'Anton', sans-serif;
+  text-transform: uppercase;
+  line-height: 0.95;
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 5px #ff007f,
+    0 0 10px #ff007f,
+    0 0 20px #a832a8,
+    0 0 40px #a832a8;
 }
 
 .itens-cardapio {
-
-    background-color: #0d0614;
-    border: 4px solid #a832a8;
-    border-radius: 15px;
-    padding: 15px;
-    box-shadow: 0 0 10px rgba(168, 50, 168, 0.3);
+  margin: 3vh 0;
+  background-color: #0d0614;
+  border: 2px solid #a832a8;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 0 10px rgba(168, 50, 168, 0.3);
+  align-items: center;
 }
 
 .itens-cardapio img {
-    width: 170px;
-    height: 140px;
+  width: 100%;
+  max-width: 150px;
+  height: auto;
+  border-radius: 10px;
 }
 
-
 .text-itens-cardapio {
-
-    display: flex;
-    align-items: start;
-    flex-direction: column;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
 }
 
 .itens-cardapio h2 {
-    color: white;
-    padding: 0;
-    font-size: 40px
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .itens-cardapio h3 {
-    color: white;
-    font-size: 18px;
+  color: #cccccc;
+  font-size: 16px;
+  font-weight: normal;
 }
 
-.preco-itens-cardapio {
-    gap: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.preco-itens-cardapio h3 {
+  color: #ffe600;
+  font-size: 28px;
+  text-shadow: 0 0 8px rgba(255, 230, 0, 0.5);
 }
 
 .div-button-itens-cardapio {
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .button-itens-cardapio {
-    background-color: pink;
-    padding: 10px;
-    width: 100px;
+  background: linear-gradient(180deg, #ff007f 0%, #a832a8 100%);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.button-itens-cardapio:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #ff007f;
 }
