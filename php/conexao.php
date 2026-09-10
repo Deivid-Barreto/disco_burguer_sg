@@ -1,27 +1,20 @@
 <?php
-$host = "localhost";
-$usuario = "root";
-$senha = "";
-$banco = "discoburguer";
+$host = 'discoburguer-sgbd-discoburguer.d.aivencloud.com';
+$port = '21477'; // Substitua pela porta exibida no painel Aiven
+$db   = 'defaultdb'; 
+$user = 'avnadmin';
+$pass = 'AVNS_OPFWfmtmtZz4KxfF3_F';
 
-$conn = new mysqli($host, $usuario, $senha, $banco);
-$conn->set_charset("utf8mb4");
+$options = [
+    // Caminho absoluto para o arquivo ca.pem na mesma pasta deste script
+    PDO::MYSQL_ATTR_SSL_CA => __DIR__ . '/ca.pem',
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+];
 
-if ($conn->connect_error) {
-    die("Falha na conexão: " . $conn->connect_error);
-    // pag de carregamento p sempre
+try {
+    $pdo = new PDO("mysql:host={$host};port={$port};dbname={$db};charset=utf8mb4", $user, $pass, $options);
+    echo "Conexão realizada com sucesso!";
+} catch (PDOException $e) {
+    echo "Erro: " . $e->getMessage();
 }
-
-
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-   
-</body>
-</html>
