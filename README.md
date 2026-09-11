@@ -4,7 +4,7 @@ Repositório destinado ao sistema de gerenciamento.
 Projeto do sistema/site para a hamburgueria **Disco Burguer SG**.
 
 ## Tecnologias utilizadas
-- HTML / CSS / JavaScript (ou as tecnologias que você usou)
+- HTML / CSS / JavaScript / PHP (ou as tecnologias que você usou)
 
 ## Como rodar o projeto
 1. Clone este repositório
