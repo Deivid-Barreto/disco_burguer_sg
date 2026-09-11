@@ -1,20 +1,15 @@
 <?php
-
-if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1') {
+if ($_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '127.0.0.1' || strpos($_SERVER['HTTP_HOST'], '.test') !== false) {
     $host     = 'localhost';
     $dbname   = 'discoburguer';
     $username = 'root';
-    $password = ''; 
-
+    $password = '';
 } else {
-
-    $host     = 'sql107.infinityfree.com'; 
-    $dbname   = 'if0_42538913_discoburguerorder';   
-    $username = 'if0_42538913';           
-    $password = 'ebg5cc3VQy';     
-
+    $host     = 'sql107.infinityfree.com';
+    $dbname   = 'if0_42538913_discoburguerorder';
+    $username = 'if0_42538913';
+    $password = 'ebg5cc3VQy';
 }
-
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
@@ -24,9 +19,9 @@ try {
 }
 
 if (isset($pdo)) {
-    echo "<h2 style='color: green;'>✅ Conexão realizada com sucesso!</h2>";
+    echo "Conexão realizada com sucesso!";
 } else {
-    echo "<h2 style='color: red;'>❌ Não foi possível conectar ao banco de dados.</h2>";
+    echo "Não foi possível conectar ao banco de dados.";
 }
 
 ?>
