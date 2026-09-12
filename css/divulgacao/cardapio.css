@@ -1,10 +1,18 @@
 
+
 html {
   scroll-behavior: smooth;
 }
 
 main {
+  background-image: url(../../img/fundo_cardapio.png);
   background-color: #0b021a; 
+  background-attachment: fixed; 
+  background-size: cover; 
+  background-position: center top; 
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  background-color: black; 
   min-height: 800px;
   display: flex;
   justify-content: center;
@@ -12,24 +20,49 @@ main {
   padding-bottom: 30px;
 }
 
+.secao-cardapio{
+  scroll-margin-top: 110px
+}
+
+
+/*BOTÕES DO CARDAPIO */
+
 .inicio-cardapio h1 {
+   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
   padding-top: 20vh;
   font-size: 90px;
   font-weight: 900;
   font-style: italic;
   text-transform: uppercase;
   margin-bottom: 20px;
-  
-
   background: linear-gradient(180deg, #ffe600 0%, #00d2ff 50%, #ff007f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  
- 
   filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.6));
   letter-spacing: 5px;
 }
 
+
+  
+
+
+.titulo-cardapio::before,
+.titulo-cardapio::after {
+  content: "";
+  flex-grow: 1;
+  max-width: 120px;
+  height: 8px; /* Altura do bloco que conterá as duas linhas */
+  
+  /* Cria as duas linhas paralelas finas */
+  border-top: 2px solid #ff007f;
+  border-bottom: 2px solid #ff007f;
+  
+  /* Aplica o brilho neon nas duas linhas */
+  filter: drop-shadow(0 0 6px #ff007f);
+}
 
 .menu-categorias {
   display: flex;
@@ -41,10 +74,20 @@ main {
   border-radius: 50px;
   border: 2px solid #a832a8;
   width: fit-content;
-  margin: 0 auto 5vh auto;
+  margin: 20px auto;
   box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
- position: fixed;
+  transition: all 1.8s ease;
 }
+
+
+.menu-categorias.fixo {
+  position: fixed;
+  top:85%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
 
 
 .btn-categoria {
@@ -74,6 +117,7 @@ main {
   transform: scale(1.05);
 }
 
+/*ITENS CARDAPIO*/
 
 .titulo-section {
   padding: 40px 0px 10px 0px;
@@ -89,6 +133,24 @@ main {
     0 0 10px #ff007f,
     0 0 20px #a832a8,
     0 0 40px #a832a8;
+}
+
+
+.linha {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  
+}
+
+.linha-neon {
+  
+  flex-grow: 1; /* Faz a linha ocupar todo o espaço restante */
+  height: 2px;  /* Espessura da linha */
+  background-color: #ff007f; /* Cor rosa neon */
+  box-shadow: 0 0 8px #ff007f, 0 0 12px #ff007f; /* Efeito de brilho neon */
+  border-radius: 2px;
 }
 
 .itens-cardapio {

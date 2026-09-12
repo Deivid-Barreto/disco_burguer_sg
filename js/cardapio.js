@@ -3,10 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const sections = document.querySelectorAll(".secao-cardapio");
   const navLinks = document.querySelectorAll(".btn-categoria");
 
-  // Configuração do observador de tela
+
   const observerOptions = {
     root: null,
-    rootMargin: "-10% 0px -60% 0px",
+    rootMargin: "-20% 0px -60% 0px",
     threshold: 0
   };
 
@@ -27,4 +27,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   sections.forEach((section) => observer.observe(section));
+});
+
+window.addEventListener("scroll", () => {
+  const menu = document.querySelector(".menu-categorias");
+  
+
+  if (window.scrollY > 200) {
+    menu.classList.add("fixo");
+  } else {
+    menu.classList.remove("fixo");
+  }
 });

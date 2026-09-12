@@ -9,7 +9,7 @@
     background-repeat: no-repeat;
     background-attachment: fixed;
     width: 100%;
-    min-height:900px;
+    min-height:1200px;
     display: flex;
     justify-content: center;
 
@@ -86,7 +86,7 @@
 /*Mais pedidos*/
 .divisoria-neon {
     height: 100px; /* Ajuste a altura do espaço como preferir (ex: 80px, 120px) */
-    background-color: #0d0d11; /* Cor escura do seu fundo */
+    background-color:white; /* Cor escura do seu fundo */
     width: 100%;
   }
 
@@ -101,119 +101,138 @@ text-align: center;
 display: flex;
 justify-content: center;
 width: 100%;
-min-height: 1000px;
+min-height: 1300px;
 background-size: 100% 100%;
 
 
 }
 
-.Mais-Pedidos h2{
-  font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.95;
+.titulo-mp{
+  color: #faf8f5;
+  font-family: 'Impact', sans-serif;
+  font-size: 100px;
   letter-spacing: 2px;
-  color: #ffffff;
-  text-shadow:
-  0 0 5px #ffffff,
-  0 0 10px #fff700,
-  0 0 20px #fcee0a,
-  0 0 40px #ffcc00,
-  0 0 80px #ff9900;
-   
-   
+  text-transform: uppercase;
+  text-shadow: 
+    0 0 5px #ffaa00,
+    0 0 10px #ffaa00,
+    0 0 20px #ff8800;
 }
 
-.cards-mp h2{
-   
+
+.cards-container{
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 30px;
+  gap: 10vh;
+
 }
 
-.cards-mp-rosa h2{
-    
-  font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.95;
-  letter-spacing: 2px;
+.card{
   
-  color: #ffffff;
-  text-shadow:
-    0 0 5px #ffffff,
-    0 0 10px #ff66cc,
-    0 0 20px #ff007f,
-    0 0 40px #ff0055,
-    0 0 80px #b8004f;
+  
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+  background-color: transparent;
+  border-radius: 8px;
+  padding: 20px;
+  width: 500px; 
+  min-height: 700px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
-.cards-mp-azul h2{
-
-font-family: 'Oswald', 'Anton', sans-serif;
-font-size: clamp(2.5rem, 8vw, 5rem);
-font-weight: 700;
-text-transform: uppercase;
-line-height: 0.95;
-letter-spacing: 2px;
-color: #ffffff;
-text-shadow:
-  0 0 5px #ffffff,
-  0 0 10px #70e0ff,
-  0 0 20px #00bfff,
-  0 0 40px #0077ff,
-  0 0 80px #0033cc;
+.card h2{
+ font-size: 70px;
+ display: flex;
+ white-space: nowrap;
+ 
 
 }
 
-.cards-mp-azul-amarelo h2{
+.card img {
+  max-width: 100%;
+  height: 400px;
+  margin: 0 auto 15px auto;
+  
+}
 
-    font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
+.card-rosa{
+  background-color: rgba(255, 0, 255, 0.12);
+  border: 3px solid #ff00ff;
+  box-shadow: 0 0 15px #ff00ff, inset 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+.card-rosa h2{
+  
+  color: #ff00ff;
+  text-shadow: 0 0 8px #ff00ff;
+     
+}
+
+
+.card-azul {
+  background-color: rgba(0, 212, 255, 0.12);
+  border: 3px solid #00d4ff;
+  box-shadow: 0 0 15px #00d4ff, inset 0 0 15px rgba(0, 212, 255, 0.3);
+
+}
+
+
+.card-azul h2{
+
+color: #00d4ff;
+text-shadow: 0 0 8px #00d4ff;
+
+}
+
+
+
+.card-amarelo{
+background-color: rgba(255, 170, 0, 0.12);
+border: 3px solid #ffaa00;
+box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
+}
+
+.card-amarelo h2{
+color: #ffaa00;
+  text-shadow: 0 0 8px #ffaa00;
+
+}
+
+
+.card h3{
+text-align: center;
+font-size: 30px;
+color: white;
+}
+
+.card button{
+  border-color: #ff00ff;
+  box-shadow: 0 0 10px #ff00ff;
+  margin-top: 3vh;
+  background-color: rgba(255, 0, 255, 0.12);
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 8px 20px;
+  font-weight: bold;
+  font-size: 25px;
+  cursor: pointer;
   text-transform: uppercase;
-  line-height: 0.95;
-  letter-spacing: 2px;
-  color: #ffffff;
-  text-shadow:
-  0 0 5px #ffffff,
-  0 0 10px #fff700,
-  0 0 20px #fcee0a,
-  0 0 40px #ffcc00,
-  0 0 80px #ff9900;
-   
-
+  transition: all 0.3s ease;
 }
+
+
+
+
 
 
   
    
 
-
-.Mais-Pedidos h3{
-    padding: 10px;
-    color: white;
-    
-
-}
-
-
-
-
-.cards-mp img{
-
- width: 400px;
- height: 500px;
-}
-
-
-.cards-mp button{
-
-    font-weight: 600;
-    color: white;
-    width: clamp(80px, 22vw, 100px);
-    height: 40px;
-    font-size: clamp(0.7rem, 3.2vw, 0.95rem);
-    border-radius: 12px;
-    background:linear-gradient(90deg, #FFD84D 0%, #FFB347 50%, #FF9F43 100%);
-}
 
