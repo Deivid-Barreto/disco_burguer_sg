@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `estoque` (
     `codigo` VARCHAR(250) NOT NULL UNIQUE,
     `unidade_medida` ENUM('g', 'un') NOT NULL,
     `estoque_minimo` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 CHECK (`estoque_minimo` >= 0),
+    `eh_revenda` TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 

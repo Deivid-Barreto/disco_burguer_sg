@@ -18,10 +18,5 @@ try {
     die("Erro ao conectar com o banco de dados: " . $e->getMessage());
 }
 
-if (isset($pdo)) {
-    echo "Conexão realizada com sucesso!";
-} else {
-    echo "Não foi possível conectar ao banco de dados.";
-}
 
 ?>
