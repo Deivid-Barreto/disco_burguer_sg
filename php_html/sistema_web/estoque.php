@@ -46,7 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- LOTES ---
     if ($acao === 'add_lote') {
         $fornecedor_id = !empty($_POST['fornecedor_id']) ? $_POST['fornecedor_id'] : null;
         
@@ -54,6 +53,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$_POST['estoque_id'], $fornecedor_id, $_POST['numero_lote'], $_POST['data_validade'], $_POST['quantidade'], $_POST['preco_custo']]);
         $id_lote = $pdo->lastInsertId();
         
+        $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, 'entrada', ?, ?)");
+        $stmtMov->execute([$id_lote, $_POST['funcionario_id'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
+
         $dataBR = date('d/m/Y', strtotime($_POST['data_validade']));
         $un = $_POST['unidade_medida'];
         
@@ -75,6 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE lotes_estoque SET numero_lote=?, fornecedor_id=?, data_validade=?, quantidade_estoque=?, preco_custo=? WHERE id=?");
         $stmt->execute([$_POST['numero_lote'], $fornecedor_id, $_POST['data_validade'], $_POST['quantidade'], $_POST['preco_custo'], $_POST['lote_id']]);
         
+        $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, ?, ?)");
+        $stmtMov->execute([$_POST['lote_id'], $_POST['funcionario_id'], $_POST['tipo_movimentacao'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
+
         $dataBR = date('d/m/Y', strtotime($_POST['data_validade']));
         $un = $_POST['unidade_medida'];
         
@@ -83,6 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($acao === 'del_lote') {
+        $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, 0, ?)");
+        $stmtMov->execute([$_POST['lote_id'], $_POST['funcionario_id'], $_POST['tipo_movimentacao'], $_POST['observacao'] ?? null]);
+
         $stmt = $pdo->prepare("DELETE FROM lotes_estoque WHERE id = ?");
         $stmt->execute([$_POST['lote_id']]);
         echo "ok";
@@ -93,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $estoques = $pdo->query("SELECT * FROM estoque ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 $lotes_raw = $pdo->query("SELECT * FROM lotes_estoque ORDER BY data_validade ASC")->fetchAll(PDO::FETCH_ASSOC);
 $fornecedores = $pdo->query("SELECT id, nome_razao_social FROM fornecedores WHERE ativo = 1 ORDER BY nome_razao_social ASC")->fetchAll(PDO::FETCH_ASSOC);
+$funcionarios = $pdo->query("SELECT id, nome FROM funcionarios WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 $lotes_agrupados = [];
 foreach($lotes_raw as $l) {
@@ -155,7 +164,6 @@ foreach($lotes_raw as $l) {
         ADICIONAR NOVO INSUMO
     </button>
 
-    <!-- Modal ADD Estoque -->
     <dialog id="modalEstoque">
         <h3>Cadastrar Insumo ou Item de Revenda</h3>
         <form id="formEstoque" onsubmit="salvarEstoque(event)">
@@ -174,6 +182,7 @@ foreach($lotes_raw as $l) {
                     <option hidden></option>
                     <option value="g">Gramas (g)</option>
                     <option value="un">Unidade (un)</option>
+                    <option value="ml">Mililitros (ml)</option>
                 </select>
             </div>
             <div>
@@ -192,7 +201,6 @@ foreach($lotes_raw as $l) {
         </form>
     </dialog>
 
-    <!-- Modal EDIT Estoque -->
     <dialog id="modalEditEstoque">
         <h3>Editar Insumo / Revenda</h3>
         <form onsubmit="editarEstoque(event)">
@@ -229,7 +237,6 @@ foreach($lotes_raw as $l) {
         </form>
     </dialog>
 
-    <!-- Modal ADD Lote -->
     <dialog id="modalLote">
         <h3>Adicionar Novo Lote</h3>
         <form id="formLote" onsubmit="salvarLote(event)">
@@ -262,6 +269,23 @@ foreach($lotes_raw as $l) {
                 <label>Preço de Custo:</label>
                 <input type="number" step="0.01" name="preco_custo" required>
             </div>
+
+            <hr>
+            <h4>Informações da Movimentação</h4>
+            <div>
+                <label>Funcionário Responsável:</label>
+                <select name="funcionario_id" required>
+                    <option value="">-- Selecione --</option>
+                    <?php foreach($funcionarios as $func): ?>
+                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label>Observação (Opcional):</label>
+                <input type="text" name="observacao" placeholder="Ex: Recebido NF 1234">
+            </div>
+
             <div>
                 <button type="button" onclick="document.getElementById('modalLote').close()">Cancelar</button>
                 <button type="submit">Adicionar Lote</button>
@@ -269,7 +293,6 @@ foreach($lotes_raw as $l) {
         </form>
     </dialog>
 
-    <!-- Modal EDIT Lote -->
     <dialog id="modalEditLote">
         <h3>Editar Lote</h3>
         <form onsubmit="editarLote(event)">
@@ -302,9 +325,86 @@ foreach($lotes_raw as $l) {
                 <label>Preço de Custo:</label>
                 <input type="number" step="0.01" name="preco_custo" id="edit_preco" required>
             </div>
+
+            <hr>
+            <h4>Informações da Movimentação</h4>
+            <div>
+                <label>Funcionário Responsável:</label>
+                <select name="funcionario_id" required>
+                    <option value="">-- Selecione --</option>
+                    <?php foreach($funcionarios as $func): ?>
+                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label>Motivo da Edição:</label>
+                <select name="tipo_movimentacao" required>
+                    <option value="ajuste">Ajuste (Correção manual)</option>
+                    <option value="perda_validade">Perda por Validade</option>
+                    <option value="descarte">Descarte</option>
+                </select>
+            </div>
+            <div>
+                <label>Observação (Opcional):</label>
+                <input type="text" name="observacao" placeholder="Ex: Contagem de fim de mês">
+            </div>
+
             <div>
                 <button type="button" onclick="document.getElementById('modalEditLote').close()">Cancelar</button>
                 <button type="submit">Atualizar Lote</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modalDelLote">
+        <h3>Confirmar Exclusão de Lote</h3>
+        <p>Preencha os dados da movimentação antes de excluir definitivamente.</p>
+        <form id="formDelLote" onsubmit="confirmarDeletarLote(event)">
+            <input type="hidden" name="acao" value="del_lote">
+            <input type="hidden" name="lote_id" id="del_lote_id">
+            
+            <div>
+                <label>Funcionário Responsável:</label>
+                <select name="funcionario_id" required>
+                    <option value="">-- Selecione --</option>
+                    <?php foreach($funcionarios as $func): ?>
+                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label>Motivo da Exclusão:</label>
+                <select name="tipo_movimentacao" required>
+                    <option value="descarte">Descarte</option>
+                    <option value="perda_validade">Perda por Validade</option>
+                    <option value="ajuste">Ajuste (Erro de Cadastro)</option>
+                </select>
+            </div>
+            <div>
+                <label>Observação (Opcional):</label>
+                <input type="text" name="observacao" placeholder="Ex: Cadastro duplicado">
+            </div>
+            
+            <div>
+                <button type="button" onclick="document.getElementById('modalDelLote').close()">Cancelar</button>
+                <button type="submit" style="color:red;">Confirmar Exclusão</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="modalDelEstoque">
+        <h3>Confirmar Exclusão de Insumo</h3>
+        <p style="color: darkred;">
+            <strong>Atenção:</strong> Excluir este insumo apagará <b>todos</b> os lotes cadastrados nele! Deseja continuar?
+        </p>
+        <form id="formDelEstoque" onsubmit="confirmarDeletarEstoque(event)">
+            <input type="hidden" name="acao" value="del_estoque">
+            <input type="hidden" name="estoque_id" id="del_estoque_id">
+            
+            <div style="margin-top: 15px;">
+                <button type="button" onclick="document.getElementById('modalDelEstoque').close()">Cancelar</button>
+                <button type="submit" style="color: red;">Sim, Excluir Tudo</button>
             </div>
         </form>
     </dialog>
@@ -384,26 +484,40 @@ foreach($lotes_raw as $l) {
             document.getElementById('modalEditLote').close();
         }
 
-        async function deletarEstoque(id_estoque) {
-            if(!confirm("Atenção: Excluir este insumo apagará todos os lotes cadastrados nele! Deseja continuar?")) return;
-            let fd = new FormData();
-            fd.append('acao', 'del_estoque');
-            fd.append('estoque_id', id_estoque);
+        function deletarEstoque(id_estoque) {
+            document.getElementById('del_estoque_id').value = id_estoque;
+            document.getElementById('modalDelEstoque').showModal();
+        }
+
+        async function confirmarDeletarEstoque(e) {
+            e.preventDefault();
+            let form = e.target;
+            let fd = new FormData(form);
+            let id_estoque = fd.get('estoque_id');
+            
             let req = await fetch('', { method: 'POST', body: fd });
             if((await req.text()).trim() === 'ok') {
                 document.getElementById('estoque-' + id_estoque).remove();
             }
+            form.reset();
+            document.getElementById('modalDelEstoque').close();
         }
 
-        async function deletarLote(id_lote) {
-            if(!confirm("Tem certeza que deseja apagar este lote?")) return;
-            let fd = new FormData();
-            fd.append('acao', 'del_lote');
-            fd.append('lote_id', id_lote);
+        function deletarLote(id_lote) {
+            document.getElementById('del_lote_id').value = id_lote;
+            document.getElementById('modalDelLote').showModal();
+        }
+
+        async function confirmarDeletarLote(e) {
+            e.preventDefault();
+            let form = e.target;
+            let fd = new FormData(form);
             let req = await fetch('', { method: 'POST', body: fd });
             if((await req.text()).trim() === 'ok') {
-                document.getElementById('lote-' + id_lote).remove();
+                document.getElementById('lote-' + fd.get('lote_id')).remove();
             }
+            form.reset();
+            document.getElementById('modalDelLote').close();
         }
     </script>
 </body>
