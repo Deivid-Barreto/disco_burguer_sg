@@ -168,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $lista_estoque_ingredientes = [];
 $lista_estoque_revenda = [];
 $lista_produtos = [];
+$produtos_por_categoria = [];
 $produtosAtivos = [];
 $produtosPendentes = [];
 
@@ -180,6 +181,11 @@ try {
 
     $stmtProd = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE categorias != 'combos' AND ativo = 1 ORDER BY nome ASC");
     $lista_produtos = $stmtProd->fetchAll(PDO::FETCH_ASSOC);
+
+    // Agrupando produtos por categoria para o form de combos
+    foreach($lista_produtos as $p) {
+        $produtos_por_categoria[$p['categorias']][] = $p;
+    }
 
     $produtosAtivos = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
     $produtosPendentes = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 0 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
@@ -300,21 +306,41 @@ try {
 
         <div id="secao-combo" style="display:none;">
             <h3>Itens do Combo</h3>
-            <?php if(!empty($lista_produtos)): ?>
-            <table>
-                <thead>
-                    <tr><th>Incluir</th><th>Produto</th><th>Quantidade</th></tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($lista_produtos as $prod): ?>
-                        <tr>
-                            <td><input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')"></td>
-                            <td><?= htmlspecialchars($prod['nome']) ?> <small>(<?= htmlspecialchars($prod['categorias']) ?>)</small></td>
-                            <td><input type="number" id="qtd_combo_<?= $prod['id'] ?>" name="combo_qtd[<?= $prod['id'] ?>]" min="1" value="1" placeholder="Qtd" disabled style="display: none;"></td>
-                        </tr>
+            <?php if(!empty($produtos_por_categoria)): ?>
+                
+                <!-- Botões para navegar entre as categorias -->
+                <div style="margin-bottom: 15px;">
+                    <?php 
+                    $primeira_cat = array_key_first($produtos_por_categoria);
+                    foreach(array_keys($produtos_por_categoria) as $cat): ?>
+                        <button type="button" onclick="mostrarCategoriaCombo('<?= $cat ?>')">
+                            <?= ucfirst(str_replace('_', ' ', $cat)) ?>
+                        </button>
                     <?php endforeach; ?>
-                </tbody>
-            </table>
+                </div>
+
+                <!-- Tabelas separadas por categoria -->
+                <?php foreach ($produtos_por_categoria as $cat => $produtos): ?>
+                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" style="display: <?= $cat === $primeira_cat ? 'block' : 'none' ?>;">
+                        <table>
+                            <thead>
+                                <tr><th>Incluir</th><th>Produto</th><th>Quantidade</th></tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($produtos as $prod): ?>
+                                    <tr>
+                                        <td><input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')"></td>
+                                        <td><?= htmlspecialchars($prod['nome']) ?></td>
+                                        <td><input type="number" id="qtd_combo_<?= $prod['id'] ?>" name="combo_qtd[<?= $prod['id'] ?>]" min="1" value="1" placeholder="Qtd" disabled style="display: none;"></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endforeach; ?>
+
+            <?php else: ?>
+                <p>Nenhum produto cadastrado para montar combo.</p>
             <?php endif; ?>
         </div>
 
@@ -339,14 +365,26 @@ try {
     
     <div id="detalhes_produto_info" style="margin-bottom: 15px; background: #f4f4f4; padding: 10px; border-radius: 4px;"></div>
 
+    <input type="hidden" id="acao_id_produto" value="">
+    
+    <div>
+        <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()" disabled>Editar</button>
+        <button type="button" style="color: red;" onclick="abrirModalDeletar()">Excluir</button>
+        <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
+    </div>
+</dialog>
+
+<dialog id="modalDeletar">
+    <h3>Confirmar Exclusão</h3>
+    <p>Tem certeza que deseja excluir este produto? Esta ação não poderá ser desfeita.</p>
+    
     <form method="POST" action="">
         <input type="hidden" name="acao" value="deletar">
-        <input type="hidden" name="id_produto" id="acao_id_produto" value="">
+        <input type="hidden" name="id_produto" id="deletar_id_produto" value="">
         
         <div>
-            <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()" disabled>Editar</button>
-            <button type="submit" style="color: red;">Excluir</button>
-            <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
+            <button type="submit" style="color: red;">Sim, Excluir</button>
+            <button type="button" onclick="document.getElementById('modalDeletar').close()">Cancelar</button>
         </div>
     </form>
 </dialog>
@@ -464,12 +502,29 @@ function carregarDadosEdicao() {
     document.getElementById('modalCadastro').showModal();
 }
 
+function abrirModalDeletar() {
+    document.getElementById('modalAcoes').close();
+    document.getElementById('deletar_id_produto').value = document.getElementById('acao_id_produto').value;
+    document.getElementById('modalDeletar').showModal();
+}
+
 function toggleQtd(checkbox, inputId) {
     const inputQtd = document.getElementById(inputId);
     if (inputQtd) {
         inputQtd.style.display = checkbox.checked ? 'block' : 'none';
         inputQtd.disabled = !checkbox.checked;
         if(checkbox.checked) inputQtd.focus();
+    }
+}
+
+// Função nova para navegar entre as categorias no Combo
+function mostrarCategoriaCombo(categoria) {
+    document.querySelectorAll('.tabela-combo-categoria').forEach(el => {
+        el.style.display = 'none';
+    });
+    let abaSelecionada = document.getElementById('combo-cat-' + categoria);
+    if(abaSelecionada) {
+        abaSelecionada.style.display = 'block';
     }
 }
 
