@@ -18,69 +18,23 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--bg-noite);
+ 
+font-family: 'Poppins', sans-serif;
 }
 
 /* ---------- Seção geral ---------- */
 
 .contato {
-    position: relative;
-    overflow: hidden;
-    padding: 90px 20px 60px;
-    min-height: 900px;
-    background: linear-gradient(180deg, #150a2e 0%, #1a0f38 35%, #0c0821 100%);
-}
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-image: url(../../img/teste.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 1200PX;
 
-.cena-fundo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.sol {
-    position: absolute;
-    top: -180px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 620px;
-    height: 620px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 40%, var(--amarelo-sol) 0%, var(--laranja) 55%, transparent 75%);
-    opacity: 0.55;
-    filter: blur(1px);
-}
-
-.sol::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: repeating-linear-gradient(
-        180deg,
-        transparent 0px,
-        transparent 18px,
-        var(--bg-noite) 19px,
-        var(--bg-noite) 26px
-    );
-    -webkit-mask-image: linear-gradient(180deg, transparent 30%, black 55%);
-    mask-image: linear-gradient(180deg, transparent 30%, black 55%);
-}
-
-.grade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 45%;
-    background-image:
-        linear-gradient(rgba(255, 47, 160, 0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(51, 230, 255, 0.28) 1px, transparent 1px);
-    background-size: 60px 60px;
-    transform: perspective(300px) rotateX(55deg);
-    transform-origin: bottom;
-    opacity: 0.6;
 }
 
 .container-contato {
@@ -95,7 +49,7 @@ body {
     font-family: 'Righteous', 'Poppins', sans-serif;
     font-size: clamp(2.6rem, 6vw, 4.4rem);
     letter-spacing: 2px;
-    color: var(--amarelo-sol);
+    color: white;
     text-shadow:
         0 0 8px rgba(255, 215, 107, 0.8),
         0 0 24px rgba(255, 138, 61, 0.6),

@@ -18,73 +18,38 @@
 }
 
 .local {
-    position: relative;
-    overflow: hidden;
-    padding: 6vw 20px 60px;
-    width: 100%;
-    min-height: auto;
-    background: linear-gradient(180deg, #150a2e 0%, #1a0f38 35%, #0c0821 100%);
+    display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   background-image: url(../../img/teste.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 1300PX;
+
+
+   
 }
 
 /* ---------- cenário decorativo ---------- */
 
-.cena-fundo {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-}
 
-.sol {
-    position: absolute;
-    top: -160px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 560px;
-    height: 560px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 40%, var(--amarelo-sol) 0%, var(--laranja) 55%, transparent 75%);
-    opacity: 0.55;
-    filter: blur(1px);
-}
+   
 
-.sol::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: repeating-linear-gradient(
-        180deg,
-        transparent 0px,
-        transparent 18px,
-        var(--bg-noite) 19px,
-        var(--bg-noite) 26px
-    );
-    -webkit-mask-image: linear-gradient(180deg, transparent 30%, black 55%);
-    mask-image: linear-gradient(180deg, transparent 30%, black 55%);
-}
 
-.grade {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 35%;
-    background-image:
-        linear-gradient(rgba(241, 44, 95, 0.35) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(122, 31, 162, 0.32) 1px, transparent 1px);
-    background-size: 60px 60px;
-    transform: perspective(300px) rotateX(55deg);
-    transform-origin: bottom;
-    opacity: 0.55;
-}
+
+
+
 
 /* ---------- título ---------- */
 
 .titulo-local {
+    padding-bottom: 10vh;
+    color: white;
     position: relative;
     z-index: 1;
-    color: var(--amarelo-sol);
     display: flex;
     justify-content: center;
     margin-bottom: 3%;
@@ -106,16 +71,11 @@
 /* ---------- linha com os dois cartões ---------- */
 
 .linha-local {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: stretch;
+   display: flex;
+   align-items:center ;
     gap: 25px;
-    max-width: 1300px;
-    margin: 0 auto;
-    padding: 0 20px;
+    
+
 }
 
 /* ---------- cartão de informações ---------- */
@@ -128,8 +88,7 @@
     padding: 28px 30px;
     box-shadow: 0 0 25px rgba(255, 46, 166, 0.25);
     display: flex;
-    flex: 1 1 380px;
-    max-width: 460px;
+    width: 500px;
 }
 
 .text-contato {
@@ -155,12 +114,6 @@
     line-height: 1.35;
 }
 
-.divisor {
-    border: none;
-    border-top: 2px solid var(--rosa);
-    opacity: 1;
-    margin: 18px 0;
-}
 
 .text-contato h5 {
     color: var(--texto-suave);
@@ -233,7 +186,7 @@
     box-shadow: 0 0 25px rgba(122, 31, 162, 0.4);
     padding: 0;
     flex: 2 1 520px;
-    max-width: 760px;
+    width: 760px;
 }
 
 .card-local-interno {
@@ -252,29 +205,4 @@
     border: 0;
 }
 
-@media (max-width: 900px) {
-    .linha-local {
-        flex-direction: column;
-        align-items: stretch;
-    }
 
-    .card-info,
-    .card-local {
-        max-width: 100%;
-        flex-basis: auto;
-    }
-
-    .card-local-interno {
-        min-height: 360px;
-    }
-}
-
-@media (max-width: 480px) {
-    .titulo-local h1 {
-        font-size: 40px;
-    }
-
-    .card-local-interno {
-        min-height: 300px;
-    }
-}

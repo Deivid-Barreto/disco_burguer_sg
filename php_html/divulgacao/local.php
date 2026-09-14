@@ -9,7 +9,7 @@
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Righteous&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/../css/divulgacao/local.css">
+  <link rel="stylesheet" href="../../css/divulgacao/local.css">
   <link rel="stylesheet" href="/../css/header.css">
 </head>
 
