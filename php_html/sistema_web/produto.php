@@ -1,352 +1,702 @@
 <?php
+
 require_once '../../php/conexao.php'; 
+
+$mensagem_sucesso = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
 
-    if ($acao === 'add_produto') {
-        $stmt = $pdo->prepare("INSERT INTO produtos (categorias, nome, descricao, preco_venda, make_or_buy, ativo, visivel) VALUES (?, ?, ?, ?, ?, 1, 1)");
-        $stmt->execute([$_POST['categorias'], $_POST['nome'], $_POST['descricao'], $_POST['preco_venda'], $_POST['make_or_buy']]);
-        $id = $pdo->lastInsertId();
+    if ($acao === 'deletar') {
+        try {
+            $stmtDel = $pdo->prepare("DELETE FROM produtos WHERE id = ?");
+            $stmtDel->execute([$_POST['id_produto']]);
+        } catch (PDOException $e) {}
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } elseif ($acao === 'editar') {
+        $id_produto  = $_POST['id_produto'] ?? null;
+        $nome        = trim($_POST['nome'] ?? '');
+        $categoria   = $_POST['categorias'] ?? 'hamburguer';
+        $descricao   = trim($_POST['descricao'] ?? '');
+        $preco_venda = filter_var($_POST['preco_venda'] ?? 0, FILTER_VALIDATE_FLOAT);
+        $visivel     = isset($_POST['visivel']) ? 1 : 0;
         
-        echo "
-        <div id='produto-{$id}'>
-            <div>
-                <b>{$_POST['nome']}</b> (Cat: {$_POST['categorias']} | R$ {$_POST['preco_venda']} | Tipo: {$_POST['make_or_buy']})
-            </div>
-            <div id='lista-sub-{$id}'>";
-            
-        if($_POST['categorias'] === 'combos') {
-            echo "
-                <p id='pendente-{$id}'>Pendente: Nenhum item de combo cadastrado.</p>
-                <div id='container-btn-{$id}'>
-                    <button onclick='abrirModalCombo({$id}, \"{$_POST['nome']}\")'>ADICIONAR ITEM AO COMBO</button>
-                </div>";
-        } elseif($_POST['make_or_buy'] === 'produto_acabado') {
-            echo "
-                <p id='pendente-{$id}'>Pendente: Nenhuma receita cadastrada.</p>
-                <div id='container-btn-{$id}'>
-                    <button onclick='abrirModalReceita({$id}, \"{$_POST['nome']}\")'>ADICIONAR RECEITA</button>
-                </div>";
+        if (in_array($categoria, ['hamburguer', 'porcoes', 'combos', 'sobremesa_gelada', 'extras'])) {
+            $make_or_buy = 'produto_acabado';
         } else {
-            echo "<p>Item de Revenda (Pronto para venda).</p>";
+            $make_or_buy = $_POST['make_or_buy'] ?? 'revenda';
         }
-        
-        echo "
-            </div>
-        </div>";
-        exit; 
-    }
 
-    if ($acao === 'add_receita') {
-        $stmt = $pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (?, ?, ?)");
-        $stmt->execute([$_POST['produto_id'], $_POST['ingrediente_id'], $_POST['quantidade_usada']]);
-        $id_receita = $pdo->lastInsertId();
-        
-        $ing = $pdo->prepare("SELECT nome, unidade_medida FROM estoque WHERE id = ?");
-        $ing->execute([$_POST['ingrediente_id']]);
-        $dadosIng = $ing->fetch(PDO::FETCH_ASSOC);
-        
-        echo "
-        <div id='receita-{$id_receita}'>
-            <div>Ingrediente: <b>{$dadosIng['nome']}</b> | Qtd: {$_POST['quantidade_usada']} {$dadosIng['unidade_medida']}</div>
-            <div>
-                <button onclick='deletarReceita({$id_receita})'>EXCLUIR</button>
-            </div>
-        </div>";
+        $tem_combo = false;
+        if (isset($_POST['combo_itens']) && is_array($_POST['combo_itens'])) {
+            foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_combo = true;
+                    break;
+                }
+            }
+        }
+
+        $tem_receita = false;
+        if (isset($_POST['ingredientes']) && is_array($_POST['ingredientes'])) {
+            foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_receita = true;
+                    break;
+                }
+            }
+        }
+
+        $ativo = 1;
+        if ($categoria === 'combos' && !$tem_combo) {
+            $ativo = 0;
+        } elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && !$tem_receita) {
+            $ativo = 0;
+        } elseif ($make_or_buy === 'revenda' && empty($_POST['estoque_revenda_id'])) {
+            $ativo = 0;
+        }
+
+        if (!empty($id_produto) && !empty($nome) && $preco_venda !== false && $preco_venda >= 0) {
+            try {
+                $pdo->beginTransaction();
+
+                $sql_produto = "UPDATE produtos SET categorias = :cat, nome = :nome, ativo = :ativo, descricao = :desc, preco_venda = :preco, visivel = :visivel, make_or_buy = :mob WHERE id = :id";
+                
+                $stmt = $pdo->prepare($sql_produto);
+                $stmt->execute([
+                    ':cat'     => $categoria,
+                    ':nome'    => $nome,
+                    ':ativo'   => $ativo,
+                    ':desc'    => $descricao,
+                    ':preco'   => $preco_venda,
+                    ':visivel' => $visivel,
+                    ':mob'     => $make_or_buy,
+                    ':id'      => $id_produto
+                ]);
+
+                if (isset($_FILES['imagem_arquivo']) && $_FILES['imagem_arquivo']['error'] === UPLOAD_ERR_OK) {
+                    $pasta_destino = '../../img/uploads/';
+                    
+                    if (!is_dir($pasta_destino)) {
+                        mkdir($pasta_destino, 0755, true);
+                    }
+
+                    $extensao = strtolower(pathinfo($_FILES['imagem_arquivo']['name'], PATHINFO_EXTENSION));
+                    $extensoes_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+
+                    if (in_array($extensao, $extensoes_permitidas)) {
+                        $novo_nome_arquivo = 'produto_' . $id_produto . '.' . $extensao;
+                        $caminho_completo = $pasta_destino . $novo_nome_arquivo;
+
+                        if (move_uploaded_file($_FILES['imagem_arquivo']['tmp_name'], $caminho_completo)) {
+                            $sql_update_img = "UPDATE produtos SET imagem_caminho = :caminho WHERE id = :id";
+                            $stmt_img = $pdo->prepare($sql_update_img);
+                            $stmt_img->execute([
+                                ':caminho' => $caminho_completo,
+                                ':id'      => $id_produto
+                            ]);
+                        }
+                    }
+                }
+                
+                $pdo->prepare("DELETE FROM itens_combo WHERE combo_id = ?")->execute([$id_produto]);
+                $pdo->prepare("DELETE FROM receitas WHERE produto_id = ?")->execute([$id_produto]);
+
+                if ($categoria === 'combos' && isset($_POST['combo_itens'])) {
+                    $sqlCombo = "INSERT INTO itens_combo (combo_id, produto_filho_id, quantidade) VALUES (:combo, :filho, :qtd)";
+                    $stmtCombo = $pdo->prepare($sqlCombo);
+                    
+                    foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                        $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 1);
+                        if ($qtd > 0) {
+                            $stmtCombo->execute([':combo' => $id_produto, ':filho' => $filho_id, ':qtd' => $qtd]);
+                        }
+                    }
+                } 
+                elseif ($make_or_buy === 'revenda' && !empty($_POST['estoque_revenda_id'])) {
+                    $sqlReceita = "INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, 1)";
+                    $stmtReceita = $pdo->prepare($sqlReceita);
+                    $stmtReceita->execute([
+                        ':prod' => $id_produto, 
+                        ':ing'  => $_POST['estoque_revenda_id']
+                    ]);
+                }
+                elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && isset($_POST['ingredientes'])) {
+                    $sqlReceita = "INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, :qtd)";
+                    $stmtReceita = $pdo->prepare($sqlReceita);
+
+                    foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                        $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                        if ($qtd > 0) {
+                            $stmtReceita->execute([':prod' => $id_produto, ':ing' => $ingred_id, ':qtd' => $qtd]);
+                        }
+                    }
+                }
+
+                $pdo->commit();
+            } catch (PDOException $e) {
+                $pdo->rollBack();
+            }
+        }
+        header("Location: " . $_SERVER['PHP_SELF']);
         exit;
-    }
-
-    if ($acao === 'add_item_combo') {
-        $stmt = $pdo->prepare("INSERT INTO itens_combo (combo_id, produto_filho_id, quantidade) VALUES (?, ?, ?)");
-        $stmt->execute([$_POST['combo_id'], $_POST['produto_filho_id'], $_POST['quantidade']]);
-        $id_combo_item = $pdo->lastInsertId();
+    } else {
+        $nome        = trim($_POST['nome'] ?? '');
+        $categoria   = $_POST['categorias'] ?? 'hamburguer';
+        $descricao   = trim($_POST['descricao'] ?? '');
+        $preco_venda = filter_var($_POST['preco_venda'] ?? 0, FILTER_VALIDATE_FLOAT);
+        $visivel     = isset($_POST['visivel']) ? 1 : 0;
         
-        $prod = $pdo->prepare("SELECT nome FROM produtos WHERE id = ?");
-        $prod->execute([$_POST['produto_filho_id']]);
-        $dadosProd = $prod->fetch(PDO::FETCH_ASSOC);
-        
-        echo "
-        <div id='itemcombo-{$id_combo_item}'>
-            <div>Produto: <b>{$dadosProd['nome']}</b> | Qtd: {$_POST['quantidade']}</div>
-            <div>
-                <button onclick='deletarItemCombo({$id_combo_item})'>EXCLUIR</button>
-            </div>
-        </div>";
-        exit;
-    }
+        if (in_array($categoria, ['hamburguer', 'porcoes', 'combos', 'sobremesa_gelada', 'extras'])) {
+            $make_or_buy = 'produto_acabado';
+        } else {
+            $make_or_buy = $_POST['make_or_buy'] ?? 'revenda';
+        }
 
-    if ($acao === 'del_receita') {
-        $stmt = $pdo->prepare("DELETE FROM receitas WHERE id = ?");
-        $stmt->execute([$_POST['receita_id']]);
-        echo "ok";
-        exit;
-    }
+        $tem_combo = false;
+        if (isset($_POST['combo_itens']) && is_array($_POST['combo_itens'])) {
+            foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_combo = true;
+                    break;
+                }
+            }
+        }
 
-    if ($acao === 'del_item_combo') {
-        $stmt = $pdo->prepare("DELETE FROM itens_combo WHERE id = ?");
-        $stmt->execute([$_POST['item_id']]);
-        echo "ok";
+        $tem_receita = false;
+        if (isset($_POST['ingredientes']) && is_array($_POST['ingredientes'])) {
+            foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_receita = true;
+                    break;
+                }
+            }
+        }
+
+        $ativo = 1;
+        if ($categoria === 'combos' && !$tem_combo) {
+            $ativo = 0;
+        } elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && !$tem_receita) {
+            $ativo = 0;
+        } elseif ($make_or_buy === 'revenda' && empty($_POST['estoque_revenda_id'])) {
+            $ativo = 0;
+        }
+
+        if (!empty($nome) && $preco_venda !== false && $preco_venda >= 0) {
+            try {
+                $pdo->beginTransaction();
+
+                $sql_produto = "INSERT INTO produtos (categorias, nome, ativo, descricao, preco_venda, visivel, make_or_buy) 
+                                VALUES (:cat, :nome, :ativo, :desc, :preco, :visivel, :mob)";
+                
+                $stmt = $pdo->prepare($sql_produto);
+                $stmt->execute([
+                    ':cat'     => $categoria,
+                    ':nome'    => $nome,
+                    ':ativo'   => $ativo,
+                    ':desc'    => $descricao,
+                    ':preco'   => $preco_venda,
+                    ':visivel' => $visivel,
+                    ':mob'     => $make_or_buy
+                ]);
+                
+                $produto_id = $pdo->lastInsertId();
+
+                if (isset($_FILES['imagem_arquivo']) && $_FILES['imagem_arquivo']['error'] === UPLOAD_ERR_OK) {
+                    $pasta_destino = '../../img/uploads/';
+                    
+                    if (!is_dir($pasta_destino)) {
+                        mkdir($pasta_destino, 0755, true);
+                    }
+
+                    $extensao = strtolower(pathinfo($_FILES['imagem_arquivo']['name'], PATHINFO_EXTENSION));
+                    $extensoes_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+
+                    if (in_array($extensao, $extensoes_permitidas)) {
+                        $novo_nome_arquivo = 'produto_' . $produto_id . '.' . $extensao;
+                        $caminho_completo = $pasta_destino . $novo_nome_arquivo;
+
+                        if (move_uploaded_file($_FILES['imagem_arquivo']['tmp_name'], $caminho_completo)) {
+                            $sql_update_img = "UPDATE produtos SET imagem_caminho = :caminho WHERE id = :id";
+                            $stmt_img = $pdo->prepare($sql_update_img);
+                            $stmt_img->execute([
+                                ':caminho' => $caminho_completo,
+                                ':id'      => $produto_id
+                            ]);
+                        }
+                    }
+                }
+                
+                if ($categoria === 'combos' && isset($_POST['combo_itens'])) {
+                    $sqlCombo = "INSERT INTO itens_combo (combo_id, produto_filho_id, quantidade) VALUES (:combo, :filho, :qtd)";
+                    $stmtCombo = $pdo->prepare($sqlCombo);
+                    
+                    foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                        $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 1);
+                        if ($qtd > 0) {
+                            $stmtCombo->execute([':combo' => $produto_id, ':filho' => $filho_id, ':qtd' => $qtd]);
+                        }
+                    }
+                } 
+                elseif ($make_or_buy === 'revenda' && !empty($_POST['estoque_revenda_id'])) {
+                    $sqlReceita = "INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, 1)";
+                    $stmtReceita = $pdo->prepare($sqlReceita);
+                    $stmtReceita->execute([
+                        ':prod' => $produto_id, 
+                        ':ing'  => $_POST['estoque_revenda_id']
+                    ]);
+                }
+                elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && isset($_POST['ingredientes'])) {
+                    $sqlReceita = "INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, :qtd)";
+                    $stmtReceita = $pdo->prepare($sqlReceita);
+
+                    foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                        $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                        if ($qtd > 0) {
+                            $stmtReceita->execute([':prod' => $produto_id, ':ing' => $ingred_id, ':qtd' => $qtd]);
+                        }
+                    }
+                }
+
+                $pdo->commit();
+            } catch (PDOException $e) {
+                $pdo->rollBack();
+            }
+        }
+        header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
 }
 
-$produtos = $pdo->query("SELECT * FROM produtos ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
-$estoque = $pdo->query("SELECT * FROM estoque ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
-$receitas_raw = $pdo->query("SELECT r.*, e.nome as ingrediente_nome, e.unidade_medida FROM receitas r JOIN estoque e ON r.ingrediente_id = e.id")->fetchAll(PDO::FETCH_ASSOC);
-$combos_raw = $pdo->query("SELECT ic.*, p.nome as filho_nome FROM itens_combo ic JOIN produtos p ON ic.produto_filho_id = p.id")->fetchAll(PDO::FETCH_ASSOC);
+// Endpoint GET para carregar os dados na edição
+if (isset($_GET['obter_produto'])) {
+    $id_ed = (int)$_GET['obter_produto'];
+    $st = $pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+    $st->execute([$id_ed]);
+    $prod_data = $st->fetch(PDO::FETCH_ASSOC);
 
-$receitas_agrupadas = [];
-foreach($receitas_raw as $r) {
-    $receitas_agrupadas[$r['produto_id']][] = $r;
+    $st_rec = $pdo->prepare("SELECT * FROM receitas WHERE produto_id = ?");
+    $st_rec->execute([$id_ed]);
+    $prod_rec = $st_rec->fetchAll(PDO::FETCH_ASSOC);
+
+    $st_comb = $pdo->prepare("SELECT * FROM itens_combo WHERE combo_id = ?");
+    $st_comb->execute([$id_ed]);
+    $prod_comb = $st_comb->fetchAll(PDO::FETCH_ASSOC);
+
+    $img_status_html = "";
+    if (!empty($prod_data['imagem_caminho'])) {
+        $img_status_html = "<span style='color: green;'>✔ Imagem cadastrada no sistema</span>";
+    } else {
+        $img_status_html = "<span style='color: #666;'>Nenhuma imagem cadastrada</span>";
+    }
+
+    echo "<script>
+        document.getElementById('form_acao').value = 'editar';
+        document.getElementById('form_id_produto').value = " . $prod_data['id'] . ";
+        document.getElementById('modalTituloCadastro').innerText = 'Editar Produto: " . addslashes($prod_data['nome']) . "';
+        document.getElementById('btnSubmitModal').innerText = 'Salvar Alterações';
+        
+        document.getElementById('nome').value = " . json_encode($prod_data['nome']) . ";
+        document.getElementById('categorias').value = " . json_encode($prod_data['categorias']) . ";
+        document.getElementById('descricao').value = " . json_encode($prod_data['descricao']) . ";
+        document.getElementById('preco_venda').value = " . json_encode($prod_data['preco_venda']) . ";
+        document.getElementById('make_or_buy').value = " . json_encode($prod_data['make_or_buy']) . ";
+        document.getElementById('visivel').checked = " . ($prod_data['visivel'] ? 'true' : 'false') . ";
+        document.getElementById('status_imagem_cadastrada').innerHTML = " . json_encode($img_status_html) . ";
+
+        atualizarFormulario();";
+
+        if ($prod_data['categorias'] === 'combos') {
+            foreach($prod_comb as $c) {
+                echo "
+                if(document.getElementById('chk_combo_" . $c['produto_filho_id'] . "')) {
+                    document.getElementById('chk_combo_" . $c['produto_filho_id'] . "').checked = true;
+                    let inp = document.getElementById('qtd_combo_" . $c['produto_filho_id'] . "');
+                    inp.value = " . $c['quantidade'] . ";
+                    inp.style.display = 'block';
+                    inp.disabled = false;
+                }";
+            }
+        } elseif ($prod_data['make_or_buy'] === 'revenda') {
+            if(count($prod_rec) > 0) {
+                echo "document.getElementById('estoque_revenda_id').value = '" . $prod_rec[0]['ingrediente_id'] . "';";
+            }
+        } else {
+            foreach($prod_rec as $r) {
+                echo "
+                if(document.getElementById('chk_ing_" . $r['ingrediente_id'] . "')) {
+                    document.getElementById('chk_ing_" . $r['ingrediente_id'] . "').checked = true;
+                    let inp = document.getElementById('qtd_ing_" . $r['ingrediente_id'] . "');
+                    inp.value = " . $r['quantidade_usada'] . ";
+                    inp.style.display = 'block';
+                    inp.disabled = false;
+                }";
+            }
+        }
+
+    echo "document.getElementById('modalCadastro').showModal();</script>";
+    exit;
 }
 
-$combos_agrupados = [];
-foreach($combos_raw as $c) {
-    $combos_agrupados[$c['combo_id']][] = $c;
-}
+$lista_estoque_ingredientes = [];
+$lista_estoque_revenda = [];
+$lista_produtos = [];
+$produtosAtivos = [];
+$prodSemReceita = [];
+$combosVazios = [];
+
+try {
+    $stmtEstIng = $pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 0 ORDER BY nome ASC");
+    $lista_estoque_ingredientes = $stmtEstIng->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtEstRev = $pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 1 ORDER BY nome ASC");
+    $lista_estoque_revenda = $stmtEstRev->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmtProd = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE categorias != 'combos' AND ativo = 1 ORDER BY nome ASC");
+    $lista_produtos = $stmtProd->fetchAll(PDO::FETCH_ASSOC);
+
+    $produtosAtivos = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+    
+    $prodSemReceita = $pdo->query("SELECT p.id, p.nome FROM produtos p 
+                                   LEFT JOIN receitas r ON p.id = r.produto_id 
+                                   WHERE p.make_or_buy = 'produto_acabado' AND p.categorias != 'combos' AND (r.id IS NULL OR p.ativo = 0)
+                                   GROUP BY p.id ORDER BY p.nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+    $combosVazios = $pdo->query("SELECT p.id, p.nome FROM produtos p 
+                                 LEFT JOIN itens_combo c ON p.id = c.combo_id 
+                                 WHERE p.categorias = 'combos' AND (c.id IS NULL OR p.ativo = 0)
+                                 GROUP BY p.id ORDER BY p.nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Produtos, Receitas e Combos</title>
+    <title>Gestão de Produtos</title>
 </head>
 <body>
 
-    <div id="container-produtos">
-        <?php foreach($produtos as $prod): ?>
-            <div id="produto-<?= $prod['id'] ?>">
-                <div>
-                    <b><?= htmlspecialchars($prod['nome']) ?></b> 
-                    (Cat: <?= $prod['categorias'] ?> | R$ <?= $prod['preco_venda'] ?> | Tipo: <?= $prod['make_or_buy'] ?>)
-                </div>
-                
-                <div id="lista-sub-<?= $prod['id'] ?>">
-                    <?php if($prod['categorias'] === 'combos'): ?>
-                        <?php if(isset($combos_agrupados[$prod['id']])): ?>
-                            <?php foreach($combos_agrupados[$prod['id']] as $item): ?>
-                                <div id="itemcombo-<?= $item['id'] ?>">
-                                    <div>Produto: <b><?= htmlspecialchars($item['filho_nome']) ?></b> | Qtd: <?= $item['quantidade'] ?></div>
-                                    <div>
-                                        <button onclick="deletarItemCombo(<?= $item['id'] ?>)">EXCLUIR</button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p id="pendente-<?= $prod['id'] ?>">Pendente: Nenhum item de combo cadastrado.</p>
-                        <?php endif; ?>
-                        <div id="container-btn-<?= $prod['id'] ?>">
-                            <button onclick="abrirModalCombo(<?= $prod['id'] ?>, '<?= htmlspecialchars($prod['nome'], ENT_QUOTES) ?>')">ADICIONAR ITEM AO COMBO</button>
-                        </div>
+<div>
+    <button onclick="abrirModalCadastro()">ADD NOVO PRODUTO</button>
 
-                    <?php elseif($prod['make_or_buy'] === 'produto_acabado'): ?>
-                        <?php if(isset($receitas_agrupadas[$prod['id']])): ?>
-                            <?php foreach($receitas_agrupadas[$prod['id']] as $rec): ?>
-                                <div id="receita-<?= $rec['id'] ?>">
-                                    <div>Ingrediente: <b><?= htmlspecialchars($rec['ingrediente_nome']) ?></b> | Qtd: <?= $rec['quantidade_usada'] ?> <?= $rec['unidade_medida'] ?></div>
-                                    <div>
-                                        <button onclick="deletarReceita(<?= $rec['id'] ?>)">EXCLUIR</button>
-                                    </div>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p id="pendente-<?= $prod['id'] ?>">Pendente: Nenhuma receita cadastrada.</p>
-                        <?php endif; ?>
-                        <div id="container-btn-<?= $prod['id'] ?>">
-                            <button onclick="abrirModalReceita(<?= $prod['id'] ?>, '<?= htmlspecialchars($prod['nome'], ENT_QUOTES) ?>')">ADICIONAR RECEITA</button>
-                        </div>
-
-                    <?php else: ?>
-                        <p>Item de Revenda (Pronto para venda).</p>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
+    <div>
+        <h2>SEC PRODUTOS CADASTRADOS</h2>
+        <div>
+            <?php foreach($produtosAtivos as $p): ?>
+                <button onclick="abrirAcoes(<?= $p['id'] ?>, '<?= htmlspecialchars($p['nome']) ?>')">
+                    <?= htmlspecialchars($p['nome']) ?> (<?= htmlspecialchars($p['categorias']) ?>)
+                </button>
+            <?php endforeach; ?>
+        </div>
     </div>
 
-    <button onclick="document.getElementById('modalProduto').showModal()">
-        ADICIONAR NOVO PRODUTO
-    </button>
+    <div>
+        <h2>SEC PROD SEM RECEITA</h2>
+        <div>
+            <?php foreach($prodSemReceita as $p): ?>
+                <button onclick="abrirAcoes(<?= $p['id'] ?>, '<?= htmlspecialchars($p['nome']) ?>')">
+                    <?= htmlspecialchars($p['nome']) ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
-    <dialog id="modalProduto">
-        <h3 id="titulo_modal_prod">Cadastrar Novo Produto</h3>
-        <form id="formProduto" onsubmit="salvarProduto(event)">
-            <input type="hidden" name="acao" value="add_produto">
-            <div>
-                <label>Nome:</label>
-                <input type="text" name="nome" required>
-            </div>
-            <div>
-                <label>Categoria:</label>
-                <select name="categorias" required>
-                    <option hidden></option>
-                    <option value="hamburguer">Hamburguer</option>
-                    <option value="porcoes">Porções</option>
-                    <option value="bebidas">Bebidas</option>
-                    <option value="combos">Combos</option>
-                    <option value="sobremesa_gelada">Sobremesa Gelada</option>
-                    <option value="extras">Extras</option>
-                </select>
-            </div>
-            <div>
-                <label>Descrição:</label>
-                <textarea name="descricao" required></textarea>
-            </div>
-            <div>
-                <label>Preço de Venda:</label>
-                <input type="number" step="0.01" name="preco_venda" required>
-            </div>
-            <div>
-                <label>Make or Buy:</label>
-                <select name="make_or_buy" required>
-                    <option hidden></option>
-                    <option value="produto_acabado">Produto Acabado</option>
-                    <option value="revenda">Revenda</option>
-                </select>
-            </div>
-            <div>
-                <button type="button" onclick="document.getElementById('modalProduto').close()">Cancelar</button>
-                <button type="submit">Salvar</button>
-            </div>
-        </form>
-    </dialog>
+    <div>
+        <h2>SEC COMBO SEM ITENS CADASTRADOS</h2>
+        <div>
+            <?php foreach($combosVazios as $p): ?>
+                <button onclick="abrirAcoes(<?= $p['id'] ?>, '<?= htmlspecialchars($p['nome']) ?>')">
+                    <?= htmlspecialchars($p['nome']) ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>
 
-    <dialog id="modalReceita">
-        <h3 id="titulo_receita">Adicionar Receita</h3>
-        <form id="formReceita" onsubmit="salvarReceita(event)">
-            <input type="hidden" name="acao" value="add_receita">
-            <input type="hidden" name="produto_id" id="input_receita_produto_id">
-            <div>
-                <label>Ingrediente (Estoque):</label>
-                <select name="ingrediente_id" required>
-                    <option value="">Selecione o Insumo</option>
-                    <?php foreach($estoque as $e): ?>
-                        <option value="<?= $e['id'] ?>"><?= htmlspecialchars($e['nome']) ?> (<?= $e['unidade_medida'] ?>)</option>
+<dialog id="modalCadastro">
+    <h1 id="modalTituloCadastro">Cadastrar Novo Produto</h1>
+
+    <?php if ($mensagem_sucesso): ?>
+        <div><?= htmlspecialchars($mensagem_sucesso) ?></div>
+    <?php endif; ?>
+    
+    <form method="POST" action="" enctype="multipart/form-data" onsubmit="habilitarCamposAntesDeEnviar()">
+        <input type="hidden" id="form_acao" name="acao" value="cadastrar">
+        <input type="hidden" id="form_id_produto" name="id_produto" value="">
+
+        <div>
+            <label for="nome">Nome do Produto</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
+
+        <div>
+            <label for="categorias">Categoria</label>
+            <select id="categorias" name="categorias" onchange="atualizarFormulario()" required>
+                <option value="" hidden></option>
+                <option value="hamburguer">Hambúrguer</option>
+                <option value="porcoes">Porções</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="combos">Combos</option>
+                <option value="sobremesa_gelada">Sobremesa Gelada</option>
+                <option value="extras">Extras</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" rows="3" required></textarea>
+        </div>
+
+        <div>
+            <label for="preco_venda">Preço de Venda (R$)</label>
+            <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" required>
+        </div>
+
+        <div>
+            <label for="make_or_buy">Tipo de Produção</label>
+            <select id="make_or_buy" name="make_or_buy" onchange="atualizarFormulario()" required>
+                <option value="" hidden></option>
+                <option value="produto_acabado">Produto Acabado</option>
+                <option value="revenda">Revenda</option>
+            </select>
+            <input type="hidden" id="make_or_buy_hidden" name="make_or_buy" value="produto_acabado">
+        </div>
+
+        <div id="secao-revenda" style="display:none;">
+            <h3>Vínculo de Estoque (Item de Revenda)</h3>
+            <label for="estoque_revenda_id">Item para baixa automática no estoque (1 unidade):</label>
+            <select id="estoque_revenda_id" name="estoque_revenda_id">
+                <option value="">-- Selecione o item de revenda --</option>
+                <?php foreach($lista_estoque_revenda as $item): ?>
+                    <option value="<?= $item['id'] ?>"><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div id="secao-receita" style="display:none;">
+            <h3>Composição da Receita</h3>
+            <?php if(!empty($lista_estoque_ingredientes)): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Incluir</th>
+                        <th>Ingrediente</th>
+                        <th>Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($lista_estoque_ingredientes as $item): ?>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="chk_ing_<?= $item['id'] ?>" name="ingredientes[<?= $item['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_ing_<?= $item['id'] ?>')">
+                            </td>
+                            <td><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</td>
+                            <td>
+                                <input type="number" id="qtd_ing_<?= $item['id'] ?>" name="ingrediente_qtd[<?= $item['id'] ?>]" step="0.01" min="0.01" placeholder="Qtd" disabled style="display: none;">
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label>Quantidade Usada:</label>
-                <input type="number" step="0.01" name="quantidade_usada" required>
-            </div>
-            <div>
-                <button type="button" onclick="document.getElementById('modalReceita').close()">Cancelar</button>
-                <button type="submit">Salvar Receita</button>
-            </div>
-        </form>
-    </dialog>
+                </tbody>
+            </table>
+            <?php else: ?>
+                <p>Nenhum ingrediente no estoque.</p>
+            <?php endif; ?>
+        </div>
 
-    <dialog id="modalCombo">
-        <h3 id="titulo_combo">Adicionar Item ao Combo</h3>
-        <form id="formCombo" onsubmit="salvarItemCombo(event)">
-            <input type="hidden" name="acao" value="add_item_combo">
-            <input type="hidden" name="combo_id" id="input_combo_id">
-            <div>
-                <label>Produto Filho:</label>
-                <select name="produto_filho_id" required>
-                    <option value="">Selecione o Produto</option>
-                    <?php foreach($produtos as $p): ?>
-                        <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['nome']) ?></option>
+        <div id="secao-combo" style="display:none;">
+            <h3>Itens Integrantes do Combo</h3>
+            <?php if(!empty($lista_produtos)): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Incluir</th>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($lista_produtos as $prod): ?>
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')">
+                            </td>
+                            <td><?= htmlspecialchars($prod['nome']) ?> <small>(<?= htmlspecialchars($prod['categorias']) ?>)</small></td>
+                            <td>
+                                <input type="number" id="qtd_combo_<?= $prod['id'] ?>" name="combo_qtd[<?= $prod['id'] ?>]" min="1" value="1" placeholder="Qtd" disabled style="display: none;">
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
-                <label>Quantidade:</label>
-                <input type="number" name="quantidade" value="1" min="1" required>
-            </div>
-            <div>
-                <button type="button" onclick="document.getElementById('modalCombo').close()">Cancelar</button>
-                <button type="submit">Salvar Item</button>
-            </div>
-        </form>
-    </dialog>
+                </tbody>
+            </table>
+            <?php else: ?>
+                <p>Nenhum produto cadastrado.</p>
+            <?php endif; ?>
+        </div>
 
-    <script>
-        function abrirModalReceita(idProd, nomeProd) {
-            document.getElementById('input_receita_produto_id').value = idProd;
-            document.getElementById('titulo_receita').innerText = "Adicionar Receita para: " + nomeProd;
-            document.getElementById('modalReceita').showModal();
-        }
+        <div>
+            <label for="imagem_arquivo">Imagem do Produto</label>
+            <input type="file" id="imagem_arquivo" name="imagem_arquivo" accept="image/*">
+            <div id="status_imagem_cadastrada" style="margin-top: 5px; font-size: 0.9em;"></div>
+        </div>
 
-        function abrirModalCombo(idCombo, nomeCombo) {
-            document.getElementById('input_combo_id').value = idCombo;
-            document.getElementById('titulo_combo').innerText = "Adicionar Item ao Combo: " + nomeCombo;
-            document.getElementById('modalCombo').showModal();
-        }
+        <div>
+            <input type="checkbox" id="visivel" name="visivel" value="1" checked>
+            <label for="visivel">Visível no Cardápio</label>
+        </div>
 
-        async function salvarProduto(e) {
-            e.preventDefault();
-            let form = e.target;
-            let formData = new FormData(form);
+        <button type="submit" id="btnSubmitModal">Cadastrar Produto</button>
+        <button type="reset">Limpar</button>
+        <button type="button" onclick="document.getElementById('modalCadastro').close()">Fechar</button>
+    </form>
+</dialog>
 
-            let req = await fetch('', { method: 'POST', body: formData });
-            let htmlNovaCaixa = await req.text();
+<dialog id="modalAcoes">
+    <h3 id="tituloAcoes">Ações do Produto</h3>
+    <form method="POST" action="">
+        <input type="hidden" name="acao" value="deletar">
+        <input type="hidden" name="id_produto" id="acao_id_produto" value="">
+        
+        <p>Opções para este produto:</p>
+        <div>
+            <button type="button" onclick="carregarDadosEdicao()">Editar / Adicionar Receita</button>
+            <button type="submit">Excluir</button>
+            <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
+        </div>
+    </form>
+</dialog>
 
-            document.getElementById('container-produtos').insertAdjacentHTML('beforeend', htmlNovaCaixa);
-            form.reset();
-            document.getElementById('modalProduto').close();
-        }
-
-        async function salvarReceita(e) {
-            e.preventDefault();
-            let form = e.target;
-            let formData = new FormData(form);
-            let prodId = formData.get('produto_id');
-
-            let req = await fetch('', { method: 'POST', body: formData });
-            let htmlLinha = await req.text();
-
-            let pendente = document.getElementById('pendente-' + prodId);
-            if(pendente) pendente.remove();
-
-            let btnContainer = document.getElementById('container-btn-' + prodId);
-            btnContainer.insertAdjacentHTML('beforebegin', htmlLinha);
-
-            form.reset();
-            document.getElementById('modalReceita').close();
-        }
-
-        async function salvarItemCombo(e) {
-            e.preventDefault();
-            let form = e.target;
-            let formData = new FormData(form);
-            let comboId = formData.get('combo_id');
-
-            let req = await fetch('', { method: 'POST', body: formData });
-            let htmlLinha = await req.text();
-
-            let pendente = document.getElementById('pendente-' + comboId);
-            if(pendente) pendente.remove();
-
-            let btnContainer = document.getElementById('container-btn-' + comboId);
-            btnContainer.insertAdjacentHTML('beforebegin', htmlLinha);
-
-            form.reset();
-            document.getElementById('modalCombo').close();
-        }
-
-        async function deletarReceita(idRec) {
-            if(!confirm("Excluir receita?")) return;
-            let fd = new FormData();
-            fd.append('acao', 'del_receita');
-            fd.append('receita_id', idRec);
-            let req = await fetch('', { method: 'POST', body: fd });
-            if((await req.text()).trim() === 'ok') {
-                document.getElementById('receita-' + idRec).remove();
+<script>
+function abrirModalCadastro() {
+    document.getElementById('form_acao').value = 'cadastrar';
+    document.getElementById('form_id_produto').value = '';
+    document.getElementById('modalTituloCadastro').innerText = 'Cadastrar Novo Produto';
+    document.getElementById('btnSubmitModal').innerText = 'Cadastrar Produto';
+    document.getElementById('modalCadastro').querySelector('form').reset();
+    document.getElementById('status_imagem_cadastrada').innerHTML = '';
+    
+    document.querySelectorAll('input[type=checkbox]').forEach(el => {
+        if(el.id.startsWith('chk_')) {
+            el.checked = false;
+            let targetId = el.id.replace('chk_', 'qtd_');
+            let inp = document.getElementById(targetId);
+            if(inp) {
+                inp.style.display = 'none';
+                inp.disabled = true;
+                inp.value = '';
             }
         }
+    });
 
-        async function deletarItemCombo(idItem) {
-            if(!confirm("Excluir item do combo?")) return;
-            let fd = new FormData();
-            fd.append('acao', 'del_item_combo');
-            fd.append('item_id', idItem);
-            let req = await fetch('', { method: 'POST', body: fd });
-            if((await req.text()).trim() === 'ok') {
-                document.getElementById('itemcombo-' + idItem).remove();
+    atualizarFormulario();
+    document.getElementById('modalCadastro').showModal();
+}
+
+function abrirAcoes(id, nome) {
+    document.getElementById('acao_id_produto').value = id;
+    document.getElementById('tituloAcoes').innerText = "Produto: " + nome;
+    document.getElementById('modalAcoes').showModal();
+}
+
+async function carregarDadosEdicao() {
+    const id = document.getElementById('acao_id_produto').value;
+    document.getElementById('modalAcoes').close();
+
+    document.getElementById('modalCadastro').querySelector('form').reset();
+    document.getElementById('status_imagem_cadastrada').innerHTML = '';
+    document.querySelectorAll('input[type=checkbox]').forEach(el => {
+        if(el.id.startsWith('chk_')) {
+            el.checked = false;
+            let targetId = el.id.replace('chk_', 'qtd_');
+            let inp = document.getElementById(targetId);
+            if(inp) {
+                inp.style.display = 'none';
+                inp.disabled = true;
+                inp.value = '';
             }
         }
-    </script>
+    });
+
+    let req = await fetch(window.location.pathname + '?obter_produto=' + id);
+    let html = await req.text();
+    
+    let containerTemp = document.createElement('div');
+    containerTemp.innerHTML = html;
+    let scriptTag = containerTemp.querySelector('script');
+    if (scriptTag) {
+        eval(scriptTag.innerText);
+    }
+}
+
+function toggleQtd(checkbox, inputId) {
+    const inputQtd = document.getElementById(inputId);
+    if (inputQtd) {
+        if (checkbox.checked) {
+            inputQtd.style.display = 'block';
+            inputQtd.disabled = false;
+            inputQtd.focus();
+        } else {
+            inputQtd.style.display = 'none';
+            inputQtd.disabled = true;
+        }
+    }
+}
+
+function atualizarFormulario() {
+    const categoria = document.getElementById('categorias').value;
+    const makeOrBuySelect = document.getElementById('make_or_buy');
+    const makeOrBuyHidden = document.getElementById('make_or_buy_hidden');
+    
+    const secaoReceita = document.getElementById('secao-receita');
+    const secaoCombo = document.getElementById('secao-combo');
+    const secaoRevenda = document.getElementById('secao-revenda');
+
+    secaoCombo.style.display = 'none';
+    secaoReceita.style.display = 'none';
+    secaoRevenda.style.display = 'none';
+
+    if (!categoria) return;
+
+    if (categoria === 'hamburguer' || categoria === 'porcoes' || categoria === 'combos' || categoria === 'sobremesa_gelada' || categoria === 'extras') {
+        makeOrBuySelect.value = 'produto_acabado';
+        makeOrBuySelect.disabled = true;
+        makeOrBuyHidden.disabled = false;
+        makeOrBuyHidden.value = 'produto_acabado';
+    } else {
+        makeOrBuySelect.disabled = false;
+        makeOrBuyHidden.disabled = true;
+        
+        if (categoria === 'bebidas' && !makeOrBuySelect.value) {
+            makeOrBuySelect.value = 'revenda';
+        }
+    }
+
+    const tipoAtual = makeOrBuySelect.value || makeOrBuyHidden.value;
+
+    if (categoria === 'combos') {
+        secaoCombo.style.display = 'block';
+    } else if (tipoAtual === 'revenda') {
+        secaoRevenda.style.display = 'block';
+    } else if (tipoAtual === 'produto_acabado') {
+        secaoReceita.style.display = 'block';
+    }
+}
+
+function habilitarCamposAntesDeEnviar() {
+    const makeOrBuySelect = document.getElementById('make_or_buy');
+    const makeOrBuyHidden = document.getElementById('make_or_buy_hidden');
+    if (makeOrBuySelect.disabled) {
+        makeOrBuyHidden.disabled = false;
+        makeOrBuyHidden.value = makeOrBuySelect.value;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', atualizarFormulario);
+</script>
+
 </body>
 </html>
