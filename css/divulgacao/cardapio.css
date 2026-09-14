@@ -29,6 +29,7 @@ main {
 
 .inicio-cardapio h1 {
    display: flex;
+  text-align: center;
   align-items: center;
   justify-content: center;
   gap: 20px;
@@ -43,26 +44,14 @@ main {
   -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.6));
   letter-spacing: 5px;
+
 }
 
 
   
 
 
-.titulo-cardapio::before,
-.titulo-cardapio::after {
-  content: "";
-  flex-grow: 1;
-  max-width: 120px;
-  height: 8px; /* Altura do bloco que conterá as duas linhas */
-  
-  /* Cria as duas linhas paralelas finas */
-  border-top: 2px solid #ff007f;
-  border-bottom: 2px solid #ff007f;
-  
-  /* Aplica o brilho neon nas duas linhas */
-  filter: drop-shadow(0 0 6px #ff007f);
-}
+
 
 .menu-categorias {
   display: flex;

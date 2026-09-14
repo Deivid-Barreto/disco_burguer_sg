@@ -24,8 +24,8 @@
 
         <div class="container-fluid p-0 ">
             <section class="sobre-nos">
-
-                <div class="row div-sobre">
+            <div class="">
+                <div class="row m-0 div-sobre">
 
                     <div class="col-6 titulo-sobre">
 
@@ -52,7 +52,7 @@
 
                 </div>
 
-                <div class="row">
+                <div class="row m-0">
 
                     
                     <div class="col-6 texto-sobre">
@@ -90,9 +90,11 @@
                         <img class="img-grupo" src="../../img/sobre.png">
 
                     </div>
+                  <div class="row">
+
                     <div class="col-12 final-texto">
 
-e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
+                            e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
                             presente em um ambiente dinâmico e envolvente.
 
                             A proposta da empresa é oferecer mais do que hambúrgueres: proporcionar uma verdadeira
@@ -100,9 +102,9 @@ e convivência social. Assim, o termo reforça a proposta da marca de unir passa
                             marcou a juventude de seus pais, agora reinterpretada de forma moderna e atualizada.
                             A Disco Burguer nasce com o propósito de transformar refeições em experiências, estimulando
                             a interação social, a memória afetiva e o entretenimento.
-</div>
-
-
+                    </div> 
+                    </div>
+                    </div>
                 </div>
 
         </section>
@@ -114,11 +116,11 @@ e convivência social. Assim, o termo reforça a proposta da marca de unir passa
 
 
     <footer>
-
-
+    <?php
+    include __DIR__ . "/../../footer.php";
+    ?>
     </footer>
 
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
