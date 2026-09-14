@@ -18,6 +18,7 @@
 }
 
 .local {
+
     display: flex;
    justify-content: center;
    align-items: center;
@@ -27,7 +28,9 @@
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    min-height: 1300PX;
+    min-height: 1000PX;
+    padding-bottom: 20vh;
+    padding-top: 5vh;
 
 
    
@@ -46,7 +49,7 @@
 /* ---------- título ---------- */
 
 .titulo-local {
-    padding-bottom: 10vh;
+    padding-bottom: 4vh;
     color: white;
     position: relative;
     z-index: 1;
@@ -73,7 +76,8 @@
 .linha-local {
    display: flex;
    align-items:center ;
-    gap: 25px;
+   gap: 25px;
+   
     
 
 }

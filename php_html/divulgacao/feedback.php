@@ -21,9 +21,10 @@
 </header>
 
     <main>
+        
 
         <div class="container-fluid p-0">
-            <section class="feedback-nos">
+            <section class="feedback">
 
                 <div class="row div-feedback">
 
@@ -101,7 +102,10 @@
     </main>
 
     <footer>
-
+    <?php
+        include __DIR__ . "/../../footer.php";
+        ?>
+     
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
