@@ -182,7 +182,7 @@ foreach($lotes_raw as $l) {
             </div>
             <div>
                 <label>
-                    <input type="checkbox" name="eh_revenda" value="1"> Este item é para Revenda?
+                    <input type="checkbox" name="eh_revenda" value="1">Revenda
                 </label>
             </div>
             <div>
