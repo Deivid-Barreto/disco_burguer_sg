@@ -1,54 +1,130 @@
 
-*{
-    padding: 0px;
-    margin: 0px;
-}
-body{
-  
-}
+    
+
+    
+
+
 .sobre-nos{
-    background-image: url(../../img/fundo_sobre.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+     background-attachment: fixed;
     width: 100%;
-    min-height: 650px;
+    min-height: 1300px;
     align-items: center;
     display: flex;
     justify-content: center;
+    align-items: center;
     flex-direction: column;
-color: white;
+    color: white;
 }
     
-.img-grupo{
-margin-left: 10%;
-width: 500px;
-height: 500px;
-}
 .titulo-sobre{
 display: flex;
 justify-content: center;
 flex-direction: column;
-    text-align: center;
-    color: white;
+align-items : center;
+color: white;
+
     
 }
+
+
+.titulo-sobre h1{
+
+  font-family: 'Oswald', 'Anton', sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: column;
+  text-align:start;
+ 
+
+}
+
+.titulo-sobre h2{
+    
+color: white;
+text-align: center;
+  
+}
+
+
 .bola{
 
-    text-align: center;
-    color: white;
-    
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.texto-sobre{
-    font-size: larger;
-}
-.final-texto{
-    font-size: larger;
-}
-.img-bola_cristal{
 
-    width:400px;
-    height: auto;
-    
+.bola img{
+
+    width: 500px;
+    height: 500px;
+
+
 }
+
+/*PARTE DO TEXTO*/
+
+.texto-sobre{
+background-image: url(../../img/fundo_inicio.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+     background-attachment: fixed;
+    width: 100%;
+    min-height: 900px;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+
+  
+}
+
+.texto{
+
+    font-size: 20px;
+    color: white;
+}
+
+.titulo-missao {
+
+    font-size: 40PX;
+    color: blue;
+}
+
+.card-sobre{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: start;
+    margin: 20px 20vh;
+    border: solid 2px #ff00b3;
+    padding: 3vh 5vh;
+
+}
+
+.img-grupo{
+
+    display: flex;
+    align-items: center;
+    justify-content:center ;
+}
+
+.img-grupo img{
+
+    
+    width:700px;
+    height: 800px;
+
+}
+
+
+
 

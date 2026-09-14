@@ -3,7 +3,7 @@
 /*Hero*/
 
 .hero {
-    background-image: url(../../img/teste.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -12,7 +12,8 @@
     min-height:1200px;
     display: flex;
     justify-content: center;
-
+    align-items: center;
+    flex-direction: column;
 }
 
 
@@ -90,8 +91,8 @@
     width: 100%;
   }
 
+
 .Mais-Pedidos{
-    
 background-image: url(../../img/fundo_mais_pedidos.png);
 background-size: cover;
 background-position: center;
@@ -101,17 +102,15 @@ text-align: center;
 display: flex;
 justify-content: center;
 width: 100%;
-min-height: 1300px;
+min-height: clamp(600px, 100vh, 1300px);
 background-size: 100% 100%;
-
-
 }
 
 .titulo-mp{
   color: #faf8f5;
   font-family: 'Impact', sans-serif;
-  font-size: 100px;
-  letter-spacing: 2px;
+  font-size: clamp(2.5rem, 8vw, 100px);
+  letter-spacing: clamp(1px, 0.3vw, 2px);
   text-transform: uppercase;
   text-shadow: 
     0 0 5px #ffaa00,
@@ -119,47 +118,39 @@ background-size: 100% 100%;
     0 0 20px #ff8800;
 }
 
-
 .cards-container{
-
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  padding-bottom: 30px;
-  gap: 10vh;
-
+  padding-bottom: clamp(15px, 3vh, 30px);
+  gap: clamp(20px, 5vh, 10vh);
 }
 
 .card{
-  
-  
   display: flex;
   text-align: center;
   flex-direction: column;
   align-items: center;
   background-color: transparent;
   border-radius: 8px;
-  padding: 20px;
-  width: 500px; 
-  min-height: 700px;
-  margin-bottom: 20px;
+  padding: clamp(10px, 2vw, 20px);
+  width: clamp(280px, 90vw, 500px); 
+  min-height: clamp(500px, 70vh, 700px);
+  margin-bottom: clamp(10px, 2vh, 20px);
   text-align: center;
 }
 
 .card h2{
- font-size: 70px;
+ font-size: clamp(2rem, 5vw, 70px);
  display: flex;
  white-space: nowrap;
- 
-
 }
 
 .card img {
   max-width: 100%;
-  height: 400px;
-  margin: 0 auto 15px auto;
-  
+  height: clamp(200px, 30vw, 400px);
+  margin: 0 auto clamp(10px, 2vh, 15px) auto;
 }
 
 .card-rosa{
@@ -169,29 +160,20 @@ background-size: 100% 100%;
 }
 
 .card-rosa h2{
-  
   color: #ff00ff;
   text-shadow: 0 0 8px #ff00ff;
-     
 }
-
 
 .card-azul {
   background-color: rgba(0, 212, 255, 0.12);
   border: 3px solid #00d4ff;
   box-shadow: 0 0 15px #00d4ff, inset 0 0 15px rgba(0, 212, 255, 0.3);
-
 }
-
 
 .card-azul h2{
-
 color: #00d4ff;
 text-shadow: 0 0 8px #00d4ff;
-
 }
-
-
 
 .card-amarelo{
 background-color: rgba(255, 170, 0, 0.12);
@@ -202,26 +184,24 @@ box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
 .card-amarelo h2{
 color: #ffaa00;
   text-shadow: 0 0 8px #ffaa00;
-
 }
-
 
 .card h3{
 text-align: center;
-font-size: 30px;
+font-size: clamp(1.2rem, 3vw, 30px);
 color: white;
 }
 
 .card button{
   border-color: #ff00ff;
   box-shadow: 0 0 10px #ff00ff;
-  margin-top: 3vh;
+  margin-top: clamp(1.5vh, 3vh, 3vh);
   background-color: rgba(255, 0, 255, 0.12);
   color: #fff;
   border: 2px solid #fff;
-  padding: 8px 20px;
+  padding: clamp(10px, 1.5vw, 15px) clamp(20px, 4vw, 40px);
   font-weight: bold;
-  font-size: 25px;
+  font-size: clamp(1rem, 2.5vw, 25px);
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.3s ease;

@@ -176,14 +176,34 @@ $sobremesas = [
     <div class="container">
       <div class="row m-0">
         <div class="col-12 inicio-cardapio">
-          <h1 class="">Cardápio</h1>
+        <h1 class="">Cardápio</h1>
 
-          <div class="menu-categorias">
-            <a href="#hamburguers" class="btn-categoria active">BURGERS</a>
-            <a href="#combos" class="btn-categoria">COMBOS</a>
-            <a href="#shakes" class="btn-categoria">SHAKES</a>
-            <a href="#porcoes" class="btn-categoria">PORÇÕES</a>
-            <a href="#sobremesas" class="btn-categoria">SOBREMESAS</a>
+        <div class="menu-categorias">
+        <a href="#hamburguers" class="btn-categoria active img-categorias">
+        <img src="../../img/burguer.png" alt="">
+        <span class="text-center">BURGERS</span>
+    </a>
+
+    <a href="#combos" class="btn-categoria img-categorias">
+        <img src="../../img/combos.png" alt="">
+        <span class="text-center">COMBOS</span>
+    </a>
+
+    <a href="#shakes" class="btn-categoria img-categorias">
+        <img src="../../img/shakes.png" alt="">
+        <span class="text-center">SHAKES</span>
+    </a>
+
+    <a href="#porcoes" class="btn-categoria img-categorias">
+        <img src="../../img/porcoes.png" alt="">
+        <span class="text-center" >PORÇÕES</span>
+    </a>
+
+    <a href="#sobremesas" class="btn-categoria img-categorias">
+        <img src="../../img/bolo.png" alt="">
+        <span class="text-center">SOBREMESAS</span>
+    </a>
+         
           </div>
         </div>
       </div>
@@ -191,6 +211,7 @@ $sobremesas = [
       <div class="container">
       <section id="hamburguers" class="secao-cardapio">
           <div class="linha">
+          
           <h2 class="titulo-section">burguers</h2>
           <span class="linha-neon"></span>
           </div>

@@ -24,7 +24,7 @@
         </a>
 
         <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">
-          <button type="button" class="">Pedir agora!</button>
+          <button type="button" class="">Pedir agora!</button>  
         </div>
 
         <button class="navbar-toggler order-3" type="button" data-bs-toggle="collapse"

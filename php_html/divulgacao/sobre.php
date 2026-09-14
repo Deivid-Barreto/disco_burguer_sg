@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disco Burguer - Quem Somos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="../../css/divulgacao/sobre.css">
     <link rel="stylesheet" href="/../css/header.css">
-   
+
 </head>
+
 <body>
-    
+
 </body>
 <header>
     <?php
@@ -20,111 +21,126 @@
     ?>
 </header>
 
-    <main>
+<main>
 
-        <div class="container-fluid p-0 ">
-            <section class="sobre-nos">
-            <div class="">
-                <div class="row m-0 div-sobre">
+    <div class="container-fluid p-0 ">
+        <section class="sobre-nos">
+            <div class="container">
+                <div class="row m-0 ">
 
                     <div class="col-6 titulo-sobre">
 
-                        <h1>Quem Somos</h1>
-                        <p>O Disco Burguer nasceu da paixão por música boa e hambúrguer de verdade. Fundado em 2024,
-                            trazemos uma experiência retro-moderna para os nossos clientes.</p>
+                        <h1>
+                            <span class="">Quem</span>
+                            <span class="">Somos</span>
+                        </h1>
+
+
+                        <h2>O Disco Burguer nasceu da paixão por música boa e hambúrguer de verdade. Fundado em 2024, trazemos uma experiência retro-moderna para os nossos clientes.<h2>
 
                     </div>
 
-                    <div  class="col-6 bola">
+                    <div class="col-6 bola">
 
                         <img class="img-bola_cristal" src="../../img/globo.png" alt="">
-                    </div>
-
-                </div>
-
-                <div class="row">
-
-                    <div class="col-12 text-center">
-                    
-                    
 
                     </div>
 
                 </div>
+            </div>
 
-                <div class="row m-0">
+        </section>
 
-                    
-                    <div class="col-6 texto-sobre">
-                    
-                    <h3 class="sub text-center">Nossa Missão</h3>
-                        
-                        A ideia da Disco Burguer surgiu quando dois integrantes do grupo, Gabriel e Nathaly,
-                            decidiram procurar objetos antigos na casa dos pais de Nathaly. Durante essa busca,
-                            encontraram uma coleção de discos de vinil dos anos 80, juntamente com uma vitrola ainda em
-                            pleno funcionamento.
+        <section class="texto-sobre">
 
-                            Ao colocarem um dos discos para tocar, foram envolvidos por uma atmosfera repleta de
-                            memórias, energia, cores vibrantes e referências às discotecas da década de 1980. Mesmo não
-                            tendo vivido aquela época, reconheceram, por meio de fotos de seus pais e conteúdos
-                            pesquisados, o espírito marcante daquele período, além do estilo das lanchonetes retrô
-                            vibrantes que faziam sucesso na época.
+            <div class="card-sobre">
+          
+             <div class="row">
+             
+             <div class="col-6">
 
-                            Ao compartilharem essa descoberta com os demais integrantes do grupo — Gabriele, Geovanna,
-                            Lailla e Marcos — surgiu o seguinte questionamento:
 
-                            “E se criássemos um espaço onde as pessoas pudessem reviver o passado, mesmo estando no
-                            presente?”
-                            A partir dessa reflexão nasceu a ideia da Disco Burguer, uma hamburgueria temática inspirada
-                            nos anos 80, que une música, nostalgia e gastronomia em uma experiência diferenciada.
 
-                            O nome “Disco” foi escolhido por representar os discos de vinil, um dos maiores símbolos
-                            culturais da década de 1980. Mais do que um objeto musical, o disco simboliza conexão,
-                            memória afetiva, celebração e a cultura das discotecas, que marcaram a época com dança,
-                            expressão 
+                <h3 class="text-center titulo-missao">Nossa Missão</h3>           
 
-                    </div>
+                    <h3 class="texto">A ideia da Disco Burguer surgiu quando dois integrantes do grupo, Gabriel e Nathaly,
+                    decidiram procurar objetos antigos na casa dos pais de Nathaly. Durante essa busca,
+                    encontraram uma coleção de discos de vinil dos anos 80, juntamente com uma vitrola ainda em
+                    pleno funcionamento.
 
-                    <div class="col-6">
+                    Ao colocarem um dos discos para tocar, foram envolvidos por uma atmosfera repleta de
+                    memórias, energia, cores vibrantes e referências às discotecas da década de 1980. Mesmo não
+                    tendo vivido aquela época, reconheceram, por meio de fotos de seus pais e conteúdos
+                    pesquisados, o espírito marcante daquele período, além do estilo das lanchonetes retrô
+                    vibrantes que faziam sucesso na época.
 
-                        <img class="img-grupo" src="../../img/sobre.png">
+                    Ao compartilharem essa descoberta com os demais integrantes do grupo — Gabriele, Geovanna,
+                    Lailla e Marcos — surgiu o seguinte questionamento:
 
-                    </div>
-                  <div class="row">
+                    “E se criássemos um espaço onde as pessoas pudessem reviver o passado, mesmo estando no
+                    presente?”
+                    A partir dessa reflexão nasceu a ideia da Disco Burguer, uma hamburgueria temática inspirada
+                    nos anos 80, que une música, nostalgia e gastronomia em uma experiência diferenciada.
 
-                    <div class="col-12 final-texto">
+                    O nome “Disco” foi escolhido por representar os discos de vinil, um dos maiores símbolos
+                    culturais da década de 1980. Mais do que um objeto musical, o disco simboliza conexão,
+                    memória afetiva, celebração e a cultura das discotecas, que marcaram a época com dança,
+                    expressão
 
-                            e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
-                            presente em um ambiente dinâmico e envolvente.
+                    e convivência social. Assim, o termo reforça a proposta da marca de unir passado e
+                    presente em um ambiente dinâmico e envolvente.
 
-                            A proposta da empresa é oferecer mais do que hambúrgueres: proporcionar uma verdadeira
-                            viagem ao passado, em um ambiente onde as novas gerações possam vivenciar a atmosfera que
-                            marcou a juventude de seus pais, agora reinterpretada de forma moderna e atualizada.
-                            A Disco Burguer nasce com o propósito de transformar refeições em experiências, estimulando
-                            a interação social, a memória afetiva e o entretenimento.
-                    </div> 
-                    </div>
-                    </div>
-                </div>
+                    A proposta da empresa é oferecer mais do que hambúrgueres: proporcionar uma verdadeira
+                    viagem ao passado, em um ambiente onde as novas gerações possam vivenciar a atmosfera que
+                    marcou a juventude de seus pais, agora reinterpretada de forma moderna e atualizada.
+                    A Disco Burguer nasce com o propósito de transformar refeições em experiências, estimulando
+                    interação social, a memória afetiva e o entretenimento.
+                    </h3>
+             </div>
+
+             <div class="col-6 img-grupo">
+                
+              <img class="" src="../../img/sobre.png">
+
+
+             </div>
+             
+
+            </div>
+             </div>
+
+
+           
+
+
+              
+
+
+
+           
+    
+
 
         </section>
 
 
-    </main>
+ 
+
+</main>
 
 
 
 
-    <footer>
+<footer>
     <?php
     include __DIR__ . "/../../footer.php";
     ?>
-    </footer>
+</footer>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
 </body>
 
 </html>

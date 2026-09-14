@@ -1,14 +1,8 @@
-*{
-    padding: 0px;
-    margin: 0px;
-}
-body{
-   
-   
-}
+
+
 .feedback{
     padding-top: 10vh;
-    background-image: url(../../img/teste.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -39,11 +33,10 @@ body{
         0 0 8px rgba(255, 215, 107, 0.8),
         0 0 24px rgba(255, 138, 61, 0.6),
         0 0 48px rgba(255, 138, 61, 0.35);
-
-
 }
+
 .card-feedback{
-display: flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     background: rgba(30, 8, 45, 0.85);
@@ -51,7 +44,8 @@ display: flex;
     border-radius: 24px;
     padding: 50px;
     margin-top:40px;
-width: 700px;
+    width: 700px;
+
 }
 .feedback-label{
 

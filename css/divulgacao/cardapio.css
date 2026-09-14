@@ -66,15 +66,38 @@ main {
   margin: 20px auto;
   box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
   transition: all 1.8s ease;
+  margin-bottom: 5vh;
 }
 
 
 .menu-categorias.fixo {
   position: fixed;
-  top:85%;
+  top:70%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
+}
+
+.img-categorias{
+
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+}
+
+.menu-categorias img{
+
+  width: 100px;
+  height: 90px;
+}
+
+.img-titulo-section{
+
+  margin-top: 15px;
+  width: 80px;
+  height: 80px;
 }
 
 
