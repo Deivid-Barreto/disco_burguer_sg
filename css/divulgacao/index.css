@@ -21,7 +21,7 @@
     
   padding-bottom: 20px;
   font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-size: clamp(1.8rem, 8vw, 5rem);
   font-weight: 700;
   text-transform: uppercase;
   line-height: 0.95;
@@ -79,8 +79,8 @@
 
 
 .img-burger-hero{
-    width: clamp(140px, 40vw, 400px);
-    height: clamp(90px, 20vw, 220px);
+    width: clamp(120px, 40vw, 400px);
+    height: clamp(80px, 20vw, 220px);
 }
 
 
@@ -118,48 +118,52 @@ background-size: 100% 100%;
     0 0 20px #ff8800;
 }
 
-.cards-container{
+.cards-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  flex-wrap: wrap;
-  padding-bottom: clamp(15px, 3vh, 30px);
-  gap: clamp(20px, 5vh, 10vh);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: clamp(5px, 2vw, 20px);
+  padding: clamp(10px, 2vh, 20px) clamp(10px, 2vw, 15px);
+  width: 100%;
 }
 
-.card{
+.card {
   display: flex;
-  text-align: center;
   flex-direction: column;
   align-items: center;
+  flex: 0 0 auto;
   background-color: transparent;
   border-radius: 8px;
-  padding: clamp(10px, 2vw, 20px);
-  width: clamp(280px, 90vw, 500px); 
-  min-height: clamp(500px, 70vh, 700px);
-  margin-bottom: clamp(10px, 2vh, 20px);
+  padding: clamp(12px, 2vw, 20px);
+  width: clamp(50px, 75vw, 380px);
+  min-height: clamp(100px, 60vh, 520px);
   text-align: center;
 }
 
-.card h2{
- font-size: clamp(2rem, 5vw, 70px);
- display: flex;
- white-space: nowrap;
+.card h2 {
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  display: flex;
+  white-space: nowrap;
+  margin-bottom: clamp(10px, 2vh, 15px);
 }
 
 .card img {
   max-width: 100%;
-  height: clamp(200px, 30vw, 400px);
+  height: clamp(120px, 25vw, 260px);
+
+  object-fit: contain;
   margin: 0 auto clamp(10px, 2vh, 15px) auto;
 }
 
-.card-rosa{
+.card-rosa {
   background-color: rgba(255, 0, 255, 0.12);
   border: 3px solid #ff00ff;
   box-shadow: 0 0 15px #ff00ff, inset 0 0 15px rgba(255, 0, 255, 0.3);
 }
 
-.card-rosa h2{
+.card-rosa h2 {
   color: #ff00ff;
   text-shadow: 0 0 8px #ff00ff;
 }
@@ -170,38 +174,38 @@ background-size: 100% 100%;
   box-shadow: 0 0 15px #00d4ff, inset 0 0 15px rgba(0, 212, 255, 0.3);
 }
 
-.card-azul h2{
-color: #00d4ff;
-text-shadow: 0 0 8px #00d4ff;
+.card-azul h2 {
+  color: #00d4ff;
+  text-shadow: 0 0 8px #00d4ff;
 }
 
-.card-amarelo{
-background-color: rgba(255, 170, 0, 0.12);
-border: 3px solid #ffaa00;
-box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
+.card-amarelo {
+  background-color: rgba(255, 170, 0, 0.12);
+  border: 3px solid #ffaa00;
+  box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
 }
 
-.card-amarelo h2{
-color: #ffaa00;
+.card-amarelo h2 {
+  color: #ffaa00;
   text-shadow: 0 0 8px #ffaa00;
 }
 
-.card h3{
-text-align: center;
-font-size: clamp(1.2rem, 3vw, 30px);
-color: white;
+.card h3 {
+  text-align: center;
+  font-size: clamp(0.9rem, 2.2vw, 1.2rem);
+  color: white;
 }
 
-.card button{
+.card button {
   border-color: #ff00ff;
   box-shadow: 0 0 10px #ff00ff;
-  margin-top: clamp(1.5vh, 3vh, 3vh);
+  margin-top: 0;
   background-color: rgba(255, 0, 255, 0.12);
   color: #fff;
   border: 2px solid #fff;
-  padding: clamp(10px, 1.5vw, 15px) clamp(20px, 4vw, 40px);
+  padding: clamp(6px, 1vh, 10px) clamp(14px, 2.5vw, 24px);
   font-weight: bold;
-  font-size: clamp(1rem, 2.5vw, 25px);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
   cursor: pointer;
   text-transform: uppercase;
   transition: all 0.3s ease;
