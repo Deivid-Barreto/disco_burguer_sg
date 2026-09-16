@@ -216,7 +216,7 @@ $sobremesas = [
           <span class="linha-neon"></span>
           </div>
           <?php foreach ($hamburgueres as $lanche): ?>
-            <div class="row m-0 itens-cardapio">
+            <div class="row  itens-cardapio">
 
               <div class="col-2 m-0">
                 <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>">
@@ -248,7 +248,7 @@ $sobremesas = [
           </div>
 
         <?php foreach ($combos as $combo): ?>
-          <div class="row m-0 itens-cardapio">
+          <div class="row itens-cardapio">
 
             <div class="col-2 m-0">
               <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>">
@@ -281,7 +281,7 @@ $sobremesas = [
         </div>
 
         <?php foreach ($shakes as $shake): ?>
-          <div class="row m-0 itens-cardapio">
+          <div class="row itens-cardapio">
 
             <div class="col-2 m-0">
               <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>">
@@ -315,7 +315,7 @@ $sobremesas = [
         </div>
 
         <?php foreach ($porções as $porção): ?>
-          <div class="row m-0 itens-cardapio">
+          <div class="row  itens-cardapio">
 
             <div class="col-2 m-0">
               <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>">
@@ -349,7 +349,7 @@ $sobremesas = [
       </div>
 
         <?php foreach ($sobremesas as $sobremesa): ?>
-          <div class="row m-0 itens-cardapio">
+          <div class="row itens-cardapio">
 
             <div class="col-2 m-0">
               <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>">
