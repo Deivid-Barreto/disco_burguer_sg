@@ -120,6 +120,7 @@ main {
 
 .btn-categoria:hover {
   color: white;
+  transform: scale(1.1)
 }
 
  

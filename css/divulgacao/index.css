@@ -1,53 +1,52 @@
-.hero {
+/* =========================================
+   SEÇÃO HERO
+   ========================================= */
+   .hero {
     background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     width: 100%;
-    /* Reduzimos o valor mínimo para 350px e o ideal para 80vh */
     min-height: clamp(350px, 80vh, 750px); 
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 20px 0; /* Adiciona um respiro seguro nas pontas */
+    padding: 20px 0;
 }
 
 .titulo-hero {
-  /* Diminuímos um pouco o padding inferior para encolhar o bloco */
-  padding-bottom: 10px;
-  font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2rem, 7vw, 4rem); /* Título um pouco mais compacto */
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.90;
-  letter-spacing: 2px;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
+    padding-bottom: 10px;
+    font-family: 'Oswald', 'Anton', sans-serif;
+    font-size: clamp(2rem, 7vw, 4rem); 
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.90;
+    letter-spacing: 2px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
-
-
 .neon-disco {
-  color: #ffbdf2; 
-  text-shadow:
-    0 0 5px #ff66d4,
-    0 0 10px #ff66d4,
-    0 0 20px #ff00ab,
-    0 0 40px #ff00ab,
-    0 0 80px #d80093;
+    color: #ffbdf2; 
+    text-shadow:
+        0 0 5px #ff66d4,
+        0 0 10px #ff66d4,
+        0 0 20px #ff00ab,
+        0 0 40px #ff00ab,
+        0 0 80px #d80093;
 }
 
 .neon-burguer {
-  color: #cceeff; 
-  text-shadow:
-    0 0 5px #00d2ff,
-    0 0 10px #00d2ff,
-    0 0 20px #00aaff,
-    0 0 40px #0088ff,
-    0 0 80px #0055ff;
+    color: #cceeff; 
+    text-shadow:
+        0 0 5px #00d2ff,
+        0 0 10px #00d2ff,
+        0 0 20px #00aaff,
+        0 0 40px #0088ff,
+        0 0 80px #0055ff;
 }
 
 .button-hero {
@@ -58,7 +57,7 @@
     height: 50px;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease; /* Transição suave */
     box-shadow:
         0 0 5px #a020f0,
         0 0 15px #a020f0,
@@ -72,16 +71,17 @@
         0 0 10px #d946ef,
         0 0 25px #d946ef,
         0 0 50px #d946ef;
+    transform: scale(1.1); /* Efeito de crescer */
 }
 
 .img-burger-hero{
-    /* Reduzimos o tamanho máximo e mínimo da imagem do hero */
     width: clamp(100px, 30vw, 300px);
     height: clamp(70px, 15vw, 160px);
 }
 
-
-/*Mais pedidos*/
+/* =========================================
+   SEÇÃO MAIS PEDIDOS
+   ========================================= */
 .divisoria-neon {
     height: 100px;
     background-color: white;
@@ -106,125 +106,143 @@
 }
 
 .titulo-mp {
-  color: #faf8f5;
-  font-family: 'Impact', sans-serif;
-  font-size: clamp(2rem, 5vw, 4.5rem);
-  letter-spacing: clamp(1px, 0.3vw, 2px);
-  text-transform: uppercase;
-  text-shadow: 
-    0 0 5px #ffaa00,
-    0 0 10px #ffaa00,
-    0 0 20px #ff8800;
-  margin-bottom: 4vh;
+    color: #faf8f5;
+    font-family: 'Impact', sans-serif;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    letter-spacing: clamp(1px, 0.3vw, 2px);
+    text-transform: uppercase;
+    text-shadow: 
+        0 0 5px #ffaa00,
+        0 0 10px #ffaa00,
+        0 0 20px #ff8800;
+    margin-bottom: 4vh;
 }
 
 .cards-container {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  flex-wrap: nowrap; 
-  width: 100%;
-  max-width: 1200px; /* Permite o container expandir mais em telas grandes */
-  margin: 0 auto !important; 
-  padding: 0;
-  gap: clamp(8px, 2vw, 25px); /* O espaço entre os cards cresce suavemente */
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: nowrap; 
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto !important; 
+    padding: 0;
+    gap: clamp(8px, 2vw, 25px); 
 }
 
+/* Base do Card */
 .card {
-  display: flex;
-  text-align: center;
-  flex-direction: column;
-  align-items: center;
-  background-color: transparent;
-  border-radius: 8px;
-  padding: clamp(12px, 2vw, 28px); /* Padding maior e mais confortável no PC */
-  
-  flex: 1; 
-  min-width: 90px;
-  /* O pulo do gato: o max-width agora usa clamp para crescer até 380px no PC! */
-  max-width: clamp(100px, 30vw, 380px); 
-  
-  /* Altura mínima cresce fluidamente de 240px no celular até 500px no PC */
-  min-height: clamp(240px, 42vw, 500px); 
-  margin-bottom: 0;
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: transparent;
+    border-radius: 8px;
+    padding: clamp(12px, 2vw, 28px); 
+    flex: 1; 
+    min-width: 90px;
+    max-width: clamp(100px, 30vw, 380px); 
+    min-height: clamp(240px, 42vw, 500px); 
+    margin-bottom: 0;
+    transition: all 0.3s ease; /* Prepara o card para a animação */
+}
+
+/* Efeito Hover no Card (Flutua e Cresce) */
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    z-index: 10;
 }
 
 .card h2 {
-  /* Fonte do título cresce fluidamente até 2rem no PC */
-  font-size: clamp(0.7rem, 2.2vw, 2rem);
-  display: flex;
-  white-space: nowrap;
-  margin-bottom: clamp(6px, 1.5vw, 15px);
-}
-
-.card img {
-  width: 100%;
-  max-width: 100%;
-  /* Imagem cresce de 75px no celular até 220px no PC */
-  height: clamp(75px, 16vw, 220px);
-  object-fit: contain;
-  margin: 0 auto clamp(6px, 1.5vw, 15px) auto;
-  transition: transform 0.3s ease;
-}
-
-.card:hover img {
-  transform: scale(1.08);
-}
-
-/* Cores e Neons */
-.card-rosa {
-  background-color: rgba(255, 0, 255, 0.12);
-  border: 2px solid #ff00ff;
-  box-shadow: 0 0 10px #ff00ff, inset 0 0 10px rgba(255, 0, 255, 0.3);
-}
-
-.card-rosa h2 {
-  color: #ff00ff;
-  text-shadow: 0 0 6px #ff00ff;
-}
-
-.card-azul {
-  background-color: rgba(0, 212, 255, 0.12);
-  border: 2px solid #00d4ff;
-  box-shadow: 0 0 10px #00d4ff, inset 0 0 10px rgba(0, 212, 255, 0.3);
-}
-
-.card-azul h2 {
-  color: #00d4ff;
-  text-shadow: 0 0 6px #00d4ff;
-}
-
-.card-amarelo {
-  background-color: rgba(255, 170, 0, 0.12);
-  border: 2px solid #ffaa00;
-  box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
-}
-
-.card-amarelo h2 {
-  color: #ffaa00;
-  text-shadow: 0 0 6px #ffaa00;
+    font-size: clamp(0.7rem, 2.2vw, 2rem);
+    display: flex;
+    white-space: nowrap;
+    margin-bottom: clamp(6px, 1.5vw, 15px);
 }
 
 .card h3 {
-  text-align: center;
-  /* Texto descritivo cresce de 0.55rem até 1.2rem */
-  font-size: clamp(0.55rem, 1.4vw, 1.2rem);
-  color: white;
-  line-height: 1.2;
-  margin-bottom: clamp(8px, 2vw, 20px);
+    text-align: center;
+    font-size: clamp(0.55rem, 1.4vw, 1.2rem);
+    color: white;
+    line-height: 1.2;
+    margin-bottom: clamp(8px, 2vw, 20px);
 }
 
+/* Imagem dentro do card */
+.card img {
+    width: 100%;
+    max-width: 100%;
+    height: clamp(75px, 16vw, 220px);
+    object-fit: contain;
+    margin: 0 auto clamp(6px, 1.5vw, 15px) auto;
+    transition: transform 0.3s ease;
+}
+
+.card:hover img {
+    transform: scale(1.08); /* Imagem cresce ao passar o mouse no card */
+}
+
+/* Cores específicas dos cards e seus efeitos de brilho ao passar o mouse */
+.card-rosa {
+    background-color: rgba(255, 0, 255, 0.12);
+    border: 2px solid #ff00ff;
+    box-shadow: 0 0 10px #ff00ff, inset 0 0 10px rgba(255, 0, 255, 0.3);
+}
+.card-rosa:hover {
+    box-shadow: 0 0 25px #ff00ff, inset 0 0 15px rgba(255, 0, 255, 0.5);
+    background-color: rgba(255, 0, 255, 0.2);
+}
+.card-rosa h2 {
+    color: #ff00ff;
+    text-shadow: 0 0 6px #ff00ff;
+}
+
+.card-azul {
+    background-color: rgba(0, 212, 255, 0.12);
+    border: 2px solid #00d4ff;
+    box-shadow: 0 0 10px #00d4ff, inset 0 0 10px rgba(0, 212, 255, 0.3);
+}
+.card-azul:hover {
+    box-shadow: 0 0 25px #00d4ff, inset 0 0 15px rgba(0, 212, 255, 0.5);
+    background-color: rgba(0, 212, 255, 0.2);
+}
+.card-azul h2 {
+    color: #00d4ff;
+    text-shadow: 0 0 6px #00d4ff;
+}
+
+.card-amarelo {
+    background-color: rgba(255, 170, 0, 0.12);
+    border: 2px solid #ffaa00;
+    box-shadow: 0 0 15px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.3);
+}
+.card-amarelo:hover {
+    box-shadow: 0 0 25px #ffaa00, inset 0 0 15px rgba(255, 170, 0, 0.5);
+    background-color: rgba(255, 170, 0, 0.2);
+}
+.card-amarelo h2 {
+    color: #ffaa00;
+    text-shadow: 0 0 6px #ffaa00;
+}
+
+/* Botão dentro do card */
 .card button {
-  margin-top: auto;
-  background-color: rgba(255, 0, 255, 0.12);
-  color: #fff;
-  border: 2px solid #ff00ff;
-  box-shadow: 0 0 8px #ff00ff;
-  padding: clamp(6px, 1vw, 12px) clamp(12px, 2vw, 26px);
-  font-weight: bold;
-  /* Botão cresce de 0.6rem até 1.05rem no PC */
-  font-size: clamp(0.6rem, 1.2vw, 1.05rem);
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.3s ease;
+    margin-top: auto;
+    background-color: rgba(255, 0, 255, 0.12);
+    color: #fff;
+    border: 2px solid #ff00ff;
+    box-shadow: 0 0 8px #ff00ff;
+    padding: clamp(6px, 1vw, 12px) clamp(12px, 2vw, 26px);
+    font-weight: bold;
+    font-size: clamp(0.6rem, 1.2vw, 1.05rem);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+}
+
+.card button:hover {
+    transform: scale(1.1);
+    background-color: #ff00ff; 
+    color: white; 
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff;
 }

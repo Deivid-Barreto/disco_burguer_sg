@@ -1,22 +1,19 @@
-header{
+header {
     background-color: rgba(0, 0, 0, 0.7);
     padding: 5px;
     width: 100%;
     position: fixed;
     z-index: 100;
-    
-    
 }
 
 .nav-item a {
-  position: relative;
+    position: relative;
     color: white;
     text-decoration: none;
     transition: color 0.3s ease;
-
 }
 
-.nav-item a::after{
+.nav-item a::after {
     content: '';
     position: absolute;
     width: 0;
@@ -36,69 +33,66 @@ header{
 
 .nav-item a:hover,
 .nav-item a:focus,
-.nav-item a:active,
 .nav-item a:active {
     transition: 0.3s;
     color: #FFC107;
-    
 }
 
-.dropdown-menu a{
-
+.dropdown-menu a {
     color: black;
 }
 
-.button_header button
-
-{
+/* =========================================
+   BOTÃO DO HEADER (Com efeitos Hover)
+   ========================================= */
+.button_header button {
     font-weight: 600;
     color: white;
-   width: clamp(80px, 22vw, 100px);
+    width: clamp(80px, 22vw, 100px);
     height: 40px;
     display: block;
     font-size: clamp(0.7rem, 3.2vw, 0.95rem);
     border-radius: 12px;
     background: linear-gradient(90deg, #E5A823 0%, #E68A00 50%, #D96B00 100%);
-
+    
+    /* Prepara para a animação */
+    transition: all 0.3s ease; 
+    cursor: pointer;
+    border: 2px solid transparent;
 }
 
-.icone_header img{
+.button_header button:hover {
+    background: white; /* Sobrescreve o gradiente para branco sólido */
+    color: black;      /* Texto preto */
+    transform: scale(1.05); /* Cresce levemente */
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* Brilho branco */
+}
 
-    margin:0;
+/* =========================================
+   ÍCONES E TOGGLER MOBILE
+   ========================================= */
+.icone_header img {
+    margin: 0;
     width: clamp(100px, 14vw, 150px);
     height: auto;
-   
 }
-
 
 .icone-fechar {
     display: none;
-    
 }
-
-
 
 .navbar-toggler[aria-expanded="true"] .icone-menu {
     display: none;
-
-    
 }
 
 .navbar-toggler[aria-expanded="true"] .icone-fechar {
     display: inline;
-    
-   
 }
 
-.navbar-toggler span{
-
+.navbar-toggler span {
     color: white;
-
-    
 }
 
-.navbar-toggler{
-
+.navbar-toggler {
     border-color: white;
 }
-
