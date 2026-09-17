@@ -8,7 +8,7 @@
     background-repeat: no-repeat;
     background-attachment: fixed;
     width: 100%;
-    min-height: clamp(350px, 80vh, 750px); 
+    min-height: clamp(250px, 100vh, 1100px); 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,8 +16,10 @@
     padding: 20px 0;
 }
 
+
+
 .titulo-hero {
-    padding-bottom: 10px;
+
     font-family: 'Oswald', 'Anton', sans-serif;
     font-size: clamp(2rem, 7vw, 4rem); 
     font-weight: 700;
@@ -25,8 +27,7 @@
     line-height: 0.90;
     letter-spacing: 2px;
     margin: 0;
-    display: flex;
-    flex-direction: column;
+    
 }
 
 .neon-disco {
@@ -100,7 +101,7 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: clamp(450px, 85vh, 1100px);
+    min-height: clamp(300px, 90vh, 1300px);
     padding: 40px 15px;
     box-sizing: border-box;
 }
@@ -172,8 +173,8 @@
 .card img {
     width: 100%;
     max-width: 100%;
-    height: clamp(75px, 16vw, 220px);
-    object-fit: contain;
+    height: clamp(75px, 16vw, 300px);
+   
     margin: 0 auto clamp(6px, 1.5vw, 15px) auto;
     transition: transform 0.3s ease;
 }

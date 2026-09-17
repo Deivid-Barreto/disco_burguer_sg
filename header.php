@@ -17,7 +17,7 @@
 
 
     <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid p-0 align-items-center">
+      <div class="container-fluid ps-5 pe-5 align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
           <img src="../../img/icone-disco-burguer.png" alt="Logo">
