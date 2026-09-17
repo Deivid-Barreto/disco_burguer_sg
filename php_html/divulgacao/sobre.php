@@ -32,7 +32,7 @@
 
                         <h1>
                             <span class="">Quem</span>
-                            <span class="">Somos</span>
+                            <span class="somos">Somos</span>
                         </h1>
 
 

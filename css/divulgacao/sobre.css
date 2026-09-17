@@ -1,18 +1,15 @@
-
-    
-
-    
-
-
-.sobre-nos{
-    background-color: black;
+@import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
+/* =========================================
+   SEÇÃO SOBRE NÓS
+   ========================================= */
+   .sobre-nos {
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
+    background-attachment: fixed;
     width: 100%;
-    min-height: 1300px;
-    align-items: center;
+    min-height: 800px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -20,111 +17,144 @@
     color: white;
 }
     
-.titulo-sobre{
-display: flex;
-justify-content: center;
-flex-direction: column;
-align-items : center;
-color: white;
-
-    
+.titulo-sobre {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    align-items: start;
 }
 
-
-.titulo-sobre h1{
-
-  font-family: 'Oswald', 'Anton', sans-serif;
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 1;
-  letter-spacing: 2px;
-  margin-bottom: 5px;
-  display: flex;
-  flex-direction: column;
-  text-align:start;
- 
-
+.titulo-sobre h1 {
+    font-family: 'Oswald', 'Anton', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    /* Adicionado efeito Neon rosa no título */
+    text-shadow: 0 0 10px rgba(255, 0, 179, 0.6), 0 0 20px #ff00b3;
+    transition: all 0.3s ease;
 }
 
-.titulo-sobre h2{
-    
-color: white;
-text-align: center;
-  
+.titulo-sobre h1:hover {
+    transform: scale(1.02); /* Cresce levemente */
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px #ff00b3;
 }
 
+.titulo-sobre h2 {
+    color: white;
+    text-align:left;
+    transition: all 0.3s ease;
+}
+.somos {
+    padding-left: 20px;
+    font-family: 'Yellowtail', cursive;
+}
 
-.bola{
-
+/* =========================================
+   BOLA DE DISCO
+   ========================================= */
+.bola {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.bola img{
-
+.bola img {
     width: 500px;
     height: 500px;
-
-
+    object-fit: contain;
+    /* Transição suave para o hover */
+    transition: all 0.5s ease-in-out;
+    filter: drop-shadow(0 0 15px rgba(255, 0, 179, 0.3)); /* Brilho leve por padrão */
 }
 
-/*PARTE DO TEXTO*/
+.bola img:hover {
+    transform: scale(1.05) translateY(-10px); /* Dá um zoom e flutua para cima */
+    filter: drop-shadow(0 0 30px rgba(255, 0, 179, 0.8)); /* Brilho neon intenso */
+}
 
-.texto-sobre{
-background-image: url(../../img/fundo_inicio.png);
+/* =========================================
+   PARTE DO TEXTO & CARD "NOSSA MISSÃO"
+   ========================================= */
+.texto-sobre {
+    background-color: black;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-     background-attachment: fixed;
+    background-attachment: fixed;
     width: 100%;
     min-height: 900px;
-  display: flex;
-  align-items:center;
-  justify-content: center;
-
-  
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.texto{
-
-    font-size: 20px;
+.texto {
+    font-size: 17.5px;
     color: white;
+    line-height: 1.5;
 }
 
 .titulo-missao {
-
-    font-size: 40PX;
-    color: blue;
+    font-size: 40px;
+    /* Ajustado para um tom de azul/ciano mais vivo (estilo neon) */
+    color: #00d2ff; 
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
 }
 
-.card-sobre{
+.titulo-missao:hover {
+    transform: translateX(10px); /* Desliza um pouquinho para a direita ao passar o mouse */
+    text-shadow: 0 0 15px #00d2ff, 0 0 30px #00aaff;
+}
+
+.card-sobre {
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: start;
-    margin: 20px 20vh;
+    margin: 20px 18vh;
     border: solid 2px #ff00b3;
     padding: 3vh 5vh;
-
+    /* Adicionado fundo semi-transparente, bordas arredondadas e sombra neon */
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(255, 0, 179, 0.3), inset 0 0 10px rgba(255, 0, 179, 0.1);
+    transition: all 0.4s ease;
 }
 
-.img-grupo{
+.card-sobre:hover {
+    transform: translateY(-5px); /* O card inteiro flutua suavemente */
+    box-shadow: 0 0 25px rgba(255, 0, 179, 0.6), inset 0 0 15px rgba(255, 0, 179, 0.3);
+}
 
+/* =========================================
+   IMAGEM DO GRUPO
+   ========================================= */
+.img-grupo {
     display: flex;
     align-items: center;
-    justify-content:center ;
+    justify-content: center;
 }
 
-.img-grupo img{
-
-    
-    width:700px;
-    height: 800px;
-
+.img-grupo img {
+    width: 550px;
+    height: 900px;
+    /* object-fit impede que a imagem fique achatada/esticada nas medidas fixas */
+    object-fit: cover; 
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
 }
 
-
-
-
+.img-grupo img:hover {
+    transform: scale(1.03); /* A foto dá um leve zoom interativo */
+    border-color: #ff00ea;
+    box-shadow: 0 0 20px rgba(255, 0, 179, 0.5); /* Acende uma luz azul atrás da foto */
+}
