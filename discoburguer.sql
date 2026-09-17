@@ -1,4 +1,4 @@
--- Active: 1789422333464@@127.0.0.1@3306
+-- Active: 1789678235952@@127.0.0.1@3306
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS `lotes_estoque` (
 
 CREATE TABLE IF NOT EXISTS `movimentacoes_estoque` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `lote_estoque_id` INT NOT NULL,
+    `lote_estoque_id` INT NULL, 
     `funcionario_id` INT NULL,
     `tipo_movimentacao` ENUM(
         'entrada',
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS `movimentacoes_estoque` (
         `tipo_movimentacao`,
         `data_movimentacao`
     ),
-    CONSTRAINT `fk_mov_lote` FOREIGN KEY (`lote_estoque_id`) REFERENCES `lotes_estoque` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_mov_lote` FOREIGN KEY (`lote_estoque_id`) REFERENCES `lotes_estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `fk_mov_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
