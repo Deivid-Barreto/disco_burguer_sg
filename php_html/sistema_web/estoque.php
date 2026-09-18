@@ -1,5 +1,8 @@
 <?php
-require_once '../../php/conexao.php'; 
+session_start();
+require_once __DIR__ . '/../../php/conexao.php'; 
+
+$funcionario_id = $_SESSION['funcionario_id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
@@ -11,19 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda]);
         $id = $pdo->lastInsertId();
         
+        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES);
+        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES);
+        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES);
+
         echo "
         <div id='estoque-{$id}'>
             <div>
                 <span id='cabecalho-estoque-{$id}'>
-                    <b>{$_POST['nome']}</b> (Cód: {$_POST['codigo']} | Min: {$_POST['estoque_minimo']}{$_POST['unidade_medida']})
+                    <b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})
                 </span>
-                <button onclick='abrirModalEditEstoque({$id}, \"{$_POST['nome']}\", \"{$_POST['codigo']}\", \"{$_POST['unidade_medida']}\", {$_POST['estoque_minimo']}, {$eh_revenda})'>EDITAR INSUMO</button>
+                <button onclick='abrirModalEditEstoque({$id}, \"{$nome_esc}\", \"{$cod_esc}\", \"{$un_esc}\", {$_POST['estoque_minimo']}, {$eh_revenda})'>EDITAR INSUMO</button>
                 <button onclick='deletarEstoque({$id})'>EXCLUIR INSUMO</button>
             </div>
             <div id='lista-lotes-{$id}'>
                 <p id='sem-lotes-{$id}'>Nenhum lote cadastrado.</p>
                 <div id='container-btn-{$id}'>
-                    <button onclick='abrirModalLote({$id}, \"{$_POST['unidade_medida']}\")'>ADICIONAR NOVO LOTE</button>
+                    <button onclick='abrirModalLote({$id}, \"{$un_esc}\")'>ADICIONAR NOVO LOTE</button>
                 </div>
             </div>
         </div>";
@@ -35,14 +42,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE estoque SET nome=?, codigo=?, unidade_medida=?, estoque_minimo=?, eh_revenda=? WHERE id=?");
         $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda, $_POST['estoque_id']]);
         
-        echo "<b>{$_POST['nome']}</b> (Cód: {$_POST['codigo']} | Min: {$_POST['estoque_minimo']}{$_POST['unidade_medida']})";
+        $nome_esc = htmlspecialchars($_POST['nome']);
+        $cod_esc = htmlspecialchars($_POST['codigo']);
+        $un_esc = htmlspecialchars($_POST['unidade_medida']);
+
+        echo "<b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})";
         exit;
     }
 
     if ($acao === 'del_estoque') {
-        $stmt = $pdo->prepare("DELETE FROM estoque WHERE id = ?");
-        $stmt->execute([$_POST['estoque_id']]);
-        echo "ok";
+        try {
+            $pdo->beginTransaction();
+            
+            $stmtDelLotes = $pdo->prepare("DELETE FROM lotes_estoque WHERE estoque_id = ?");
+            $stmtDelLotes->execute([$_POST['estoque_id']]);
+
+            $stmt = $pdo->prepare("DELETE FROM estoque WHERE id = ?");
+            $stmt->execute([$_POST['estoque_id']]);
+            
+            $pdo->commit();
+            echo "ok";
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            echo "erro_fk";
+        }
         exit;
     }
 
@@ -54,18 +77,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id_lote = $pdo->lastInsertId();
         
         $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, 'entrada', ?, ?)");
-        $stmtMov->execute([$id_lote, $_POST['funcionario_id'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
+        $stmtMov->execute([$id_lote, $funcionario_id, $_POST['quantidade'], $_POST['observacao'] ?? null]);
 
         $dataBR = date('d/m/Y', strtotime($_POST['data_validade']));
-        $un = $_POST['unidade_medida'];
+        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES);
+        $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES);
         
         echo "
         <div id='lote-{$id_lote}'>
             <div id='info-lote-{$id_lote}'>
-                Lote: <b>{$_POST['numero_lote']}</b> | Val: {$dataBR} | Qtd: {$_POST['quantidade']}{$un}
+                Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR} | Qtd: {$_POST['quantidade']}{$un}
             </div>
             <div>
-                <button onclick='abrirModalEditLote({$id_lote}, \"{$_POST['numero_lote']}\", \"{$fornecedor_id}\", \"{$_POST['data_validade']}\", {$_POST['quantidade']}, {$_POST['preco_custo']}, \"{$un}\")'>EDITAR LOTE</button>
+                <button onclick='abrirModalEditLote({$id_lote}, \"{$num_lote_esc}\", \"{$fornecedor_id}\", \"{$_POST['data_validade']}\", {$_POST['quantidade']}, {$_POST['preco_custo']}, \"{$un}\")'>EDITAR LOTE</button>
                 <button onclick='deletarLote({$id_lote})'>EXCLUIR LOTE</button>
             </div>
         </div>";
@@ -78,22 +102,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$_POST['numero_lote'], $fornecedor_id, $_POST['data_validade'], $_POST['quantidade'], $_POST['preco_custo'], $_POST['lote_id']]);
         
         $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, ?, ?)");
-        $stmtMov->execute([$_POST['lote_id'], $_POST['funcionario_id'], $_POST['tipo_movimentacao'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
+        $stmtMov->execute([$_POST['lote_id'], $funcionario_id, $_POST['tipo_movimentacao'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
 
         $dataBR = date('d/m/Y', strtotime($_POST['data_validade']));
-        $un = $_POST['unidade_medida'];
+        $un = htmlspecialchars($_POST['unidade_medida']);
+        $num_lote_esc = htmlspecialchars($_POST['numero_lote']);
         
-        echo "Lote: <b>{$_POST['numero_lote']}</b> | Val: {$dataBR} | Qtd: {$_POST['quantidade']}{$un}";
+        echo "Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR} | Qtd: {$_POST['quantidade']}{$un}";
         exit;
     }
 
     if ($acao === 'del_lote') {
-        $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, 0, ?)");
-        $stmtMov->execute([$_POST['lote_id'], $_POST['funcionario_id'], $_POST['tipo_movimentacao'], $_POST['observacao'] ?? null]);
+        try {
+            $pdo->beginTransaction();
+            
+            $stmtLote = $pdo->prepare("SELECT numero_lote FROM lotes_estoque WHERE id = ?");
+            $stmtLote->execute([$_POST['lote_id']]);
+            $numLote = $stmtLote->fetchColumn();
 
-        $stmt = $pdo->prepare("DELETE FROM lotes_estoque WHERE id = ?");
-        $stmt->execute([$_POST['lote_id']]);
-        echo "ok";
+            $obsFormulario = $_POST['observacao'] ?? '';
+            $novaObservacao = trim("Lote excluído: " . $numLote . ". " . $obsFormulario);
+
+            $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, 0, ?)");
+            $stmtMov->execute([$_POST['lote_id'], $funcionario_id, $_POST['tipo_movimentacao'], $novaObservacao]);
+
+            $stmt = $pdo->prepare("DELETE FROM lotes_estoque WHERE id = ?");
+            $stmt->execute([$_POST['lote_id']]);
+            
+            $pdo->commit();
+            echo "ok";
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            echo "erro";
+        }
         exit;
     }
 }
@@ -101,7 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $estoques = $pdo->query("SELECT * FROM estoque ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 $lotes_raw = $pdo->query("SELECT * FROM lotes_estoque ORDER BY data_validade ASC")->fetchAll(PDO::FETCH_ASSOC);
 $fornecedores = $pdo->query("SELECT id, nome_razao_social FROM fornecedores WHERE ativo = 1 ORDER BY nome_razao_social ASC")->fetchAll(PDO::FETCH_ASSOC);
-$funcionarios = $pdo->query("SELECT id, nome FROM funcionarios WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 $lotes_agrupados = [];
 foreach($lotes_raw as $l) {
@@ -219,6 +259,7 @@ foreach($lotes_raw as $l) {
                 <select name="unidade_medida" id="edit_unidade" required>
                     <option value="g">Gramas (g)</option>
                     <option value="un">Unidade (un)</option>
+                    <option value="ml">Mililitros (ml)</option>
                 </select>
             </div>
             <div>
@@ -273,15 +314,6 @@ foreach($lotes_raw as $l) {
             <hr>
             <h4>Informações da Movimentação</h4>
             <div>
-                <label>Funcionário Responsável:</label>
-                <select name="funcionario_id" required>
-                    <option value="">-- Selecione --</option>
-                    <?php foreach($funcionarios as $func): ?>
-                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
                 <label>Observação (Opcional):</label>
                 <input type="text" name="observacao" placeholder="Ex: Recebido NF 1234">
             </div>
@@ -329,15 +361,6 @@ foreach($lotes_raw as $l) {
             <hr>
             <h4>Informações da Movimentação</h4>
             <div>
-                <label>Funcionário Responsável:</label>
-                <select name="funcionario_id" required>
-                    <option value="">-- Selecione --</option>
-                    <?php foreach($funcionarios as $func): ?>
-                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div>
                 <label>Motivo da Edição:</label>
                 <select name="tipo_movimentacao" required>
                     <option value="ajuste">Ajuste (Correção manual)</option>
@@ -359,20 +382,11 @@ foreach($lotes_raw as $l) {
 
     <dialog id="modalDelLote">
         <h3>Confirmar Exclusão de Lote</h3>
-        <p>Preencha os dados da movimentação antes de excluir definitivamente.</p>
+        <p>A exclusão será registrada no histórico com as informações abaixo.</p>
         <form id="formDelLote" onsubmit="confirmarDeletarLote(event)">
             <input type="hidden" name="acao" value="del_lote">
             <input type="hidden" name="lote_id" id="del_lote_id">
             
-            <div>
-                <label>Funcionário Responsável:</label>
-                <select name="funcionario_id" required>
-                    <option value="">-- Selecione --</option>
-                    <?php foreach($funcionarios as $func): ?>
-                        <option value="<?= $func['id'] ?>"><?= htmlspecialchars($func['nome']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
             <div>
                 <label>Motivo da Exclusão:</label>
                 <select name="tipo_movimentacao" required>
@@ -484,37 +498,44 @@ foreach($lotes_raw as $l) {
             document.getElementById('modalEditLote').close();
         }
 
-        function deletarEstoque(id_estoque) {
-            document.getElementById('del_estoque_id').value = id_estoque;
+        function deletarEstoque(id) {
+            document.getElementById('del_estoque_id').value = id;
             document.getElementById('modalDelEstoque').showModal();
         }
 
         async function confirmarDeletarEstoque(e) {
             e.preventDefault();
-            let form = e.target;
-            let fd = new FormData(form);
-            let id_estoque = fd.get('estoque_id');
+            let formData = new FormData(e.target);
+            let id = formData.get('estoque_id');
+            let req = await fetch('', { method: 'POST', body: formData });
+            let resp = await req.text();
             
-            let req = await fetch('', { method: 'POST', body: fd });
-            if((await req.text()).trim() === 'ok') {
-                document.getElementById('estoque-' + id_estoque).remove();
+            if (resp.trim() === 'ok') {
+                document.getElementById('estoque-' + id).remove();
+            } else {
+                alert('Erro ao excluir. O item pode estar atrelado a outros registros além de lotes.');
             }
-            form.reset();
             document.getElementById('modalDelEstoque').close();
         }
 
-        function deletarLote(id_lote) {
-            document.getElementById('del_lote_id').value = id_lote;
+        function deletarLote(id) {
+            document.getElementById('del_lote_id').value = id;
             document.getElementById('modalDelLote').showModal();
         }
 
         async function confirmarDeletarLote(e) {
             e.preventDefault();
             let form = e.target;
-            let fd = new FormData(form);
-            let req = await fetch('', { method: 'POST', body: fd });
-            if((await req.text()).trim() === 'ok') {
-                document.getElementById('lote-' + fd.get('lote_id')).remove();
+            let formData = new FormData(form);
+            let id = formData.get('lote_id');
+            
+            let req = await fetch('', { method: 'POST', body: formData });
+            let resp = await req.text();
+            
+            if (resp.trim() === 'ok') {
+                document.getElementById('lote-' + id).remove();
+            } else {
+                alert('Erro ao excluir o lote.');
             }
             form.reset();
             document.getElementById('modalDelLote').close();
