@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
+
+/* =========================================
+   SEÇÃO SOBRE NÓS
+   ========================================= */
+.quem-somos {
+    background-image: url(../../img/fundo_quem_somos.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: clamp(250px, 100vh, 1100px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+.linha-titulo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.titulo-quem-somos h1 {
+    font-family: 'Oswald', 'Anton', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    text-shadow: 0 0 10px rgba(255, 0, 179, 0.6), 0 0 20px #ff00b3;
+    transition: all 0.3s ease;
+}
+
+.titulo-quem-somos h1:hover {
+    transform: scale(1.02); 
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px #ff00b3;
+}
+
+.titulo-quem-somos h2 {
+    color: white;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.somos {
+    padding-left: 20px;
+    font-family: 'Yellowtail', cursive;
+}
+
+/* =========================================
+   BOLA DE DISCO
+   ========================================= */
+.bola {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bola img {
+    width: clamp(250px, 50vw, 500px); 
+    height: auto; 
+    aspect-ratio: 1 / 1; 
+    object-fit: contain;
+    transition: all 0.5s ease-in-out;
+    filter: drop-shadow(0 0 15px rgba(255, 0, 179, 0.3)); 
+}
+
+.bola img:hover {
+    transform: scale(1.05) translateY(-10px); 
+    filter: drop-shadow(0 0 30px rgba(255, 0, 179, 0.8)); 
+}
+
+/* =========================================
+   PARTE DO TEXTO & CARD "NOSSA MISSÃO"
+   ========================================= */
+.texto-quem-somos {
+    background-image: url(../../img/fundo_quem_somos.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: clamp(250px, 100vh, 1100px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0; 
+}
+
+.card-quem-somos {
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; 
+    
+    width: 90%; 
+    max-width: 1500px; 
+    margin: 5vh auto 10vh auto; 
+    padding: clamp(20px, 4vw, 40px); 
+    
+    border: solid 2px #ff00b3;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(255, 0, 179, 0.3), inset 0 0 10px rgba(255, 0, 179, 0.1);
+    transition: all 0.4s ease;
+}
+
+.card-quem-somos:hover {
+    transform: translateY(-5px); 
+    box-shadow: 0 0 25px rgba(255, 0, 179, 0.6), inset 0 0 15px rgba(255, 0, 179, 0.3);
+}
+
+.container-titulo-missao {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.titulo-missao {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    color: #00d2ff; 
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.6);
+    margin: 0; 
+    white-space: nowrap;
+}
+
+.linha-azul-neon {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #00d2ff;
+    box-shadow: 0 0 8px #00d2ff, 0 0 15px #00d2ff;
+    border-radius: 2px;
+}
+
+.texto {
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    color: #e0e0e0; 
+    line-height: 1.6;
+    flex: 1; 
+}
+
+/* =========================================
+   IMAGEM DO GRUPO (Ajuste de tamanho)
+   ========================================= */
+.img-grupo {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.img-grupo img {
+    width: clamp(280px, 100%, 700px);
+    height: auto; 
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+}
+
+.img-grupo img:hover {
+    transform: scale(1.05); 
+    border-color: #00d2ff;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.5); 
+}

@@ -5,23 +5,31 @@ html {
 }
 
 main {
-  background-image: url(../../img/fundo_cardapio.png);
+  
+  
+  
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+ 
+}
+
+.secao-cardapio{
+  scroll-margin-top: 110px
+}
+
+
+#inicio-cardapio-secao{
+
+ background-image: url(../../img/fundo_cardapio.png);
   background-color: #0b021a; 
   background-attachment: fixed; 
   background-size: cover; 
   background-position: center top; 
   background-repeat: no-repeat;
   min-height: 100vh;
-  background-color: black; 
   min-height: 800px;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  padding-bottom: 30px;
-}
 
-.secao-cardapio{
-  scroll-margin-top: 110px
 }
 
 
@@ -75,7 +83,7 @@ main {
 
 .menu-categorias.fixo {
   position: fixed;
-  top:70%;
+  top:80%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
@@ -134,6 +142,13 @@ main {
 }
 
 /*ITENS CARDAPIO*/
+
+#itens-cardapio-secao{
+
+  
+  background-color: black;
+
+}
 
 .titulo-section {
   padding: 40px 0px 10px 0px;
