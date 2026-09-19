@@ -145,8 +145,15 @@ main {
 
 #itens-cardapio-secao{
 
+    background-image: url(../../img/fundo_cardapio.png);
+  background-color: #0b021a; 
+  background-attachment: fixed; 
+  background-size: cover; 
+  background-position: center top; 
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  min-height: 800px;
   
-  background-color: black;
 
 }
 

@@ -18,13 +18,12 @@
     <main>
         <div class="container-fluid p-0 ">
 
-            <!-- SEÇÃO 1: TÍTULO E GLOBO -->
             <section class="quem-somos">
                 <div class="container">
-                    <!-- align-items-center alinha globo e texto no meio -->
+               
                     <div class="row m-0 linha-titulo align-items-center">
 
-                        <!-- COLUNA DO TEXTO: Fica embaixo no celular (order-2) e na esquerda no PC (order-md-1) -->
+                  
                         <div class="col-12 col-md-6 titulo-quem-somos mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start text-center text-md-start order-2 order-md-1">
                             <h1>
                                 <span class="">Quem</span>
@@ -33,9 +32,9 @@
                             <h2>O Disco Burguer nasceu da paixão por música boa e hambúrguer de verdade. Fundado em 2024, trazemos uma experiência retro-moderna para os nossos clientes.</h2>
                         </div>
 
-                        <!-- COLUNA DO GLOBO: Fica em cima no celular (order-1) e na direita no PC (order-md-2) -->
+                    
                         <div class="col-12 col-md-6 bola mt-4 mt-md-0 order-1 order-md-2">
-                            <!-- img-fluid garante que o globo não vaze no celular -->
+                       
                             <img class="img-bola_cristal img-fluid" src="../../img/globo.png" alt="Globo de Cristal">
                         </div>
 
@@ -43,13 +42,13 @@
                 </div>
             </section>
 
-            <!-- SEÇÃO 2: TEXTO DA MISSÃO E FOTO DO GRUPO -->
+            
             <section class="texto-quem-somos">
                 <div class="card-quem-somos">
                     <!-- Adicionei w-100 para o row preencher todo o card -->
                     <div class="row w-100 m-0 align-items-stretch">
 
-                        <!-- COLUNA DO TEXTO: Fica embaixo no celular (order-2) e na esquerda no PC (order-md-1) -->
+                  
                         <div class="col-12 col-md-6 mb-5 mb-md-0 order-2 order-md-1">
 
                             <div class="container-titulo-missao justify-content-center justify-content-md-start mt-4 mt-md-0">
