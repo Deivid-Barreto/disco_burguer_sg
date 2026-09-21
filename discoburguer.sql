@@ -300,20 +300,14 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
 
 CREATE TABLE IF NOT EXISTS `feedbacks` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `pedido_id` INT NULL,
-    `clicou_para_avaliar` TINYINT(1) NOT NULL DEFAULT 0 CHECK (
-        `clicou_para_avaliar` IN (0, 1)
-    ),
-    `google_review_id` VARCHAR(128) NULL UNIQUE,
-    `nome_avaliador` VARCHAR(150) NULL,
+    `pedido_id` INT NOT NULL, -- Agora é NOT NULL, pois todo feedback vem de um pedido
     `nota` TINYINT UNSIGNED NOT NULL CHECK (`nota` BETWEEN 1 AND 5),
     `comentario` TEXT NULL,
-    `data_envio_google` DATETIME NULL,
-    `data_sincronizacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `status_moderacao` ENUM('aprovado', 'bloqueado_filtro') NOT NULL DEFAULT 'aprovado',
+    `data_feedback` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_feedback_pedido` (`pedido_id`),
-    INDEX `idx_exibicao_site` (`nota`, `data_envio_google`),
-    CONSTRAINT `fk_feedbacks_item` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    UNIQUE KEY `uk_feedback_pedido` (`pedido_id`), -- Garante apenas 1 feedback por pedido
+    CONSTRAINT `fk_feedbacks_pedido` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `fluxo_caixa` (
