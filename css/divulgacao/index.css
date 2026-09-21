@@ -245,3 +245,178 @@
     color: white; 
     box-shadow: 0 0 15px #ff00ff, 0 0 30px #ff00ff;
 }
+
+/*FEEDBACK*/
+
+.feedback {
+    background-image: url(../../img/fundo_inicio.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: clamp(250px, 100vh, 1100px); 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.titulo-feedback {
+    color: white;
+    width: 100%;
+    max-width: 700px;        /* Mesma largura exata do card */
+    margin-left: auto;
+    margin-right: auto;      /* Centraliza perfeitamente o bloco */
+    margin-bottom: 20px;     /* Espaço entre o título e o formulário */
+    text-align: center;
+}
+
+.titulo-feedback h1 {
+    font-family: 'Righteous', 'Poppins', sans-serif;
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem); /* Escala segura para não quebrar a linha */
+    letter-spacing: 2px;
+    color: white;
+    white-space: nowrap;     /* Mantém o título numa linha só */
+    text-shadow:
+        0 0 8px rgba(255, 215, 107, 0.8),
+        0 0 24px rgba(255, 138, 61, 0.6),
+        0 0 48px rgba(255, 138, 61, 0.35);
+}
+
+.card-feedback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 8, 45, 0.85);
+    border: 2px solid #ff3d9a;
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 700px;        /* Largura fixa máxima de 700px */
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 2;
+}   
+.feedback-label{
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+
+}
+.feedback-label:not(:first-child){
+
+    margin-top: 30px;
+
+}
+.feedback-label h3{
+
+    color: #ff3d9a;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    margin: 0px;
+    border-bottom: 2px solid #ff3d9a;
+    padding-bottom: 4px;
+    flex: 1;
+
+}
+.icone-label{
+
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #ff3d9a;
+    color: #ff3d9a;
+    font-size: 1.1rem;
+
+}
+.campo-comentario{
+
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: 16px;
+    color: white;
+    resize: vertical;
+    min-height: 130px;
+
+}
+.campo-comentario::placeholder{
+
+    color: rgba(255, 255, 255, 0.55);
+
+}
+.campo-comentario:focus{
+
+    outline: none;
+    border-color: #ff3d9a;
+
+}
+.avaliacao-estrelas{
+
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 12px;
+    font-size: 2.4rem;
+    margin-top: 10px;
+
+}
+.avaliacao-estrelas input{
+
+    display: none;
+
+}
+.avaliacao-estrelas label{
+
+    color: transparent;
+    -webkit-text-stroke: 1.5px #ffd93d;
+    cursor: pointer;
+
+}
+.avaliacao-estrelas label:hover,
+.avaliacao-estrelas label:hover ~ label,
+.avaliacao-estrelas input:checked ~ label{
+
+    color: #ffd93d;
+
+}
+.texto-ajuda{
+
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-top: 8px;
+
+}
+.btn-enviar-feedback{
+
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+    padding: 14px 0px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(90deg, #ff3d9a, #ff8a3d);
+
+}
+.btn-enviar-feedback:hover{
+
+    opacity: 0.9;
+
+}

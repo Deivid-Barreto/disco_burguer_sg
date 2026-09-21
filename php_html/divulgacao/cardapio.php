@@ -392,7 +392,7 @@ $sobremesas = [
 
 
 
-  <footer>
+  <footer  id="contato">
     <?php
     include __DIR__ . "/../../footer.php";
     ?>
@@ -400,6 +400,7 @@ $sobremesas = [
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../js/cardapio.js"></script>
+   <script src="../../js/scroll.js"></script>
 
 
 </body>

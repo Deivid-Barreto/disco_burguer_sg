@@ -94,7 +94,7 @@
 
   </main>
 
-  <footer>
+  <footer  id="contato">
         <?php
         include __DIR__ . "/../../footer.php";
         ?>

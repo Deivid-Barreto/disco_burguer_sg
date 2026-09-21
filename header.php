@@ -35,7 +35,7 @@
             </li>
            
             <li class="nav-item">
-              <a class="nav-link" href="../../php_html/divulgacao/feedback.php">Feedback</a>
+             <a class="nav-link" href="../../php_html/divulgacao/../../index.php#feedback">Feedback</a>
             </li>
             <li class="nav-item ">
               <a class="nav-link" href="../../php_html/divulgacao/quem_somos.php">Quem Somos</a>
@@ -44,7 +44,7 @@
               <a class="nav-link" href="../../php_html/divulgacao/local.php">Local</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="../../php_html/divulgacao/contato.php">Contato</a>
+              <a class="nav-link"href="#contato">Contato</a>
             </li>
           </ul>
         </div>
