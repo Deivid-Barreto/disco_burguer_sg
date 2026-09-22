@@ -1,137 +1,117 @@
-
-
 html {
   scroll-behavior: smooth;
 }
 
 main {
-  
-  
-  
   display: flex;
   justify-content: center;
   flex-direction: column;
- 
 }
 
-.secao-cardapio{
-  scroll-margin-top: 110px
+.secao-cardapio {
+  scroll-margin-top: 110px;
 }
 
-
-#inicio-cardapio-secao{
-
- background-image: url(../../img/fundo_cardapio.png);
+#inicio-cardapio-secao {
+  background-image: url(../../img/fundo_cardapio.png);
   background-color: #0b021a; 
   background-attachment: fixed; 
   background-size: cover; 
   background-position: center top; 
   background-repeat: no-repeat;
-  min-height: 100vh;
-  min-height: 800px;
-
+  min-height: 600px;
 }
-
 
 .inicio-cardapio h1 {
   display: flex;
   text-align: center;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
   gap: 20px;
   padding-top: 25vh;
   
-  /* Ajustes de Fonte */
-  font-family: 'Oswald', 'Impact', sans-serif; /* Tente usar uma fonte mais condensada */
-  font-size: 100px; /* Aumentei um pouquinho para compensar se a fonte for mais fina */
+  /* Ajustes de Fonte com clamp para responsividade */
+  font-family: 'Oswald', 'Impact', sans-serif;
+  font-size: clamp(3.5rem, 10vw, 100px); 
   font-weight: 900;
   font-style: italic;
   text-transform: uppercase;
-  letter-spacing: 2px; /* Diminuí o espaçamento para ficar mais parecido com o Canva */
+  letter-spacing: 2px;
 
-  /* 1. Gradiente da ESQUERDA para a DIREITA (90deg) */
+  /* Gradiente e Efeitos */
   background: linear-gradient(90deg, #ffb300 0%, #ff007f 50%, #5d00ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text; 
-
-  /* 2. Contorno um pouco mais fino para não "engolir" a cor da letra */
   -webkit-text-stroke: 1.5px #ffffff;
-
-  /* Brilho Neon */
   filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)) drop-shadow(0 0 30px rgba(255, 0, 127, 0.4));
 }
 
-
+/* Menu de categorias: Força tudo na mesma linha */
 .menu-categorias {
   display: flex;
-  justify-content: center;
+  flex-wrap: nowrap; /* Impede a quebra de linha */
+  justify-content: space-between; /* Distribui o espaço uniformemente */
   align-items: center;
-  gap: 15px;
+  gap: clamp(2px, 1vw, 10px); /* Espaço mínimo entre os botões */
   background-color: #12032b;
-  padding: 12px 25px;
-  border-radius: 50px;
-  border: 2px solid #a832a8;
-  width: fit-content;
-  margin: 20px auto;
+  padding: 8px 5px; /* Redução do padding para maximizar o espaço interno */
+  border-radius: 35px;
+  width: 98%; /* Ocupa quase toda a largura do telemóvel */
+  max-width: 800px; 
+  margin: 5vh auto;
   box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
-  transition: all 1.8s ease;
-  margin-bottom: 5vh;
 }
-
 
 .menu-categorias.fixo {
   position: fixed;
-  top:80%;
+  top: 70%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
 }
 
-.img-categorias{
-
-
+.img-categorias {
   display: flex;
   align-items: center;
   flex-direction: column;
-
 }
 
-.menu-categorias img{
-
-  width: 100px;
-  height: 90px;
+/* Ícones mais pequenos para caberem 5 na mesma linha */
+.menu-categorias img {
+  width: clamp(25px, 6vw, 100px); 
+  height: auto;
 }
 
-.img-titulo-section{
-
-  margin-top: 15px;
-  width: 80px;
-  height: 80px;
-}
-
-
-
+/* Ajuste dos botões: Quase sem espaço lateral interno e espremidos igualmente */
 .btn-categoria {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   color: #ffffff;
   text-decoration: none;
   background-color: transparent;
-  padding: 12px 25px;
+  padding: 5px 2px; /* Padding minúsculo para caberem todos */
   border-radius: 30px;
   transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1; /* Faz com que todos os botões ocupem a mesma proporção de espaço */
+}
+
+/* Texto das categorias muito mais pequeno no telemóvel */
+.btn-categoria span {
+  font-size: clamp(0.5rem, 1.8vw, 1rem); /* Fonte a 8px no telemóvel */
+  margin-top: 3px;
 }
 
 .btn-categoria:hover {
   color: white;
-  transform: scale(1.1)
+  transform: scale(1.1);
 }
 
- 
 .btn-categoria.active {
   background: linear-gradient(180deg, #ffea00 0%, #ff007f 100%);
   color: white;
@@ -141,33 +121,30 @@ main {
   transform: scale(1.05);
 }
 
-/*ITENS CARDAPIO*/
+/* ITENS CARDAPIO */
 
-#itens-cardapio-secao{
-
-    background-image: url(../../img/fundo_cardapio.png);
+#itens-cardapio-secao {
+  background-image: url(../../img/fundo_cardapio.png);
   background-color: #0b021a; 
   background-attachment: fixed; 
   background-size: cover; 
   background-position: center top; 
   background-repeat: no-repeat;
+  padding-bottom: 10vh;
   min-height: 100vh;
-  min-height: 800px;
-  
-
 }
 
+/* Diminuir os títulos das secções no telemóvel */
 .titulo-section {
   padding: 40px 0px 10px 0px;
-  color: #ff007f; /* Mudei para rosa como na imagem */
-  font-size: 3.0rem;
+  color: #ff007f;
+  font-size: clamp(1.8rem, 8vw, 3rem); 
   font-weight: bold;
   font-family: 'Oswald', 'Anton', sans-serif;
-  font-style: italic; /* Adicionado para ficar igual à referência */
+  font-style: italic;
   text-transform: uppercase;
   line-height: 0.95;
   letter-spacing: 2px;
-  /* Brilho neon ajustado para não conflitar com a cor da letra */
   text-shadow: 0 0 10px rgba(255, 0, 127, 0.6); 
 }
 
@@ -188,61 +165,58 @@ main {
 .itens-cardapio {
   padding-bottom: 10px;
   margin: 3vh 0vh;
-  background-color: #0d001a; /* Fundo levemente mais escuro para destacar o neon */
-  border: 1px solid #7b2cbf; /* Borda mais fina e com tom de roxo mais próximo ao da foto */
+  background-color: #0d001a; 
+  border: 1px solid #7b2cbf;
   border-radius: 15px;
   padding: 15px;
-  box-shadow: 0 0 15px rgba(123, 44, 191, 0.15); /* Sombra interna mais leve */
+  box-shadow: 0 0 15px rgba(123, 44, 191, 0.15); 
   align-items: center;
-  transition: all 0.3s ease; /* Transição para o card todo */
+  transition: all 0.3s ease; 
 }
 
-/* NOVO: Efeito de Hover no Card inteiro */
 .itens-cardapio:hover {
-  transform: translateY(-5px); /* Dá uma leve "flutuada" para cima */
-  box-shadow: 0 0 25px rgba(123, 44, 191, 0.5); /* Aumenta o brilho roxo */
+  transform: translateY(-5px); 
+  box-shadow: 0 0 25px rgba(123, 44, 191, 0.5); 
   border-color: #a832a8;
 }
 
 .itens-cardapio img {
   width: 100%;
-  max-width: 150px;
+  max-width: 110px; /* Reduzido para ficar mais proporcional no telemóvel */
   height: auto;
   border-radius: 10px;
-  transition: transform 0.4s ease; /* Prepara a imagem para o hover */
+  transition: transform 0.4s ease; 
 }
 
-/* NOVO: Aumenta a imagem quando o mouse passa sobre o card */
 .itens-cardapio:hover img {
   transform: scale(1.1); 
 }
 
 .text-itens-cardapio {
   display: flex;
-  align-items: start;
   flex-direction: column;
 }
 
 .itens-cardapio h2 {
   color: white;
-  font-size: 28px;
+  font-size: clamp(1.5rem, 4vw, 28px);
   font-weight: 900;
-  font-style: italic; /* Título do hambúrguer em itálico */
+  font-style: italic;
   letter-spacing: 1px;
 }
 
 .itens-cardapio h3 {
-  color: #b3b3b3; /* Um cinza mais suave para a descrição, igual ao Canva */
-  font-size: 16px;
+  color: #b3b3b3;
+  font-size: clamp(0.9rem, 2.5vw, 16px);
   font-weight: normal;
   line-height: 1.4;
 }
 
 .preco-itens-cardapio h3 {
-  color: white; /* Na sua imagem, o preço é branco */
-  font-size: 32px;
+  color: white;
+  font-size: clamp(1.5rem, 5vw, 32px);
   font-weight: 900;
-  font-style: italic; /* Preço em itálico */
+  font-style: italic; 
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
@@ -253,12 +227,12 @@ main {
 }
 
 .button-itens-cardapio {
-  background-color: #ff007f; /* Rosa sólido, sem gradiente, igual à foto */
+  background-color: #ff007f;
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 8px; /* Borda menos redonda (formato "pílula" quadrado) */
-  padding: 13px 50px;
+  border-radius: 8px; 
+  padding: clamp(10px, 2vw, 13px) clamp(20px, 5vw, 50px);
   transition: all 0.3s ease;
   cursor: pointer;
   text-transform: uppercase;
@@ -266,9 +240,8 @@ main {
   box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
 }
 
-/* NOVO: Efeito de Hover turbinado no botão */
 .button-itens-cardapio:hover {
-  transform: scale(1.1); /* Botão cresce */
-  box-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; /* Neon rosa acende */
-  background-color: #ff1a8c; /* Fica um tom de rosa ligeiramente mais claro */
+  transform: scale(1.1); 
+  box-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; 
+  background-color: #ff1a8c; 
 }

@@ -21,35 +21,30 @@ $hamburgueres = [
   ]
 ];
 
-
 $combos = [
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ]
 ];
 
@@ -59,28 +54,24 @@ $shakes = [
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ]
 ];
 
@@ -90,64 +81,54 @@ $porções = [
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ]
 ];
+
 $sobremesas = [
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ],
   [
     "nome" => "2 burgers + 1 fritas grande",
     "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
     "preco" => "R$ 60,00",
     "imagem" => "../../img/whats.jpeg"
-
   ]
 ];
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -171,238 +152,183 @@ $sobremesas = [
   </header>
 
   <main>
-
+    <!-- SEÇÃO 1: TOPO E CATEGORIAS -->
     <section id="inicio-cardapio-secao">
-    <div class="container">
-      
+      <div class="container">
+        <div class="row m-0">
+          <div class="col-12 inicio-cardapio">
+            <h1>Cardápio</h1>
 
-     
-      <div class="row m-0">
-        <div class="col-12 inicio-cardapio">
-        <h1 class="">Cardápio</h1>
+            <div class="menu-categorias">
+              <a href="#hamburguers" class="btn-categoria active img-categorias">
+                <img src="../../img/burguer.png" alt="">
+                <span class="text-center">BURGERS</span>
+              </a>
+              <a href="#combos" class="btn-categoria img-categorias">
+                <img src="../../img/combos.png" alt="">
+                <span class="text-center">COMBOS</span>
+              </a>
+              <a href="#shakes" class="btn-categoria img-categorias">
+                <img src="../../img/shakes.png" alt="">
+                <span class="text-center">SHAKES</span>
+              </a>
+              <a href="#porcoes" class="btn-categoria img-categorias">
+                <img src="../../img/porcoes.png" alt="">
+                <span class="text-center">PORÇÕES</span>
+              </a>
+              <a href="#sobremesas" class="btn-categoria img-categorias">
+                <img src="../../img/bolo.png" alt="">
+                <span class="text-center">SOBREMESAS</span>
+              </a>
+            </div>
 
-        <div class="menu-categorias">
-        <a href="#hamburguers" class="btn-categoria active img-categorias">
-        <img src="../../img/burguer.png" alt="">
-        <span class="text-center">BURGERS</span>
-    </a>
-
-    <a href="#combos" class="btn-categoria img-categorias">
-        <img src="../../img/combos.png" alt="">
-        <span class="text-center">COMBOS</span>
-    </a>
-
-    <a href="#shakes" class="btn-categoria img-categorias">
-        <img src="../../img/shakes.png" alt="">
-        <span class="text-center">SHAKES</span>
-    </a>
-
-    <a href="#porcoes" class="btn-categoria img-categorias">
-        <img src="../../img/porcoes.png" alt="">
-        <span class="text-center" >PORÇÕES</span>
-    </a>
-
-    <a href="#sobremesas" class="btn-categoria img-categorias">
-        <img src="../../img/bolo.png" alt="">
-        <span class="text-center">SOBREMESAS</span>
-    </a>
-         
           </div>
         </div>
       </div>
- </section> 
- <section id="itens-cardapio-secao">
-      <div class="container">
-       
+    </section> 
 
-       
+    <!-- SEÇÃO 2: LISTA DE ITENS DO CARDÁPIO -->
+    <section id="itens-cardapio-secao">
+      <div class="container">
+
+        <!-- BURGUERS -->
         <section id="hamburguers" class="secao-cardapio">
           <div class="linha">
-          
-          <h2 class="titulo-section">burguers</h2>
-          <span class="linha-neon"></span>
+            <h2 class="titulo-section">burguers</h2>
+            <span class="linha-neon"></span>
           </div>
           <?php foreach ($hamburgueres as $lanche): ?>
-            <div class="row  itens-cardapio">
-
-              <div class="col-2 m-0">
-                <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>">
+            <div class="row itens-cardapio align-items-center text-center text-md-start">
+              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>" class="img-fluid">
               </div>
-
-              <div class="col-6 text-itens-cardapio ">
+              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
                 <h2><?php echo htmlspecialchars($lanche['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($lanche['descricao']); ?></h3>
               </div>
-
-              <div class="col-2 preco-itens-cardapio">
-
+              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
                 <h3><?php echo htmlspecialchars($lanche['preco']); ?></h3>
               </div>
-
-              <div class="col-2 div-button-itens-cardapio ">
+              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
                 <button class="button-itens-cardapio">ola</button>
               </div>
-
             </div>
           <?php endforeach; ?>
+        </section>
 
-      </section>
-
-      <section id="combos" class="secao-cardapio">
+        <!-- COMBOS -->
+        <section id="combos" class="secao-cardapio">
           <div class="linha">
-          <h2 class="titulo-section">Combos</h2>
-          <span class="linha-neon"></span>
+            <h2 class="titulo-section">Combos</h2>
+            <span class="linha-neon"></span>
           </div>
-
-        <?php foreach ($combos as $combo): ?>
-          <div class="row itens-cardapio">
-
-            <div class="col-2 m-0">
-              <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>">
+          <?php foreach ($combos as $combo): ?>
+            <div class="row itens-cardapio align-items-center text-center text-md-start">
+              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>" class="img-fluid">
+              </div>
+              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+                <h2><?php echo htmlspecialchars($combo['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($combo['descricao']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+                <h3><?php echo htmlspecialchars($combo['preco']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+                <button class="button-itens-cardapio">ola</button>
+              </div>
             </div>
+          <?php endforeach; ?>
+        </section>
 
-            <div class="col-6 text-itens-cardapio ">
-              <h2><?php echo htmlspecialchars($combo['nome']); ?></h2>
-              <h3><?php echo htmlspecialchars($combo['descricao']); ?></h3>
-            </div>
-
-            <div class="col-2 preco-itens-cardapio">
-
-              <h3><?php echo htmlspecialchars($combo['preco']); ?></h3>
-            </div>
-
-            <div class="col-2 div-button-itens-cardapio ">
-              <button class="button-itens-cardapio">ola</button>
-            </div>
-
+        <!-- SHAKES -->
+        <section id="shakes" class="secao-cardapio">
+          <div class="linha">
+            <h2 class="titulo-section">Shakes</h2>
+            <span class="linha-neon"></span>
           </div>
-        <?php endforeach; ?>
-
-
-      </section>
-
-      <section id="shakes" class="secao-cardapio">
-        <div class="linha">
-        <h2 class="titulo-section">Shakes</h2>
-        <span class="linha-neon"></span>
-        </div>
-
-        <?php foreach ($shakes as $shake): ?>
-          <div class="row itens-cardapio">
-
-            <div class="col-2 m-0">
-              <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>">
+          <?php foreach ($shakes as $shake): ?>
+            <div class="row itens-cardapio align-items-center text-center text-md-start">
+              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>" class="img-fluid">
+              </div>
+              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+                <h2><?php echo htmlspecialchars($shake['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($shake['descricao']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+                <h3><?php echo htmlspecialchars($shake['preco']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+                <button class="button-itens-cardapio">ola</button>
+              </div>
             </div>
+          <?php endforeach; ?>
+        </section>
 
-            <div class="col-6 text-itens-cardapio ">
-              <h2><?php echo htmlspecialchars($shake['nome']); ?></h2>
-              <h3><?php echo htmlspecialchars($shake['descricao']); ?></h3>
-            </div>
-
-            <div class="col-2 preco-itens-cardapio">
-
-              <h3><?php echo htmlspecialchars($shake['preco']); ?></h3>
-            </div>
-
-            <div class="col-2 div-button-itens-cardapio ">
-              <button class="button-itens-cardapio">ola</button>
-            </div>
-
+        <!-- PORÇÕES -->
+        <section id="porcoes" class="secao-cardapio">
+          <div class="linha">
+            <h2 class="titulo-section">Porções</h2>
+            <span class="linha-neon"></span>
           </div>
-        <?php endforeach; ?>
-
-
-      </section>
-
-      <section id="porcoes" class="secao-cardapio">
-
-        <div class="linha">
-        <h2 class="titulo-section">Porções</h2>
-        <span class="linha-neon"></span>
-        </div>
-
-        <?php foreach ($porções as $porção): ?>
-          <div class="row  itens-cardapio">
-
-            <div class="col-2 m-0">
-              <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>">
+          <?php foreach ($porções as $porção): ?>
+            <div class="row itens-cardapio align-items-center text-center text-md-start">
+              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>" class="img-fluid">
+              </div>
+              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+                <h2><?php echo htmlspecialchars($porção['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($porção['descricao']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+                <h3><?php echo htmlspecialchars($porção['preco']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+                <button class="button-itens-cardapio">ola</button>
+              </div>
             </div>
+          <?php endforeach; ?>
+        </section>
 
-            <div class="col-6 text-itens-cardapio ">
-              <h2><?php echo htmlspecialchars($porção['nome']); ?></h2>
-              <h3><?php echo htmlspecialchars($porção['descricao']); ?></h3>
-            </div>
-
-            <div class="col-2 preco-itens-cardapio">
-
-              <h3><?php echo htmlspecialchars($porção['preco']); ?></h3>
-            </div>
-
-            <div class="col-2 div-button-itens-cardapio ">
-              <button class="button-itens-cardapio">ola</button>
-            </div>
-
+        <!-- SOBREMESAS -->
+        <section id="sobremesas" class="secao-cardapio">
+          <div class="linha">
+            <h2 class="titulo-section">Sobremesas</h2>
+            <span class="linha-neon"></span>
           </div>
-        <?php endforeach; ?>
+          <?php foreach ($sobremesas as $sobremesa): ?>
+            <div class="row itens-cardapio align-items-center text-center text-md-start">
+              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
+                <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>" class="img-fluid">
+              </div>
+              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+                <h2><?php echo htmlspecialchars($sobremesa['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($sobremesa['descricao']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+                <h3><?php echo htmlspecialchars($sobremesa['preco']); ?></h3>
+              </div>
+              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+                <button class="button-itens-cardapio">ola</button>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </section>
 
-
-      </section>
-
-      <section id="sobremesas" class="secao-cardapio">
-
-      <div class="linha">
-      <h2 class="titulo-section">Sobremesas</h2>
-      <span class="linha-neon"></span>
       </div>
-
-        <?php foreach ($sobremesas as $sobremesa): ?>
-          <div class="row itens-cardapio">
-
-            <div class="col-2 m-0">
-              <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>">
-            </div>
-
-            <div class="col-6 text-itens-cardapio ">
-              <h2><?php echo htmlspecialchars($sobremesa['nome']); ?></h2>
-              <h3><?php echo htmlspecialchars($sobremesa['descricao']); ?></h3>
-            </div>
-
-            <div class="col-2 preco-itens-cardapio">
-
-              <h3><?php echo htmlspecialchars($sobremesa['preco']); ?></h3>
-            </div>
-
-            <div class="col-2 div-button-itens-cardapio ">
-              <button class="button-itens-cardapio">ola</button>
-            </div>
-
-          </div>
-        <?php endforeach; ?>
-
-
-     
-      </div>
-    </div> 
     </section>
-    </section>
-  
   </main>
 
-
-
-
-
-  <footer  id="contato">
+  <footer id="contato">
     <?php
     include __DIR__ . "/../../footer.php";
     ?>
-
   </footer>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../../js/cardapio.js"></script>
-   <script src="../../js/scroll.js"></script>
-
+  <script src="../../js/scroll.js"></script>
 
 </body>
-
 </html>

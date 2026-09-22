@@ -31,11 +31,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("scroll", () => {
   const menu = document.querySelector(".menu-categorias");
-  
+  const footer = document.querySelector("footer");
 
+  if (!menu || !footer) return;
+
+  const footerRect = footer.getBoundingClientRect();
+  const windowHeight = window.innerHeight;
+
+  // Se rolou mais que 200px e o rodapé ainda está longe da tela
   if (window.scrollY > 200) {
-    menu.classList.add("fixo");
+    // Verifica se o topo do rodapé já entrou na área visível da tela (com margem de 100px)
+    if (footerRect.top <= windowHeight - 50) {
+      // Quando o rodapé estiver chegando, remove o fixed para ele parar de flutuar
+      menu.classList.remove("fixo");
+    } else {
+      // Caso contrário, mantém fixo flutuando na tela
+      menu.classList.add("fixo");
+    }
   } else {
+    // Se estiver no topo da página, remove o fixo
     menu.classList.remove("fixo");
   }
 });
