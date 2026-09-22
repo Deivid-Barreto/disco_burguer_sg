@@ -7,19 +7,17 @@
     background-attachment: fixed;
     width: 100%;
     min-height: clamp(250px, 100vh, 1100px); 
+    
     display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    align-items: center; /* Mantém tudo centralizado verticalmente */
     padding: 20px 0;
 }
-
 
 
 .titulo-hero {
 
     font-family: 'Oswald', 'Anton', sans-serif;
-    font-size: clamp(2rem, 7vw, 4rem); 
+    font-size: clamp(2rem, 7vw, 6rem); 
     font-weight: 700;
     text-transform: uppercase;
     line-height: 0.90;
@@ -49,33 +47,53 @@
 }
 
 .button-hero {
-    background: transparent;
-    color: white;
-    border: 2px solid #a020f0;
-    width: clamp(130px, 40vw, 180px);
-    height: 50px;
-    font-weight: bold;
+    /* Fundo roxo bem escuro e translúcido para dar contraste ao brilho */
+    background-color: rgba(40, 0, 40, 0.6); 
+    color: #ffffff;
+    
+    /* Borda branca sólida e mais grossa, como na imagem */
+    border: 3px solid #ffffff; 
+    
+    /* O segredo do neon: múltiplas camadas de sombra rosa (externas e uma interna) */
+    box-shadow: 
+        0 0 10px #ff00ff,
+        0 0 20px #ff00ff,
+        inset 0 0 12px #ff00ff;
+        
+    /* Ajustes de tamanho e formato para ficar bem retangular */
+    padding: clamp(10px, 1.5vw, 15px) clamp(20px, 3vw, 40px);
+    
+    /* Tipografia alinhada com o estilo do título */
+    font-family: 'Oswald', 'Anton', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.8rem);
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease; /* Transição suave */
-    box-shadow:
-        0 0 5px #a020f0,
-        0 0 15px #a020f0,
-        0 0 30px #a020f0;
+    transition: all 0.3s ease;
 }
 
 .button-hero:hover {
-    background: rgba(180, 70, 255, 0.35);
-    color: white;
-    box-shadow:
-        0 0 10px #d946ef,
-        0 0 25px #d946ef,
-        0 0 50px #d946ef;
-    transform: scale(1.1); /* Efeito de crescer */
+    transform: scale(1.05);
+    background-color: rgba(255, 0, 255, 0.4); 
+    box-shadow: 
+        0 0 15px #ff00ff, 
+        0 0 30px #ff00ff, 
+        0 0 50px #ff00ff,
+        inset 0 0 20px #ff00ff;
+    text-shadow: 0 0 8px #ffffff;
 }
 
 .img-burger-hero{
-    width: clamp(100px, 30vw, 300px);
-    height: clamp(70px, 15vw, 160px);
+    
+    width: clamp(100px, 30vw, 500px);
+    height: clamp(70px, 15vw, 600px);
+}
+
+.img-burger-hero :hover{
+ 
+transform: translateY(-8px) scale(1.02);
+z-index: 10;
 }
 
 /* =========================================
@@ -261,29 +279,39 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 40px 20px;
+    padding: 40px 15px; /* Menos padding lateral no telemóvel */
 }
 
 .titulo-feedback {
     color: white;
     width: 100%;
-    max-width: 700px;        /* Mesma largura exata do card */
+    max-width: 700px;
     margin-left: auto;
-    margin-right: auto;      /* Centraliza perfeitamente o bloco */
-    margin-bottom: 20px;     /* Espaço entre o título e o formulário */
+    margin-right: auto;
+    margin-bottom: 20px;
     text-align: center;
 }
 
 .titulo-feedback h1 {
     font-family: 'Righteous', 'Poppins', sans-serif;
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem); /* Escala segura para não quebrar a linha */
+    /* Reduzi o mínimo para 1.8rem para caber melhor no telemóvel */
+    font-size: clamp(1.8rem, 6vw, 3.8rem); 
     letter-spacing: 2px;
     color: white;
-    white-space: nowrap;     /* Mantém o título numa linha só */
+    text-transform: uppercase;
+    font-weight: 700;
+    /* Mudei de nowrap para normal. Agora o texto pode quebrar de linha se não couber! */
+    white-space: normal; 
     text-shadow:
         0 0 8px rgba(255, 215, 107, 0.8),
-        0 0 24px rgba(255, 138, 61, 0.6),
+        0 0 24px rgba(255, 138, 61, 0.6), 
         0 0 48px rgba(255, 138, 61, 0.35);
+}
+
+/* Novo: Aplicado um clamp também ao subtítulo para não ficar gigante no telemóvel */
+.titulo-feedback p {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    margin-top: 10px;
 }
 
 .card-feedback {
@@ -293,130 +321,120 @@
     background: rgba(30, 8, 45, 0.85);
     border: 2px solid #ff3d9a;
     border-radius: 24px;
-    padding: 40px;
-    width: 100%;
-    max-width: 700px;        /* Largura fixa máxima de 700px */
+    /* Padding dinâmico: 20px no telemóvel, até 40px no computador */
+    padding: clamp(20px, 5vw, 40px);
+    width: 95%; /* Adicionado para garantir uma pequena margem no telemóvel */
+    max-width: 700px;
     box-sizing: border-box;
     margin-left: auto;
     margin-right: auto;
     z-index: 2;
 }   
-.feedback-label{
 
+.feedback-label {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 12px;
-
+    width: 100%; /* ADICIONADO: Garante que as labels e a linha ocupam o espaço todo */
 }
-.feedback-label:not(:first-child){
 
+.feedback-label:not(:first-child) {
     margin-top: 30px;
-
 }
-.feedback-label h3{
 
+.feedback-label h3 {
     color: #ff3d9a;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem); /* Fonte flexível */
     text-transform: uppercase;
     margin: 0px;
     border-bottom: 2px solid #ff3d9a;
     padding-bottom: 4px;
     flex: 1;
-
 }
-.icone-label{
 
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
+.icone-label {
+    /* Ícones ligeiramente redimensionáveis */
+    width: clamp(30px, 8vw, 40px);
+    height: clamp(30px, 8vw, 40px);
+    min-width: clamp(30px, 8vw, 40px);
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     border: 2px solid #ff3d9a;
     color: #ff3d9a;
-    font-size: 1.1rem;
-
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
 }
-.campo-comentario{
 
+.campo-comentario {
     width: 100%;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 12px;
-    padding: 16px;
+    padding: clamp(12px, 3vw, 16px);
     color: white;
     resize: vertical;
     min-height: 130px;
-
 }
-.campo-comentario::placeholder{
 
+.campo-comentario::placeholder {
     color: rgba(255, 255, 255, 0.55);
-
 }
-.campo-comentario:focus{
 
+.campo-comentario:focus {
     outline: none;
     border-color: #ff3d9a;
-
 }
-.avaliacao-estrelas{
 
+.avaliacao-estrelas {
     display: flex;
     flex-direction: row-reverse;
     justify-content: center;
-    gap: 12px;
-    font-size: 2.4rem;
+    /* Estrelas também devem encolher num ecrã muito pequeno */
+    gap: clamp(5px, 2vw, 12px);
+    font-size: clamp(2rem, 8vw, 2.8rem); 
     margin-top: 10px;
-
 }
-.avaliacao-estrelas input{
 
+.avaliacao-estrelas input {
     display: none;
-
 }
-.avaliacao-estrelas label{
 
+.avaliacao-estrelas label {
     color: transparent;
     -webkit-text-stroke: 1.5px #ffd93d;
     cursor: pointer;
-
 }
+
 .avaliacao-estrelas label:hover,
 .avaliacao-estrelas label:hover ~ label,
-.avaliacao-estrelas input:checked ~ label{
-
+.avaliacao-estrelas input:checked ~ label {
     color: #ffd93d;
-
 }
-.texto-ajuda{
 
+.texto-ajuda {
     text-align: center;
     color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
     margin-top: 8px;
-
 }
-.btn-enviar-feedback{
 
+.btn-enviar-feedback {
     display: block;
     width: 100%;
     margin-top: 30px;
-    padding: 14px 0px;
+    padding: clamp(12px, 3vw, 14px) 0px;
     border: none;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: clamp(0.9rem, 3vw, 1.05rem);
     text-transform: uppercase;
     color: white;
     background: linear-gradient(90deg, #ff3d9a, #ff8a3d);
-
 }
-.btn-enviar-feedback:hover{
 
+.btn-enviar-feedback:hover {
     opacity: 0.9;
-
 }

@@ -25,33 +25,33 @@
 
   <main>
   <div class="container-fluid p-0">
-    <section class="hero align-items-center">
-  <div class="row m-0 ">
+  <section class="hero align-items-center">
+    <div class="container">
+      <!-- justify-content-center agrupa as colunas no centro do ecrã -->
+      <div class="row g-4  justify-content-center align-items-center">
+        
+        <!-- Coluna do Texto: agora com col-md-5 e alinhada à direita (md-end) para colar no centro -->
+        <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-end">
+          <div class="d-flex flex-column align-items-center align-items-md-start">
+            
+            <h1 class="titulo-hero d-flex flex-column align-items-center align-items-md-start text-start">
+              <span class="neon-disco">DISCO</span> 
+              <span class="neon-burguer">BURGUER</span>
+            </h1>
+            
+            <button class="button-hero mt-5">Ver Cardápio ></button>
+          </div>
+        </div>
     
-   
-    <div class="col-12 col-md-6 d-flex justify-content-center align-items-center">
-      <div class="d-flex flex-column align-items-center align-items-md-start">
+        <!-- Coluna da Imagem: agora com col-md-5 e alinhada à esquerda (md-start) para colar no centro -->
+        <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-start mt-5 mt-md-0 ms-md-5 ">
+          <img class="img-burger-hero img-fluid" src="" alt="Logo Disco Burguer">
+        </div> 
         
-        
-        <h1 class="titulo-hero d-flex flex-column align-items-center align-items-md-start text-start">
-          <span class="neon-disco">DISCO</span> 
-          <span class="neon-burguer">BURGUER</span>
-        </h1>
-        
-        
-        <button class="button-hero mt-3">Ver Cardápio</button>
       </div>
-
     </div>
-
-    <!-- COLUNA DA IMAGEM -->
-    <div class="col-12 col-md-6 d-flex justify-content-center mt-5 mt-md-0">
-      <img class="img-burger-hero img-fluid" src="img/Icone-disco-burguer.png" alt="Logo Disco Burguer">
-    </div> 
-    
-  </div>
-</section>
-  </div>
+  </section>
+</div>
   
 
   <div class="container-fluid p-0">
@@ -158,7 +158,7 @@
     <?php
     include __DIR__ . "../footer.php";
     ?>
-  </footer>
+  </footer> 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
