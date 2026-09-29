@@ -8,8 +8,8 @@
  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/divulgacao/index.css">
-  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="../../css/divulgacao/index.css">
+  <link rel="stylesheet" href="../../css/header.css">
   <link rel="stylesheet" href="css/footer.css">
   <link rel="shortcut icon" href="../../img/logo2.jpeg" type="image/x-icon">
   
@@ -19,7 +19,7 @@
 
   <header>
     <?php
-    include __DIR__ . "../header.php";
+    include __DIR__ . "../../../header.php";
     ?>
   </header>
 
@@ -64,21 +64,21 @@
       <div class="row m-0  cards-container">
         <div class="col-4 card card-rosa">
           <h2>X-TUDO 80</h2>
-          <img src="img/insta.png" alt="X-Tudo 80 ">
+          <img src="../../img/insta.png" alt="X-Tudo 80 ">
           <h3>Hamburguer 150g, salada, ovos...</h3>
           <button>VISUALIZAR</button>
         </div>
 
         <div class="col-4 card card-azul">
           <h2>NOSTALGIA 80</h2> 
-          <img src="img/insta.png" alt="Nostalgia 80">
+          <img src="../../img/insta.png" alt="Nostalgia 80">
           <h3>150g de hamburguer bovino...</h3>
           <button>VISUALIZAR</button>
         </div>
 
         <div class="col-4 card card-amarelo">
           <h2>CHEDDAR 80</h2>
-          <img src="img/insta.png" alt="Cheddar 80">
+          <img src="../../img/insta.png" alt="Cheddar 80">
           <h3>150g de hamburguer bovino...</h3>
           <button>VISUALIZAR</button>
           </div>
@@ -156,7 +156,7 @@
 
  <footer id="contato">
     <?php
-    include __DIR__ . "../footer.php";
+    include __DIR__ . "../../footer.php";
     ?>
   </footer> 
 
