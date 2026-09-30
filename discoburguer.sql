@@ -1,4 +1,4 @@
--- Active: 1789678235952@@127.0.0.1@3306
+-- Active: 1790768694915@@127.0.0.1@3306
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -130,20 +130,6 @@ CREATE TABLE IF NOT EXISTS `movimentacoes_estoque` (
     CONSTRAINT `fk_mov_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
-CREATE TABLE IF NOT EXISTS `alertas_estoque` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `estoque_id` INT NOT NULL,
-    `tipo_alerta` ENUM('estoque_minimo', 'validade') NOT NULL,
-    `mensagem` VARCHAR(255) NOT NULL,
-    `data_alerta` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    INDEX `idx_alertas_busca` (
-        `estoque_id`,
-        `tipo_alerta`,
-        `data_alerta`
-    ),
-    CONSTRAINT `fk_alertas_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `receitas` (
     `id` INT NOT NULL AUTO_INCREMENT,
