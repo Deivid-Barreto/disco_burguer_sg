@@ -1,4 +1,7 @@
 <?php
+
+// select bem feito da tabela de estoque
+
 require_once __DIR__ . '/../../php/conexao.php'; 
 if (isset($_GET['ajax']) && $_GET['ajax'] == 'true') {
     try {
