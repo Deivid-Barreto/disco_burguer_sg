@@ -35,7 +35,7 @@
         <a href="../../index.html">Início</a>
         <a href="cardapio.php">Cardápio</a>
         <a href="feedback.php">Feedback</a>
-        <a href="sobre.php">Quem somos</a>
+        <a href="quem_somos.php">Quem somos</a>
         <a href="local.php">Local</a>
         <a href="contato.php">Contato</a>
       </div>
