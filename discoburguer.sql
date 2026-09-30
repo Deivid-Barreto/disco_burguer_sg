@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
     `cargo` ENUM(
         'administrador',
         'atendente',
+        'operador_caixa',
         'cozinheiro'
     ) NOT NULL,
     `nome` VARCHAR(100) NOT NULL,
@@ -170,23 +171,6 @@ CREATE TABLE IF NOT EXISTS `mesas` (
     ) NOT NULL DEFAULT 'livre',
     `quantidade_lugares` INT NOT NULL DEFAULT 2 CHECK (`quantidade_lugares` > 0),
     PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
-CREATE TABLE IF NOT EXISTS `mesas_reservadas` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `mesa_id` INT NOT NULL,
-    `nome_cliente` VARCHAR(100) NOT NULL,
-    `telefone` VARCHAR(20) NOT NULL,
-    `quantidade_pessoas` INT NOT NULL DEFAULT 1 CHECK (`quantidade_pessoas` > 0),
-    `data_reserva` DATETIME NOT NULL,
-    `status_reserva` ENUM(
-        'ativa',
-        'concluida',
-        'cancelada'
-    ) NOT NULL DEFAULT 'ativa',
-    PRIMARY KEY (`id`),
-    INDEX `idx_reserva_mesa_data` (`mesa_id`, `data_reserva`),
-    CONSTRAINT `fk_reserva_id_mesa` FOREIGN KEY (`mesa_id`) REFERENCES `mesas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `pedidos` (
