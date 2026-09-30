@@ -8,8 +8,8 @@
  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <link rel="stylesheet" href="../../css/divulgacao/index.css">
-  <link rel="stylesheet" href="../../css/header.css">
+  <link rel="stylesheet" href="css/divulgacao/index.css">
+  <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/footer.css">
   <link rel="shortcut icon" href="../../img/logo2.jpeg" type="image/x-icon">
   
@@ -18,9 +18,50 @@
 <body>
 
   <header>
-    <?php
-    include __DIR__ . "../../../header.php";
-    ?>
+  <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid  align-items-center">
+
+        <a class="navbar-brand icone_header order-1" href="#">
+          <img src="../../img/icone-disco-burguer.png" alt="Logo">
+        </a>
+
+        <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">
+          <button type="button" class="">Pedir agora!</button>  
+        </div>
+
+        <button class="navbar-toggler order-3" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <span class="icone-menu">☰</span>
+          <span class="icone-fechar">✕</span>
+        </button>
+
+        <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
+            <li class="nav-item ">
+              <a class="nav-link" href="index.php">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="php_html/divulgacao/cardapio.php">Cardápio</a>
+            </li>
+           
+            <li class="nav-item">
+             <a class="nav-link" href="php_html/divulgacao/fee">Feedback</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="php_html/divulgacao/quem_somos.php">Quem Somos</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link" href="php_html/divulgacao/local.php">Local</a>
+            </li>
+            <li class="nav-item ">
+              <a class="nav-link"href="#contato">Contato</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </nav>
   </header>
 
   <main>
@@ -31,10 +72,10 @@
       <div class="row g-4  justify-content-center align-items-center">
         
         <!-- Coluna do Texto: agora com col-md-5 e alinhada à direita (md-end) para colar no centro -->
-        <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-end">
+        <div class="col-12 col-md-12 d-flex justify-content-center justify-content-md-start ">
           <div class="d-flex flex-column align-items-center align-items-md-start">
             
-            <h1 class="titulo-hero d-flex flex-column align-items-center align-items-md-start text-start">
+            <h1 class="titulo-hero d-flex flex-column align-items-center align-items-md-start text-start mt-5">
               <span class="neon-disco">DISCO</span> 
               <span class="neon-burguer">BURGUER</span>
             </h1>
@@ -43,10 +84,7 @@
           </div>
         </div>
     
-        <!-- Coluna da Imagem: agora com col-md-5 e alinhada à esquerda (md-start) para colar no centro -->
-        <div class="col-12 col-md-5 d-flex justify-content-center justify-content-md-start mt-5 mt-md-0 ms-md-5 ">
-          <img class="img-burger-hero img-fluid" src="" alt="Logo Disco Burguer">
-        </div> 
+       
         
       </div>
     </div>
@@ -64,21 +102,21 @@
       <div class="row m-0  cards-container">
         <div class="col-4 card card-rosa">
           <h2>X-TUDO 80</h2>
-          <img src="../../img/insta.png" alt="X-Tudo 80 ">
+          <img src="img/insta.png" alt="X-Tudo 80 ">
           <h3>Hamburguer 150g, salada, ovos...</h3>
           <button>VISUALIZAR</button>
         </div>
 
         <div class="col-4 card card-azul">
           <h2>NOSTALGIA 80</h2> 
-          <img src="../../img/insta.png" alt="Nostalgia 80">
+          <img src="img/insta.png" alt="Nostalgia 80">
           <h3>150g de hamburguer bovino...</h3>
           <button>VISUALIZAR</button>
         </div>
 
         <div class="col-4 card card-amarelo">
           <h2>CHEDDAR 80</h2>
-          <img src="../../img/insta.png" alt="Cheddar 80">
+          <img src="img/insta.png" alt="Cheddar 80">
           <h3>150g de hamburguer bovino...</h3>
           <button>VISUALIZAR</button>
           </div>
@@ -156,7 +194,7 @@
 
  <footer id="contato">
     <?php
-    include __DIR__ . "../../footer.php";
+    include __DIR__ . "../footer.php";
     ?>
   </footer> 
 

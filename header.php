@@ -28,7 +28,7 @@
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
             <li class="nav-item ">
-              <a class="nav-link" href="index.php">Inicio</a>
+              <a class="nav-link" href="../../index.php">Inicio</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="cardapio.php">Cardápio</a>
@@ -41,7 +41,7 @@
               <a class="nav-link" href="quem_somos.php">Quem Somos</a>
             </li>
             <li class="nav-item ">
-              <a class="nav-link" href="0local.php">Local</a>
+              <a class="nav-link" href="local.php">Local</a>
             </li>
             <li class="nav-item ">
               <a class="nav-link"href="#contato">Contato</a>
