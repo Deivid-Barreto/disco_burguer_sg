@@ -1,4 +1,4 @@
--- Active: 1790768694915@@127.0.0.1@3306
+-- Active: 1790873166906@@127.0.0.1@3306
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `fluxo_caixa` (
     `pedido_id` INT NULL,
     `categoria_id` INT NOT NULL,
     `funcionario_id` INT NOT NULL,
-    `descricao` VARCHAR(255) NOT NULL,
+    `descricao` VARCHAR(255) NULL,
     `valor` DECIMAL(10, 2) NOT NULL CHECK (valor >= 0),
     `data_movimentacao` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
