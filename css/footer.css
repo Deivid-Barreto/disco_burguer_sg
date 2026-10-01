@@ -1,12 +1,14 @@
 footer{
 
 
-    background-color: #272222;
+    
+   
+    background-color: black;
 }
 
 .row-footer{
+    padding: 8vh;
 
-    padding: 15px;
 }
 
 
