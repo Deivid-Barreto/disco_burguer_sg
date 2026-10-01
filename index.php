@@ -95,31 +95,44 @@
   <div class="container-fluid p-0">
     <section class="Mais-Pedidos">
       <div class="row m-0 align-items-center">
-        <div class="col-12">  
+        <div class="col-12">
           <h2 class="titulo-mp">OS MAIS PEDIDOS</h2>
+        </div>
       </div>
 
-      <div class="row m-0  cards-container">
-        <div class="col-4 card card-rosa">
-          <h2>X-TUDO 80</h2>
-          <img src="img/insta.png" alt="X-Tudo 80 ">
-          <h3>Hamburguer 150g, salada, ovos...</h3>
-          <button>VISUALIZAR</button>
-        </div>
+      <div class="row m-0">
+        <div class="col-12">
 
-        <div class="col-4 card card-azul">
-          <h2>NOSTALGIA 80</h2> 
-          <img src="img/insta.png" alt="Nostalgia 80">
-          <h3>150g de hamburguer bovino...</h3>
-          <button>VISUALIZAR</button>
-        </div>
+          <div class="carrossel-container">
+            <button type="button" class="seta-carrossel seta-anterior">‹</button>
 
-        <div class="col-4 card card-amarelo">
-          <h2>CHEDDAR 80</h2>
-          <img src="img/insta.png" alt="Cheddar 80">
-          <h3>150g de hamburguer bovino...</h3>
-          <button>VISUALIZAR</button>
+            <div class="carrossel-pista">
+
+              <div class="carrossel-item item-rosa item-ativo">
+                <h2>X-TUDO 80</h2>
+                <img src="img/insta.png" alt="X-Tudo 80">
+                <h3>Hamburguer 150g, salada, ovos...</h3>
+                <button type="button">VISUALIZAR</button>
+              </div>
+
+              <div class="carrossel-item item-azul">
+                <h2>NOSTALGIA 80</h2>
+                <img src="img/insta.png" alt="Nostalgia 80">
+                <h3>150g de hamburguer bovino...</h3>
+                <button type="button">VISUALIZAR</button>
+              </div>
+
+              <div class="carrossel-item item-amarelo">
+                <h2>CHEDDAR 80</h2>
+                <img src="img/insta.png" alt="Cheddar 80">
+                <h3>150g de hamburguer bovino...</h3>
+                <button type="button">VISUALIZAR</button>
+              </div>
+
+            </div>
+            <button type="button" class="seta-carrossel seta-proximo">›</button>
           </div>
+
         </div>
       </div>
     </section>
@@ -201,6 +214,43 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
+   
+      <script>
+    const itens = document.querySelectorAll(".carrossel-item");
+    const total = itens.length;
+    let indiceAtual = 0;
+
+    function atualizarCarrossel() {
+      itens.forEach(function (item, i) {
+        let distancia = i - indiceAtual;
+
+        if (distancia > total / 2) distancia -= total;
+        if (distancia < -total / 2) distancia += total;
+
+        item.classList.remove("item-ativo", "item-esquerda", "item-direita");
+
+        if (distancia === 0) item.classList.add("item-ativo");
+        else if (distancia === -1) item.classList.add("item-esquerda");
+        else if (distancia === 1) item.classList.add("item-direita");
+      });
+    }
+
+    document.querySelector(".seta-proximo").addEventListener("click", function () {
+      indiceAtual = (indiceAtual + 1) % total;
+      atualizarCarrossel();
+    });
+
+    document.querySelector(".seta-anterior").addEventListener("click", function () {
+      indiceAtual = (indiceAtual - 1 + total) % total;
+      atualizarCarrossel();
+    });
+
+    atualizarCarrossel();
+  </script>
+
+
+
+
 </body>
 
 </html>

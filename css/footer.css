@@ -1,101 +1,91 @@
-footer{
-
-
-    
-   
+footer {
     background-color: black;
+    color: #ffffff;
 }
 
-.row-footer{
+.row-footer {
     padding: 8vh;
-
 }
 
-
-
-.icone-footer{
-    
+.icone-footer {
     display: flex;
     justify-content: center;
-   
+    align-items: center;
 }
-.icone-footer img{
-
+.icone-footer img {
     width: 150px;
     height: 100px;
+    object-fit: contain;
 }
 
-.local-footer{
-  
+.local-footer {
     gap: 10px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
-.local-footer img{
-
+.local-footer img {
     width: 40px;
     height: auto;
 }
 
-.local-footer h3{
-
+.local-footer h3 {
     font-style: italic;
     color: white;
-    font-size:  20px;
+    font-size: 20px;
+    margin: 0; /* Remove margens padrão para alinhar certinho com o ícone */
 }
 
-.contato-img{
 
-    display: flex;  
-    align-items:center ;
-    justify-content: center;
-    gap: 5px;
-    
 
-}
 
-.contato-img img{
 
+
+
+
+
+.contato-img {
     width: 40px;
-    padding-bottom: 5px;
     height: auto;
 }
 
-.contato-footer h3{
 
-    font-style: italic;
-    font-size: 15px;
-    text-align: center;
-    color: gold;
+
+
+
+
+
+
+
+
+
+.bloco-institucional {
+    display: inline-block; 
+    text-align: left;      
 }
 
 
-.menu-footer{
-
-    
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-   
-}
 
 .menu-footer a{
-
     font-size: 15px;
     color: white;
     font-style: italic;
     text-decoration: none;
-    
+    width: fit-content;
+    padding-bottom: 3px;
+   
 }
 
 
+
+
+
 .checker {
-    height: 34px;
+    height: 3px;
     width: 100%;
-    background-image:
-      linear-gradient(45deg, #ff2ea6 25%, transparent 25%, transparent 75%, #ff2ea6 75%, #ff2ea6),
-      linear-gradient(45deg, #ff2ea6 25%, #2e0854 25%, #2e0854 75%, #ff2ea6 75%, #ff2ea6);
+    background-color: white;
     background-size: 34px 34px;
     background-position: 0 0, 17px 17px;
-  } 
+}
+
