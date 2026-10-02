@@ -9,7 +9,7 @@
       <!-- Logo -->
       <div class="col-12 col-md-2 icone-footer mb-4 mb-md-0">
 
-        <img src="../../img/disco-burguer-footer.png" alt="Logo Footer">
+        <img src="../../img/icone-disco-burguer.png" alt="Logo Footer">
       </div>
 
       <!-- Local -->
@@ -19,18 +19,20 @@
         <h3>Rua Fagundes N. 80<br>Liberdade - São Paulo</h3>
       </div>
 
-      <!-- Contato / Redes Sociais -->
 
     <div class="col-12 col-md-3 d-flex flex-column align-items-center align-self-start img-contato">
-    <h3>REDES SOCIAIS</h3>
-    
-    
+    <h3 class="titulos-footer">REDES SOCIAIS</h3>
+    <div class="centralizar">
+
     <div class="d-flex align-self-center align-items-center">
         <img class="contato-img" src="../../img/insta-footer.png" alt="Instagram">
         <img class="contato-img" src="../../img/email-footer.png" alt="E-mail">
         <img class="contato-img" src="../../img/whats-footer.png" alt="WhatsApp">
     </div>
-    
+
+    <h3 class="text-center link-disco">#DiscoBurguer</h3>
+
+    </div>
     
 </div>
 
@@ -38,7 +40,7 @@
     <div class="col-12 col-md-3 d-flex flex-column align-items-center">
    
     <div class="bloco-institucional">
-        <h3>INSTITUCIONAL</h3>
+        <h3  class="titulos-footer" >INSTITUCIONAL</h3>
         <div class="menu-footer d-flex flex-column align-items-start">
             <a href="../../index.html">Início</a>
             <a href="cardapio.php">Cardápio</a>

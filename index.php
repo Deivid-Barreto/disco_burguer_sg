@@ -19,7 +19,7 @@
 
   <header>
   <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid  align-items-center">
+      <div class="container-fluid ps-5  pe-5 align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
           <img src="../../img/icone-disco-burguer.png" alt="Logo">
@@ -38,23 +38,23 @@
 
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
-            <li class="nav-item ">
+            <li class="nav-item me-4 ">
               <a class="nav-link" href="index.php">Inicio</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item me-4">
               <a class="nav-link" href="php_html/divulgacao/cardapio.php">Cardápio</a>
             </li>
            
-            <li class="nav-item">
+            <li class="nav-item me-4">
              <a class="nav-link" href="php_html/divulgacao/fee">Feedback</a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item me-4">
               <a class="nav-link" href="php_html/divulgacao/quem_somos.php">Quem Somos</a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item me-4">
               <a class="nav-link" href="php_html/divulgacao/local.php">Local</a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item me-4">
               <a class="nav-link"href="#contato">Contato</a>
             </li>
           </ul>

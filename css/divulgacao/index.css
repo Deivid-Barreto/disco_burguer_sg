@@ -154,7 +154,7 @@ z-index: 10;
     height: clamp(320px, 62vw, 540px);
 }
 
-/* Base do Card (escondido atrás dos outros) */
+
 .carrossel-item {
     position: absolute;
     top: 50%;

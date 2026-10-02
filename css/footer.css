@@ -1,3 +1,6 @@
+
+
+
 footer {
     background-color: black;
     color: #ffffff;
@@ -13,9 +16,9 @@ footer {
     align-items: center;
 }
 .icone-footer img {
-    width: 150px;
-    height: 100px;
-    object-fit: contain;
+    width: 200px;
+    height: 120px;
+
 }
 
 .local-footer {
@@ -43,12 +46,24 @@ footer {
 
 
 
+ .link-disco{
+
+    padding-top: 4px;
+    font-size: 15px;
+    color: gold;
+ }
 
 
 .contato-img {
-    width: 40px;
-    height: auto;
+    width: 90px;
+    height: 90px;
 }
+
+.centralizar {
+
+    padding: 20px;
+}
+
 
 
 
@@ -65,15 +80,27 @@ footer {
     text-align: left;      
 }
 
+.titulos-footer{
+    padding-bottom: 2px;
+    color: wihte;
+    letter-spacing: clamp(1px, 0.3vw, 2px);
+    text-transform: uppercase;
+    text-shadow: 
+        0 0 5px #ffaa00,
+        0 0 10px #ffaa00,
+        0 0 20px #ff8800;
+}
 
 
 .menu-footer a{
+ 
+
     font-size: 15px;
     color: white;
-    font-style: italic;
+  
     text-decoration: none;
     width: fit-content;
-    padding-bottom: 3px;
+    padding-bottom: 10px;
    
 }
 
