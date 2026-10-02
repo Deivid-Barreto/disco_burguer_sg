@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($acao === 'adicionar_mesa') {
 
         try {
-            
 
             $numero = (int) ($_POST['numero'] ?? 0);
             $quantidade = (int) ($_POST['quantidade_lugares'] ?? 0);
@@ -70,12 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "
                 <div id='mesa-{$id}'>
                     <b>Mesa {$numero}</b>
-                    <p>
-                        Lugares: {$quantidade}
-                    </p>
-                    <p>
-                        Status: livre
-                    </p>
+                    <p>Lugares: {$quantidade}</p>
+                    <p>Status: livre</p>
+                    <button onclick=\"abrirEditarMesa({$id}, {$numero}, {$quantidade}, 'livre')\">EDITAR</button>
+                    <button onclick=\"deletarMesa({$id})\">EXCLUIR</button>
                 </div>
                 <hr>
             ";
@@ -91,199 +88,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     /* =========================
-       ADICIONAR RESERVA
+       EDITAR MESA
     ========================= */
 
-    if ($acao === 'adicionar_reserva') {
+    if ($acao === 'editar_mesa') {
 
         try {
 
-            $mesa_id = (int) ($_POST['mesa_id'] ?? 0);
-            $nome = trim($_POST['nome_cliente'] ?? '');
-            $telefone = trim($_POST['telefone'] ?? '');
-            $quantidade = (int) ($_POST['quantidade_pessoas'] ?? 0);
-            $data = trim($_POST['data_reserva'] ?? '');
+            $id = (int) ($_POST['id'] ?? 0);
+            $numero = (int) ($_POST['numero'] ?? 0);
+            $quantidade = (int) ($_POST['quantidade_lugares'] ?? 0);
+            $status = trim($_POST['status'] ?? 'livre');
 
-
-            if (
-                $mesa_id <= 0 ||
-                $nome === '' ||
-                $telefone === '' ||
-                $quantidade <= 0 ||
-                $data === ''
-            ) {
-
-                echo "Preencha todos os campos.";
+            if ($id <= 0 || $numero <= 0 || $quantidade <= 0) {
+                echo "Preencha os dados corretamente.";
                 exit;
             }
-
-
-            /* datetime-local -> DATETIME */
-
-            $data = str_replace('T', ' ', $data);
-
-
-            /* =========================
-               VERIFICAR MESA
-            ========================= */
-
-            $stmt = $pdo->prepare("
-                SELECT
-                    numero,
-                    quantidade_lugares,
-                    status
-                FROM mesas
-                WHERE id = ?
-            ");
-
-            $stmt->execute([$mesa_id]);
-
-            $mesa = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-            if (!$mesa) {
-
-                echo "Mesa não encontrada.";
-                exit;
-            }
-
-
-            /* =========================
-               VERIFICAR CAPACIDADE
-            ========================= */
-
-            if (
-                $quantidade >
-                (int) $mesa['quantidade_lugares']
-            ) {
-
-                echo "
-                    A mesa possui apenas
-                    {$mesa['quantidade_lugares']}
-                    lugares.
-                ";
-
-                exit;
-            }
-
-
-            /* =========================
-               VERIFICAR RESERVA
-            ========================= */
-
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM mesas_reservadas
-                WHERE mesa_id = ?
-                AND data_reserva = ?
-                AND status_reserva = 'ativa'
-            ");
-
-            $stmt->execute([
-                $mesa_id,
-                $data
-            ]);
-
-
-            if ($stmt->fetch()) {
-
-                echo "
-                    Essa mesa já possui
-                    uma reserva nesse horário.
-                ";
-
-                exit;
-            }
-
-
-            /* =========================
-               CADASTRAR RESERVA
-            ========================= */
-
-            $pdo->beginTransaction();
-
-            $stmt = $pdo->prepare("
-                INSERT INTO mesas_reservadas
-                (
-                    mesa_id,
-                    nome_cliente,
-                    telefone,
-                    quantidade_pessoas,
-                    data_reserva
-                )
-                VALUES (?, ?, ?, ?, ?)
-            ");
-
-            $stmt->execute([
-                $mesa_id,
-                $nome,
-                $telefone,
-                $quantidade,
-                $data
-            ]);
-
-            $id = $pdo->lastInsertId();
-
-
-            /* Marca a mesa como reservada */
 
             $stmt = $pdo->prepare("
                 UPDATE mesas
-                SET status = 'reservada'
+                SET numero = ?, quantidade_lugares = ?, status = ?
                 WHERE id = ?
             ");
 
-            $stmt->execute([$mesa_id]);
+            $stmt->execute([$numero, $quantidade, $status, $id]);
 
-            $pdo->commit();
-
-
-            $data_formatada =
-                date('d/m/Y H:i', strtotime($data));
-
-
-            echo "
-                <div id='reserva-{$id}'>
-
-                    <b>
-                        Mesa {$mesa['numero']}
-                    </b>
-
-                    <p>
-                        Cliente: " .
-                        htmlspecialchars($nome) .
-                    "</p>
-
-                    <p>
-                        Telefone: " .
-                        htmlspecialchars($telefone) .
-                    "</p>
-
-                    <p>
-                        Pessoas: {$quantidade}
-                    </p>
-
-                    <p>
-                        Data: {$data_formatada}
-                    </p>
-
-                    <p>
-                        Status: ativa
-                    </p>
-
-                </div>
-
-                <hr>
-            ";
+            echo "ok";
 
         } catch (PDOException $e) {
 
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
+            echo "Erro ao editar mesa: " . $e->getMessage();
+
+        }
+
+        exit;
+    }
+
+
+    /* =========================
+       DELETAR MESA
+    ========================= */
+
+    if ($acao === 'deletar_mesa') {
+
+        try {
+
+            $id = (int) ($_POST['id'] ?? 0);
+
+            if ($id <= 0) {
+                echo "Mesa inválida.";
+                exit;
             }
 
-            echo "Erro ao cadastrar reserva: " .
-                 $e->getMessage();
+            $stmt = $pdo->prepare("DELETE FROM mesas WHERE id = ?");
+            $stmt->execute([$id]);
+
+            echo "ok";
+
+        } catch (PDOException $e) {
+
+            echo "Erro ao excluir mesa: " . $e->getMessage();
 
         }
 
@@ -312,25 +176,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             foreach ($mesas as $mesa) {
 
+                $status_esc = htmlspecialchars($mesa['status'], ENT_QUOTES);
+
                 echo "
                     <div id='mesa-{$mesa['id']}'>
-
-                        <b>
-                            Mesa {$mesa['numero']}
-                        </b>
-
-                        <p>
-                            Lugares:
-                            {$mesa['quantidade_lugares']}
-                        </p>
-
-                        <p>
-                            Status:
-                            {$mesa['status']}
-                        </p>
-
+                        <b>Mesa {$mesa['numero']}</b>
+                        <p>Lugares: {$mesa['quantidade_lugares']}</p>
+                        <p>Status: {$status_esc}</p>
+                        <button onclick=\"abrirEditarMesa({$mesa['id']}, {$mesa['numero']}, {$mesa['quantidade_lugares']}, '{$status_esc}')\">EDITAR</button>
+                        <button onclick=\"deletarMesa({$mesa['id']})\">EXCLUIR</button>
                     </div>
-
                     <hr>
                 ";
             }
@@ -338,115 +193,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (empty($mesas)) {
 
-                echo "
-                    <p>
-                        Nenhuma mesa cadastrada.
-                    </p>
-                ";
+                echo "<p>Nenhuma mesa cadastrada.</p>";
             }
 
         } catch (PDOException $e) {
 
-            echo "Erro ao carregar mesas: " .
-                 $e->getMessage();
-
-        }
-
-        exit;
-    }
-
-
-    /* =========================
-       LISTAR RESERVAS
-    ========================= */
-
-    if ($acao === 'listar_reservas') {
-
-        try {
-
-            $reservas = $pdo->query("
-                SELECT
-                    mr.id,
-                    mr.mesa_id,
-                    m.numero AS numero_mesa,
-                    mr.nome_cliente,
-                    mr.telefone,
-                    mr.quantidade_pessoas,
-                    mr.data_reserva,
-                    mr.status_reserva
-                FROM mesas_reservadas mr
-
-                INNER JOIN mesas m
-                    ON m.id = mr.mesa_id
-
-                ORDER BY mr.data_reserva ASC
-            ")->fetchAll(PDO::FETCH_ASSOC);
-
-
-            foreach ($reservas as $reserva) {
-
-                $data = date(
-                    'd/m/Y H:i',
-                    strtotime($reserva['data_reserva'])
-                );
-
-
-                echo "
-                    <div id='reserva-{$reserva['id']}'>
-
-                        <b>
-                            Mesa {$reserva['numero_mesa']}
-                        </b>
-
-                        <p>
-                            Cliente: " .
-                            htmlspecialchars(
-                                $reserva['nome_cliente']
-                            ) .
-                        "</p>
-
-                        <p>
-                            Telefone: " .
-                            htmlspecialchars(
-                                $reserva['telefone']
-                            ) .
-                        "</p>
-
-                        <p>
-                            Pessoas:
-                            {$reserva['quantidade_pessoas']}
-                        </p>
-
-                        <p>
-                            Data:
-                            {$data}
-                        </p>
-
-                        <p>
-                            Status:
-                            {$reserva['status_reserva']}
-                        </p>
-
-                    </div>
-
-                    <hr>
-                ";
-            }
-
-
-            if (empty($reservas)) {
-
-                echo "
-                    <p>
-                        Nenhuma reserva cadastrada.
-                    </p>
-                ";
-            }
-
-        } catch (PDOException $e) {
-
-            echo "Erro ao carregar reservas: " .
-                 $e->getMessage();
+            echo "Erro ao carregar mesas: " . $e->getMessage();
 
         }
 
@@ -472,56 +224,15 @@ $mesas = $pdo->query("
     ORDER BY numero ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-
-$reservas = $pdo->query("
-    SELECT
-        mr.id,
-        mr.mesa_id,
-        m.numero AS numero_mesa,
-        mr.nome_cliente,
-        mr.telefone,
-        mr.quantidade_pessoas,
-        mr.data_reserva,
-        mr.status_reserva
-    FROM mesas_reservadas mr
-
-    INNER JOIN mesas m
-        ON m.id = mr.mesa_id
-
-    ORDER BY mr.data_reserva ASC
-")->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
 
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <title>Mesas e Reservas</title>
-
+    <title>Gerenciamento de Mesas</title>
 </head>
-
 <body>
-
-
-<!-- =========================
-     BOTÕES PRINCIPAIS
-========================= -->
-
-<button onclick="mostrarMesas()">
-    MESAS
-</button>
-
-<button onclick="mostrarReservas()">
-    RESERVAS
-</button>
-
-
-<br><br>
 
 
 <!-- =========================
@@ -532,13 +243,7 @@ $reservas = $pdo->query("
 
     <h2>Mesas</h2>
 
-    <button onclick="
-        document
-            .getElementById('modalMesa')
-            .showModal()
-    ">
-        ADICIONAR MESA
-    </button>
+    <button onclick="abrirAdicionarMesa()">ADICIONAR MESA</button>
 
     <br><br>
 
@@ -546,9 +251,7 @@ $reservas = $pdo->query("
 
         <?php if (empty($mesas)): ?>
 
-            <p>
-                Nenhuma mesa cadastrada.
-            </p>
+            <p>Nenhuma mesa cadastrada.</p>
 
         <?php else: ?>
 
@@ -556,108 +259,19 @@ $reservas = $pdo->query("
 
                 <div id="mesa-<?= $mesa['id'] ?>">
 
-                    <b>
-                        Mesa <?= $mesa['numero'] ?>
-                    </b>
+                    <b>Mesa <?= $mesa['numero'] ?></b>
 
-                    <p>
-                        Lugares:
-                        <?= $mesa['quantidade_lugares'] ?>
-                    </p>
+                    <p>Lugares: <?= $mesa['quantidade_lugares'] ?></p>
 
-                    <p>
-                        Status:
-                        <?= htmlspecialchars($mesa['status']) ?>
-                    </p>
+                    <p>Status: <?= htmlspecialchars($mesa['status']) ?></p>
 
-                </div>
+                    <button onclick="abrirEditarMesa(<?= $mesa['id'] ?>, <?= $mesa['numero'] ?>, <?= $mesa['quantidade_lugares'] ?>, '<?= htmlspecialchars($mesa['status'], ENT_QUOTES) ?>')">
+                        EDITAR
+                    </button>
 
-                <hr>
-
-            <?php endforeach; ?>
-
-        <?php endif; ?>
-
-    </div>
-
-</div>
-
-
-<!-- =========================
-     ÁREA RESERVAS
-========================= -->
-
-<div
-    id="areaReservas"
-    style="display:none;"
->
-
-    <h2>Reservas</h2>
-
-    <button onclick="
-        carregarMesasSelect();
-        document
-            .getElementById('modalReserva')
-            .showModal()
-    ">
-        ADICIONAR RESERVA
-    </button>
-
-    <br><br>
-
-    <div id="containerReservas">
-
-        <?php if (empty($reservas)): ?>
-
-            <p>
-                Nenhuma reserva cadastrada.
-            </p>
-
-        <?php else: ?>
-
-            <?php foreach ($reservas as $reserva): ?>
-
-                <div id="reserva-<?= $reserva['id'] ?>">
-
-                    <b>
-                        Mesa <?= $reserva['numero_mesa'] ?>
-                    </b>
-
-                    <p>
-                        Cliente:
-                        <?= htmlspecialchars(
-                            $reserva['nome_cliente']
-                        ) ?>
-                    </p>
-
-                    <p>
-                        Telefone:
-                        <?= htmlspecialchars(
-                            $reserva['telefone']
-                        ) ?>
-                    </p>
-
-                    <p>
-                        Pessoas:
-                        <?= $reserva['quantidade_pessoas'] ?>
-                    </p>
-
-                    <p>
-                        Data:
-                        <?= date(
-                            'd/m/Y H:i',
-                            strtotime(
-                                $reserva['data_reserva']
-                            )
-                        ) ?>
-                    </p>
-
-                    <p>
-                        Status:
-                        <?= htmlspecialchars(
-                            $reserva['status_reserva']
-                        ) ?>
-                    </p>
+                    <button onclick="deletarMesa(<?= $mesa['id'] ?>)">
+                        EXCLUIR
+                    </button>
 
                 </div>
 
@@ -678,203 +292,40 @@ $reservas = $pdo->query("
 
 <dialog id="modalMesa">
 
-    <h3>
-        Adicionar Mesa
-    </h3>
+    <h3 id="tituloModalMesa">Adicionar Mesa</h3>
 
-    <form
-        id="formMesa"
-        onsubmit="salvarMesa(event)"
-    >
+    <form id="formMesa" onsubmit="salvarMesa(event)">
 
-        <input
-            type="hidden"
-            name="acao"
-            value="adicionar_mesa"
-        >
+        <input type="hidden" name="acao" id="acaoMesa" value="adicionar_mesa">
+        <input type="hidden" name="id" id="idMesa" value="">
 
         <div>
-
-            <label>
-                Número da Mesa:
-            </label>
-
-            <input
-                type="number"
-                name="numero"
-                min="1"
-                required
-            >
-
+            <label>Número da Mesa:</label>
+            <input type="number" name="numero" id="numeroMesa" min="1" required>
         </div>
 
         <br>
 
         <div>
-
-            <label>
-                Quantidade de Lugares:
-            </label>
-
-            <input
-                type="number"
-                name="quantidade_lugares"
-                min="1"
-                required
-            >
-
+            <label>Quantidade de Lugares:</label>
+            <input type="number" name="quantidade_lugares" id="lugaresMesa" min="1" required>
         </div>
 
         <br>
 
-        <button
-            type="button"
-            onclick="
-                document
-                    .getElementById('modalMesa')
-                    .close()
-            "
-        >
-            CANCELAR
-        </button>
-
-        <button type="submit">
-            SALVAR
-        </button>
-
-    </form>
-
-</dialog>
-
-
-<!-- =========================
-     MODAL RESERVA
-========================= -->
-
-<dialog id="modalReserva">
-
-    <h3>
-        Adicionar Reserva
-    </h3>
-
-    <form
-        id="formReserva"
-        onsubmit="salvarReserva(event)"
-    >
-
-        <input
-            type="hidden"
-            name="acao"
-            value="adicionar_reserva"
-        >
-
-
-        <div>
-
-            <label>
-                Mesa:
-            </label>
-
-            <select
-                name="mesa_id"
-                id="mesaSelect"
-                required
-            >
-
-                <option value="">
-                    Selecione uma mesa
-                </option>
-
+        <div id="campoStatusMesa" style="display:none;">
+            <label>Status:</label>
+            <select name="status" id="statusMesa">
+                <option value="livre">Livre</option>
+                <option value="ocupada">Ocupada</option>
+                <option value="reservada">Reservada</option>
             </select>
-
+            <br><br>
         </div>
 
-        <br>
+        <button type="button" onclick="document.getElementById('modalMesa').close()">CANCELAR</button>
 
-
-        <div>
-
-            <label>
-                Nome do Cliente:
-            </label>
-
-            <input
-                type="text"
-                name="nome_cliente"
-                required
-            >
-
-        </div>
-
-        <br>
-
-
-        <div>
-
-            <label>
-                Telefone:
-            </label>
-
-            <input
-                type="text"
-                name="telefone"
-                required
-            >
-
-        </div>
-
-        <br>
-
-
-        <div>
-
-            <label>
-                Quantidade de Pessoas:
-            </label>
-
-            <input
-                type="number"
-                name="quantidade_pessoas"
-                min="1"
-                required
-            >
-
-        </div>
-
-        <br>
-
-
-        <div>
-
-            <label>
-                Data e Hora:
-            </label>
-
-            <input
-                type="datetime-local"
-                name="data_reserva"
-                required
-            >
-
-        </div>
-
-        <br>
-
-
-        <button
-            type="button"
-            onclick="
-                document
-                    .getElementById('modalReserva')
-                    .close()
-            "
-        >
-            CANCELAR
-        </button>
-
-        <button type="submit">
-            SALVAR
-        </button>
+        <button type="submit">SALVAR</button>
 
     </form>
 
@@ -884,348 +335,82 @@ $reservas = $pdo->query("
 <script>
 
 /* =========================
-   MOSTRAR MESAS
+   AÇÕES DE MESAS (CRUD)
 ========================= */
 
-function mostrarMesas() {
-
-    document.getElementById(
-        'areaMesas'
-    ).style.display = 'block';
-
-    document.getElementById(
-        'areaReservas'
-    ).style.display = 'none';
-
-    carregarMesas();
-
+function abrirAdicionarMesa() {
+    document.getElementById('formMesa').reset();
+    document.getElementById('tituloModalMesa').innerText = 'Adicionar Mesa';
+    document.getElementById('acaoMesa').value = 'adicionar_mesa';
+    document.getElementById('idMesa').value = '';
+    document.getElementById('campoStatusMesa').style.display = 'none';
+    document.getElementById('modalMesa').showModal();
 }
 
-
-/* =========================
-   MOSTRAR RESERVAS
-========================= */
-
-function mostrarReservas() {
-
-    document.getElementById(
-        'areaMesas'
-    ).style.display = 'none';
-
-    document.getElementById(
-        'areaReservas'
-    ).style.display = 'block';
-
-    carregarReservas();
-
+function abrirEditarMesa(id, numero, quantidade, status) {
+    document.getElementById('tituloModalMesa').innerText = 'Editar Mesa';
+    document.getElementById('acaoMesa').value = 'editar_mesa';
+    document.getElementById('idMesa').value = id;
+    document.getElementById('numeroMesa').value = numero;
+    document.getElementById('lugaresMesa').value = quantidade;
+    document.getElementById('statusMesa').value = status;
+    document.getElementById('campoStatusMesa').style.display = 'block';
+    document.getElementById('modalMesa').showModal();
 }
 
-
-/* =========================
-   CARREGAR MESAS
-========================= */
-
-async function carregarMesas() {
+async function deletarMesa(id) {
+    if (!confirm('Deseja realmente excluir esta mesa?')) return;
 
     const dados = new FormData();
+    dados.append('acao', 'deletar_mesa');
+    dados.append('id', id);
 
-    dados.append(
-        'acao',
-        'listar_mesas'
-    );
-
-
-    const resposta = await fetch('', {
-
-        method: 'POST',
-
-        body: dados
-
-    });
-
-
-    document.getElementById(
-        'containerMesas'
-    ).innerHTML = await resposta.text();
-
-}
-
-
-/* =========================
-   SALVAR MESA
-========================= */
-
-async function salvarMesa(e) {
-
-    e.preventDefault();
-
-    const form = e.target;
-
-    const resposta = await fetch('', {
-
-        method: 'POST',
-
-        body: new FormData(form)
-
-    });
-
+    const resposta = await fetch('', { method: 'POST', body: dados });
     const texto = await resposta.text();
 
-
-    /* Qualquer resposta que não seja o HTML da mesa é erro */
-
-    if (!texto.trim().startsWith('<div')) {
-
+    if (texto.trim() === 'ok') {
+        carregarMesas();
+    } else {
         alert(texto);
-
-        return;
     }
-
-
-    const container =
-        document.getElementById(
-            'containerMesas'
-        );
-
-
-    const vazio =
-        container.querySelector('p');
-
-
-    if (
-        vazio &&
-        vazio.innerText.includes(
-            'Nenhuma mesa'
-        )
-    ) {
-
-        vazio.remove();
-
-    }
-
-
-    container.insertAdjacentHTML(
-        'beforeend',
-        texto
-    );
-
-
-    form.reset();
-
-    document
-        .getElementById('modalMesa')
-        .close();
-
 }
 
-
-/* =========================
-   CARREGAR MESAS NO SELECT
-========================= */
-
-async function carregarMesasSelect() {
-
+async function carregarMesas() {
     const dados = new FormData();
+    dados.append('acao', 'listar_mesas');
 
-    dados.append(
-        'acao',
-        'listar_mesas'
-    );
+    const resposta = await fetch('', { method: 'POST', body: dados });
+    document.getElementById('containerMesas').innerHTML = await resposta.text();
+}
 
+async function salvarMesa(e) {
+    e.preventDefault();
+    const form = e.target;
+    const acao = document.getElementById('acaoMesa').value;
 
-    const resposta = await fetch('', {
+    const resposta = await fetch('', { method: 'POST', body: new FormData(form) });
+    const texto = await resposta.text();
 
-        method: 'POST',
-
-        body: dados
-
-    });
-
-
-    const texto =
-        await resposta.text();
-
-
-    const select =
-        document.getElementById(
-            'mesaSelect'
-        );
-
-
-    select.innerHTML = `
-        <option value="">
-            Selecione uma mesa
-        </option>
-    `;
-
-
-    const temporario =
-        document.createElement('div');
-
-    temporario.innerHTML = texto;
-
-
-    const elementos =
-        temporario.querySelectorAll(
-            '[id^="mesa-"]'
-        );
-
-
-    elementos.forEach(elemento => {
-
-        const id =
-            elemento.id.replace(
-                'mesa-',
-                ''
-            );
-
-
-        const titulo =
-            elemento.querySelector('b');
-
-
-        if (!titulo) {
+    if (acao === 'adicionar_mesa') {
+        if (!texto.trim().startsWith('<div')) {
+            alert(texto);
             return;
         }
-
-
-        const numero =
-            titulo.innerText
-                .replace(
-                    'Mesa ',
-                    ''
-                );
-
-
-        select.innerHTML += `
-            <option value="${id}">
-                Mesa ${numero}
-            </option>
-        `;
-
-    });
-
-}
-
-
-/* =========================
-   SALVAR RESERVA
-========================= */
-
-async function salvarReserva(e) {
-
-    e.preventDefault();
-
-    const form = e.target;
-
-
-    const resposta = await fetch('', {
-
-        method: 'POST',
-
-        body: new FormData(form)
-
-    });
-
-
-    const texto =
-        await resposta.text();
-
-
-    /* Qualquer resposta que não seja o HTML da reserva é erro */
-
-    if (!texto.trim().startsWith('<div')) {
-
-        alert(texto);
-
-        return;
+        carregarMesas();
+    } else {
+        if (texto.trim() === 'ok') {
+            carregarMesas();
+        } else {
+            alert(texto);
+            return;
+        }
     }
-
-
-    const container =
-        document.getElementById(
-            'containerReservas'
-        );
-
-
-    const vazio =
-        container.querySelector('p');
-
-
-    if (
-        vazio &&
-        vazio.innerText.includes(
-            'Nenhuma reserva'
-        )
-    ) {
-
-        vazio.remove();
-
-    }
-
-
-    container.insertAdjacentHTML(
-        'beforeend',
-        texto
-    );
-
-
-    /* Atualiza a lista de mesas (status passou a reservada) */
-
-    carregarMesas();
-
 
     form.reset();
-
-    document
-        .getElementById('modalReserva')
-        .close();
-
+    document.getElementById('modalMesa').close();
 }
-
-
-/* =========================
-   CARREGAR RESERVAS
-========================= */
-
-async function carregarReservas() {
-
-    const dados = new FormData();
-
-    dados.append(
-        'acao',
-        'listar_reservas'
-    );
-
-
-    const resposta = await fetch('', {
-
-        method: 'POST',
-
-        body: dados
-
-    });
-
-
-    const texto =
-        await resposta.text();
-
-
-    document.getElementById(
-        'containerReservas'
-    ).innerHTML = texto;
-
-}
-
-
-/* =========================
-   INICIAR
-========================= */
-
-mostrarMesas();
 
 </script>
 
 </body>
-
 </html>

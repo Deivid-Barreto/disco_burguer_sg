@@ -559,5 +559,4 @@ $pedidos = $pdo->query("
 
 </body>
 
-
 </html>
