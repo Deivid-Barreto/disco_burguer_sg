@@ -6,9 +6,9 @@
   
 
 
-
+ 
     <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid  align-items-center">
+      <div class="container align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
           <img src="../../img/icone-disco-burguer.png" alt="Logo">
@@ -30,11 +30,11 @@
             <li class="nav-item ">
               <a class="nav-link" href="../../index.php">Inicio</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item ">
               <a class="nav-link" href="cardapio.php">Cardápio</a>
             </li>
            
-            <li class="nav-item">
+            <li class="nav-item ">
              <a class="nav-link" href="php_html/divulgacao/fee">Feedback</a>
             </li>
             <li class="nav-item ">
@@ -43,7 +43,7 @@
             <li class="nav-item ">
               <a class="nav-link" href="local.php">Local</a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item">
               <a class="nav-link"href="#contato">Contato</a>
             </li>
           </ul>
