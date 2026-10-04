@@ -1,4 +1,4 @@
--- Active: 1790873166906@@127.0.0.1@3306
+-- Active: 1790892835911@@127.0.0.1@3306
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -255,6 +255,7 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `pedido_id` INT NOT NULL,
     `item_pedido_id` INT NOT NULL,
+    `funcionario_id` INT NOT NULL,
     `tipo` ENUM(
         'cancelamento',
         'troca'
@@ -264,8 +265,10 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
     `data_ocorrencia` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_ocorrencias_pedido` (`pedido_id`),
+    INDEX `idx_ocorrencias_funcionario` (`funcionario_id`), -- NOVO ÍNDICE: Para relatórios de auditoria
     CONSTRAINT `fk_ocorrencias_pedido` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_ocorrencias_item` FOREIGN KEY (`item_pedido_id`) REFERENCES `itens_pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `fk_ocorrencias_item` FOREIGN KEY (`item_pedido_id`) REFERENCES `itens_pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_ocorrencias_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE -- NOVA CHAVE ESTRANGEIRA
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `feedbacks` (

@@ -1,0 +1,164 @@
+<?php
+session_start();
+require_once __DIR__ . '/../../php/conexao.php';
+require_once __DIR__ . '/verificar_login.php';
+
+// add dialogs de segurança
+// cores intuitvas e tudo bem organizado
+// refazer o select de semana a semana, para não ficar pesado, pensar num modo de exibição melhor..
+
+$funcionario_id = $_SESSION['funcionario_id']; 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $acao = $_POST['acao'] ?? '';
+    
+    if ($acao === 'abrir') {
+        $stmt = $pdo->prepare("INSERT INTO caixas_diarios (funcionario_abertura_id, saldo_inicial, status) VALUES (?, ?, 'aberto')");
+        $stmt->execute([$funcionario_id, $_POST['saldo_inicial']]);
+    } elseif ($acao === 'fechar') {
+        $stmt = $pdo->prepare("UPDATE caixas_diarios SET funcionario_fechamento_id=?, data_fechamento=CURRENT_TIMESTAMP, saldo_final_sistema=?, saldo_final_gaveta=?, status='fechado' WHERE id=?");
+        $stmt->execute([$funcionario_id, $_POST['saldo_sistema'], $_POST['saldo_gaveta'], $_POST['id']]);
+    } elseif ($acao === 'movimentacao') {
+        $stmt = $pdo->prepare("INSERT INTO fluxo_caixa (categoria_id, funcionario_id, descricao, valor) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$_POST['categoria_id'], $funcionario_id, $_POST['descricao'], $_POST['valor']]);
+    }
+    
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+$caixa_aberto = $pdo->query("SELECT id FROM caixas_diarios WHERE status = 'aberto' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+$caixas = $pdo->query("SELECT * FROM caixas_diarios ORDER BY data_abertura DESC")->fetchAll(PDO::FETCH_ASSOC);
+$fluxo = $pdo->query("SELECT fc.*, c.nome as cat_nome, c.tipo FROM fluxo_caixa fc JOIN categorias_financeiras c ON fc.categoria_id = c.id ORDER BY fc.data_movimentacao DESC")->fetchAll(PDO::FETCH_ASSOC);
+$categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->fetchAll(PDO::FETCH_ASSOC);
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Caixa</title>
+</head>
+<body>
+    <h1>Caixas Diários e Movimentações</h1>
+
+    <?php if (!$caixa_aberto): ?>
+        <button onclick="document.getElementById('modalAbertura').showModal()">ABRIR NOVO CAIXA</button>
+    <?php else: ?>
+        <button onclick="document.getElementById('modalFluxo').showModal()">LANÇAR MOVIMENTAÇÃO MANUAL</button>
+    <?php endif; ?>
+
+    <h2>Caixas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Abertura</th>
+                <th>Fechamento</th>
+                <th>Saldo Inicial</th>
+                <th>Saldo Final (G)</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($caixas as $c): ?>
+            <tr>
+                <td><?= date('d/m/Y H:i', strtotime($c['data_abertura'])) ?></td>
+                <td><?= $c['data_fechamento'] ? date('d/m/Y H:i', strtotime($c['data_fechamento'])) : '-' ?></td>
+                <td>R$ <?= number_format($c['saldo_inicial'], 2, ',', '.') ?></td>
+                <td><?= $c['saldo_final_gaveta'] !== null ? 'R$ ' . number_format($c['saldo_final_gaveta'], 2, ',', '.') : '-' ?></td>
+                <td><?= htmlspecialchars($c['status']) ?></td>
+                <td>
+                    <?php if ($c['status'] === 'aberto'): ?>
+                    <button onclick='fecharCaixa(<?= $c['id'] ?>)'>Fechar Caixa</button>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <h2>Histórico de Movimentações (Sangrias/Suprimentos)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Data/Hora</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($fluxo as $f): ?>
+            <tr>
+                <td><?= date('d/m/Y H:i', strtotime($f['data_movimentacao'])) ?></td>
+                <td><?= htmlspecialchars($f['descricao']) ?></td>
+                <td><?= htmlspecialchars($f['cat_nome']) ?></td>
+                <td><?= htmlspecialchars($f['tipo']) ?></td>
+                <td>R$ <?= number_format($f['valor'], 2, ',', '.') ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+    <dialog id="modalAbertura">
+        <form method="POST">
+            <input type="hidden" name="acao" value="abrir">
+            <div>
+                <label>Saldo Inicial na Gaveta (R$):</label>
+                <input type="number" step="0.01" name="saldo_inicial" required>
+            </div>
+            <button type="submit">Confirmar Abertura</button>
+            <button type="button" onclick="document.getElementById('modalAbertura').close()">Cancelar</button>
+        </form>
+    </dialog>
+
+    <dialog id="modalFechamento">
+        <form method="POST">
+            <input type="hidden" name="acao" value="fechar">
+            <input type="hidden" name="id" id="fechar_id">
+            <div>
+                <label>Saldo do Sistema (R$):</label>
+                <input type="number" step="0.01" name="saldo_sistema" required>
+            </div>
+            <div>
+                <label>Dinheiro Físico na Gaveta (R$):</label>
+                <input type="number" step="0.01" name="saldo_gaveta" required>
+            </div>
+            <button type="submit">Confirmar Fechamento</button>
+            <button type="button" onclick="document.getElementById('modalFechamento').close()">Cancelar</button>
+        </form>
+    </dialog>
+
+    <dialog id="modalFluxo">
+        <form method="POST">
+            <input type="hidden" name="acao" value="movimentacao">
+            <div>
+                <label>Descrição:</label>
+                <input type="text" name="descricao" required>
+            </div>
+            <div>
+                <label>Categoria:</label>
+                <select name="categoria_id" required>
+                    <?php foreach ($categorias as $cat): ?>
+                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nome']) ?> (<?= $cat['tipo'] ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label>Valor (R$):</label>
+                <input type="number" step="0.01" name="valor" required>
+            </div>
+            <button type="submit">Gravar Movimentação</button>
+            <button type="button" onclick="document.getElementById('modalFluxo').close()">Cancelar</button>
+        </form>
+    </dialog>
+
+    <script>
+    function fecharCaixa(id) {
+        document.getElementById('fechar_id').value = id;
+        document.getElementById('modalFechamento').showModal();
+    }
+    </script>
+</body>
+</html>

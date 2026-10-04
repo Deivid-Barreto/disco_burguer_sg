@@ -1,9 +1,11 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../php/conexao.php'; 
+require_once __DIR__ . '/verificar_login.php'; 
 
-$funcionario_id = $_SESSION['funcionario_id'] ?? null;
+// add um dialog de segurança para confirmar o update de um insumo ou lote
 
+$funcionario_id = $_SESSION['funcionario_id'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
 
