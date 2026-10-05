@@ -245,3 +245,87 @@ main {
   box-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; 
   background-color: #ff1a8c; 
 }
+
+
+/* =========================================
+   EFEITOS DE TRANSIÇÃO E ANIMAÇÃO
+   (bloco adicionado no final; o código acima não foi alterado)
+   ========================================= */
+
+@keyframes subir-suave {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---------- Entrada da página ---------- */
+.inicio-cardapio h1 {
+  animation: subir-suave 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Só opacidade, para não conflitar com o transform do .fixo */
+.menu-categorias {
+  animation: aparecer 1s ease 0.4s backwards;
+}
+
+/* ---------- Menu de categorias ---------- */
+.btn-categoria:active {
+  transform: scale(0.95);
+}
+
+/* ---------- Linha neon pulsando de leve ---------- */
+@keyframes pulsar-linha {
+  0%, 100% { box-shadow: 0 0 8px #ff007f, 0 0 12px #ff007f; }
+  50%      { box-shadow: 0 0 14px #ff007f, 0 0 26px #ff007f; }
+}
+
+.linha-neon {
+  animation: pulsar-linha 3.5s ease-in-out infinite;
+}
+
+/* ---------- Itens do cardápio ---------- */
+.itens-cardapio {
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.itens-cardapio img {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.button-itens-cardapio:active {
+  transform: scale(0.95);
+}
+
+/* ---------- Aparecer ao rolar a página (só CSS, sem JS) ----------
+   Funciona em navegadores que suportam scroll-driven animations
+   (Chrome/Edge). Nos outros, os elementos aparecem normalmente.
+   "backwards" garante que o hover continue funcionando depois. */
+@supports (animation-timeline: view()) {
+  .linha,
+  .itens-cardapio {
+    animation: subir-suave linear backwards;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+/* ---------- Respeita quem desativa animações no sistema ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
