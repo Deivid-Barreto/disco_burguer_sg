@@ -72,6 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $make_or_buy = $_POST['make_or_buy'] ?? 'revenda';
         }
 
+        // Captura o estoque_id direto se for revenda
+        $estoque_revenda_id = ($make_or_buy === 'revenda' && !empty($_POST['estoque_revenda_id'])) ? (int)$_POST['estoque_revenda_id'] : null;
+
         $tem_combo = false;
         if (isset($_POST['combo_itens']) && is_array($_POST['combo_itens'])) {
             foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
@@ -99,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ativo = 0;
         } elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && !$tem_receita) {
             $ativo = 0;
-        } elseif ($make_or_buy === 'revenda' && empty($_POST['estoque_revenda_id'])) {
+        } elseif ($make_or_buy === 'revenda' && empty($estoque_revenda_id)) {
             $ativo = 0;
         }
 
@@ -108,30 +111,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo->beginTransaction();
 
                 if ($acao === 'editar' && !empty($id_produto)) {
-                    $sql_produto = "UPDATE produtos SET categorias = :cat, nome = :nome, ativo = :ativo, descricao = :desc, preco_venda = :preco, visivel = :visivel, make_or_buy = :mob WHERE id = :id";
+                    $sql_produto = "UPDATE produtos SET estoque_id = :estoque_id, categorias = :cat, nome = :nome, ativo = :ativo, descricao = :desc, preco_venda = :preco, visivel = :visivel, make_or_buy = :mob WHERE id = :id";
                     $stmt = $pdo->prepare($sql_produto);
                     $stmt->execute([
-                        ':cat'     => $categoria,
-                        ':nome'    => $nome,
-                        ':ativo'   => $ativo,
-                        ':desc'    => $descricao,
-                        ':preco'   => $preco_venda,
-                        ':visivel' => $visivel,
-                        ':mob'     => $make_or_buy,
-                        ':id'      => $id_produto
+                        ':estoque_id' => $estoque_revenda_id,
+                        ':cat'        => $categoria,
+                        ':nome'       => $nome,
+                        ':ativo'      => $ativo,
+                        ':desc'       => $descricao,
+                        ':preco'      => $preco_venda,
+                        ':visivel'    => $visivel,
+                        ':mob'        => $make_or_buy,
+                        ':id'         => $id_produto
                     ]);
                     $alvo_id = $id_produto;
                 } else {
-                    $sql_produto = "INSERT INTO produtos (categorias, nome, ativo, descricao, preco_venda, visivel, make_or_buy) VALUES (:cat, :nome, :ativo, :desc, :preco, :visivel, :mob)";
+                    $sql_produto = "INSERT INTO produtos (estoque_id, categorias, nome, ativo, descricao, preco_venda, visivel, make_or_buy) VALUES (:estoque_id, :cat, :nome, :ativo, :desc, :preco, :visivel, :mob)";
                     $stmt = $pdo->prepare($sql_produto);
                     $stmt->execute([
-                        ':cat'     => $categoria,
-                        ':nome'    => $nome,
-                        ':ativo'   => $ativo,
-                        ':desc'    => $descricao,
-                        ':preco'   => $preco_venda,
-                        ':visivel' => $visivel,
-                        ':mob'     => $make_or_buy
+                        ':estoque_id' => $estoque_revenda_id,
+                        ':cat'        => $categoria,
+                        ':nome'       => $nome,
+                        ':ativo'      => $ativo,
+                        ':desc'       => $descricao,
+                        ':preco'      => $preco_venda,
+                        ':visivel'    => $visivel,
+                        ':mob'        => $make_or_buy
                     ]);
                     $alvo_id = $pdo->lastInsertId();
                 }
@@ -168,10 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($qtd > 0) $stmtCombo->execute([':combo' => $alvo_id, ':filho' => $filho_id, ':qtd' => $qtd]);
                     }
                 } 
-                elseif ($make_or_buy === 'revenda' && !empty($_POST['estoque_revenda_id'])) {
-                    $stmtReceita = $pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, 1)");
-                    $stmtReceita->execute([':prod' => $alvo_id, ':ing' => $_POST['estoque_revenda_id']]);
-                }
                 elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && isset($_POST['ingredientes'])) {
                     $stmtReceita = $pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, :qtd)");
                     foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
@@ -336,21 +337,21 @@ try {
                 <div style="margin-bottom: 15px;">
                     <?php 
                     $primeira_cat = array_key_first($produtos_por_categoria);
-                    foreach(array_keys($produtos_por_categoria) as $cat): ?>
+                    foreach(array_keys($produtos_por_categoria) as$cat): ?>
                         <button type="button" onclick="mostrarCategoriaCombo('<?= $cat ?>')">
                             <?= ucfirst(str_replace('_', ' ', $cat)) ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
 
-                <?php foreach ($produtos_por_categoria as $cat => $produtos): ?>
-                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" style="display: <?= $cat === $primeira_cat ? 'block' : 'none' ?>;">
+                <?php foreach ($produtos_por_categoria as $cat =>$produtos): ?>
+                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" style="display: <?= $cat ===$primeira_cat ? 'block' : 'none' ?>;">
                         <table>
                             <thead>
                                 <tr><th>Incluir</th><th>Produto</th><th>Quantidade</th></tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($produtos as $prod): ?>
+                                <?php foreach ($produtos as$prod): ?>
                                     <tr>
                                         <td><input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')"></td>
                                         <td><?= htmlspecialchars($prod['nome']) ?></td>
@@ -531,7 +532,10 @@ function carregarDadosEdicao() {
                 }
             });
         } else if (p.make_or_buy === 'revenda') {
-            if (data.receitas.length > 0) document.getElementById('estoque_revenda_id').value = data.receitas[0].ingrediente_id;
+            // Agora lê o estoque_id direto da coluna do produto!
+            if (p.estoque_id) {
+                document.getElementById('estoque_revenda_id').value = p.estoque_id;
+            }
         } else {
             data.receitas.forEach(r => {
                 let chk = document.getElementById('chk_ing_' + r.ingrediente_id);

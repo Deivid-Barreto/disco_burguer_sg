@@ -54,9 +54,21 @@ CREATE TABLE IF NOT EXISTS `fornecedores` (
     CONSTRAINT `fk_fornecedores_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
--- PRODUTOS E ESTOQUE
+
+CREATE TABLE IF NOT EXISTS `estoque` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nome` VARCHAR(250) NOT NULL,
+    `codigo` VARCHAR(250) NOT NULL UNIQUE,
+    `unidade_medida` ENUM('g', 'un', 'ml') NOT NULL,
+    `estoque_minimo` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 CHECK (`estoque_minimo` >= 0),
+    `eh_revenda` TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
+
+
 CREATE TABLE IF NOT EXISTS `produtos` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `estoque_id` INT NULL,
     `categorias` ENUM(
         'hamburguer',
         'porcoes',
@@ -74,17 +86,9 @@ CREATE TABLE IF NOT EXISTS `produtos` (
     `make_or_buy` ENUM('produto_acabado', 'revenda') NOT NULL,
     PRIMARY KEY (`id`),
     INDEX `idx_produtos_categorias` (`categorias`),
-    INDEX `idx_produtos_status` (`ativo`, `visivel`)
-) ENGINE = InnoDB;
-
-CREATE TABLE IF NOT EXISTS `estoque` (
-    `id` INT NOT NULL AUTO_INCREMENT,
-    `nome` VARCHAR(250) NOT NULL,
-    `codigo` VARCHAR(250) NOT NULL UNIQUE,
-    `unidade_medida` ENUM('g', 'un', 'ml') NOT NULL,
-    `estoque_minimo` DECIMAL(10, 2) NOT NULL DEFAULT 0.00 CHECK (`estoque_minimo` >= 0),
-    `eh_revenda` TINYINT(1) NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`)
+    INDEX `idx_produtos_status` (`ativo`, `visivel`),
+    INDEX `idx_produtos_estoque` (`estoque_id`),
+    CONSTRAINT `fk_produtos_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `lotes_estoque` (
@@ -130,7 +134,6 @@ CREATE TABLE IF NOT EXISTS `movimentacoes_estoque` (
     CONSTRAINT `fk_mov_lote` FOREIGN KEY (`lote_estoque_id`) REFERENCES `lotes_estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
     CONSTRAINT `fk_mov_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
-
 
 CREATE TABLE IF NOT EXISTS `receitas` (
     `id` INT NOT NULL AUTO_INCREMENT,
@@ -248,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `customizacoes_item_pedido` (
     INDEX `idx_custom_item` (`item_pedido_id`),
     INDEX `idx_custom_produto_extra` (`produto_id`),
     CONSTRAINT `fk_custom_item` FOREIGN KEY (`item_pedido_id`) REFERENCES `itens_pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_custom_ingrediente` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT `fk_custom_produto` FOREIGN KEY (`produto_id`) REFERENCES `produtos` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
@@ -265,21 +268,21 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
     `data_ocorrencia` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_ocorrencias_pedido` (`pedido_id`),
-    INDEX `idx_ocorrencias_funcionario` (`funcionario_id`), -- NOVO ÍNDICE: Para relatórios de auditoria
+    INDEX `idx_ocorrencias_funcionario` (`funcionario_id`),
     CONSTRAINT `fk_ocorrencias_pedido` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT `fk_ocorrencias_item` FOREIGN KEY (`item_pedido_id`) REFERENCES `itens_pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `fk_ocorrencias_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE -- NOVA CHAVE ESTRANGEIRA
+    CONSTRAINT `fk_ocorrencias_funcionario` FOREIGN KEY (`funcionario_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `feedbacks` (
     `id` INT NOT NULL AUTO_INCREMENT,
-    `pedido_id` INT NOT NULL, -- Agora é NOT NULL, pois todo feedback vem de um pedido
+    `pedido_id` INT NOT NULL,
     `nota` TINYINT UNSIGNED NOT NULL CHECK (`nota` BETWEEN 1 AND 5),
     `comentario` TEXT NULL,
     `status_moderacao` ENUM('aprovado', 'bloqueado_filtro') NOT NULL DEFAULT 'aprovado',
     `data_feedback` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_feedback_pedido` (`pedido_id`), -- Garante apenas 1 feedback por pedido
+    UNIQUE KEY `uk_feedback_pedido` (`pedido_id`),
     CONSTRAINT `fk_feedbacks_pedido` FOREIGN KEY (`pedido_id`) REFERENCES `pedidos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
@@ -323,6 +326,7 @@ CREATE TABLE IF NOT EXISTS `contas_a_pagar` (
     CONSTRAINT `fk_contas_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categorias_financeiras` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
+-- CAIXAS DIÁRIOS
 CREATE TABLE IF NOT EXISTS `caixas_diarios` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `funcionario_abertura_id` INT NOT NULL,
@@ -334,7 +338,6 @@ CREATE TABLE IF NOT EXISTS `caixas_diarios` (
     `saldo_final_gaveta` DECIMAL(10, 2) NULL,
     `status` ENUM('aberto', 'fechado') NOT NULL DEFAULT 'aberto',
     PRIMARY KEY (`id`),
-    CONSTRAINT `fk_caixa_abertura` FOREIGN KEY (`funcionario_abertura_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT,
-    CONSTRAINT `fk_caixa_fechamento` FOREIGN KEY (`funcionario_fechamento_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT
+    CONSTRAINT `fk_caixa_abertura` FOREIGN KEY (`funcionario_abertura_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT `fk_caixa_fechamento` FOREIGN KEY (`funcionario_fechamento_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
-
