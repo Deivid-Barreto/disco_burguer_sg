@@ -11,5 +11,8 @@
     <a href="caixas_diarios.php">Caixas diarios</a>
     <a href="estoque.php">Estoque</a>
     <a href="financeiro.php">Financeiro</a>
+    <a href="funcionarios.php">Funcionario</a>
+    <a href="produto.php">Produto</a>
+    <a href="estoque.php">Estoque</a>
 </body>
 </html>

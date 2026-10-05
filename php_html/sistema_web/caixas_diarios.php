@@ -3,13 +3,18 @@ session_start();
 require_once __DIR__ . '/../../php/conexao.php';
 require_once __DIR__ . '/verificar_login.php';
 
-// add dialogs de segurança
-// cores intuitvas e tudo bem organizado
-// refazer o select de semana a semana, para não ficar pesado, pensar num modo de exibição melhor..
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $funcionario_id = $_SESSION['funcionario_id']; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Ação não autorizada.');
+    }
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
     $acao = $_POST['acao'] ?? '';
     
     if ($acao === 'abrir') {
@@ -103,6 +108,7 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
 
     <dialog id="modalAbertura">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="abrir">
             <div>
                 <label>Saldo Inicial na Gaveta (R$):</label>
@@ -114,7 +120,8 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
     </dialog>
 
     <dialog id="modalFechamento">
-        <form method="POST">
+        <form id="formFechamento" method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="fechar">
             <input type="hidden" name="id" id="fechar_id">
             <div>
@@ -125,13 +132,14 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <label>Dinheiro Físico na Gaveta (R$):</label>
                 <input type="number" step="0.01" name="saldo_gaveta" required>
             </div>
-            <button type="submit">Confirmar Fechamento</button>
+            <button type="button" onclick="pedirConfirmacaoFechamento()">Confirmar Fechamento</button>
             <button type="button" onclick="document.getElementById('modalFechamento').close()">Cancelar</button>
         </form>
     </dialog>
 
     <dialog id="modalFluxo">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="movimentacao">
             <div>
                 <label>Descrição:</label>
@@ -141,7 +149,7 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <label>Categoria:</label>
                 <select name="categoria_id" required>
                     <?php foreach ($categorias as $cat): ?>
-                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nome']) ?> (<?= $cat['tipo'] ?>)</option>
+                        <option value="<?= $cat['id'] ?>">[<?= strtoupper($cat['tipo']) ?>] <?= htmlspecialchars($cat['nome']) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -154,10 +162,36 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
         </form>
     </dialog>
 
+    <dialog id="modalConfirmacaoCustom">
+        <h3 id="tituloConfirmacao">Confirmação</h3>
+        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir com o fechamento?</p>
+        <button type="button" id="btnSimConfirmacao">Sim</button>
+        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    </dialog>
+
     <script>
+    let formParaSubmeter = null;
+
+    function dispararConfirmacao(mensagem, form) {
+        formParaSubmeter = form;
+        document.getElementById('mensagemConfirmacao').innerText = mensagem;
+        document.getElementById('modalConfirmacaoCustom').showModal();
+    }
+
+    document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+        document.getElementById('modalConfirmacaoCustom').close();
+        if (formParaSubmeter) {
+            formParaSubmeter.submit();
+        }
+    });
+
     function fecharCaixa(id) {
         document.getElementById('fechar_id').value = id;
         document.getElementById('modalFechamento').showModal();
+    }
+
+    function pedirConfirmacaoFechamento() {
+        dispararConfirmacao("Atenção: Os valores estão corretos? Deseja realmente FECHAR o caixa?", document.getElementById('formFechamento'));
     }
     </script>
 </body>

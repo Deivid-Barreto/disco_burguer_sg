@@ -1,22 +1,29 @@
 <?php
+session_start();
+require_once __DIR__ . '/../../php/conexao.php'; 
+require_once __DIR__ . '/verificar_login.php'; 
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 if (isset($_GET['obter_produto'])) {
-    require_once __DIR__ . '/../../php/conexao.php'; 
     while (ob_get_level()) ob_end_clean(); 
     header('Content-Type: application/json; charset=utf-8');
     
     $id_ed = (int)$_GET['obter_produto'];
     
-    $st =$pdo->prepare("SELECT * FROM produtos WHERE id = ?");
+    $st = $pdo->prepare("SELECT * FROM produtos WHERE id = ?");
     $st->execute([$id_ed]);
-    $prod_data =$st->fetch(PDO::FETCH_ASSOC);
+    $prod_data = $st->fetch(PDO::FETCH_ASSOC);
 
-    $st_rec =$pdo->prepare("SELECT * FROM receitas WHERE produto_id = ?");
+    $st_rec = $pdo->prepare("SELECT * FROM receitas WHERE produto_id = ?");
     $st_rec->execute([$id_ed]);
-    $prod_rec =$st_rec->fetchAll(PDO::FETCH_ASSOC);
+    $prod_rec = $st_rec->fetchAll(PDO::FETCH_ASSOC);
 
-    $st_comb =$pdo->prepare("SELECT * FROM itens_combo WHERE combo_id = ?");
+    $st_comb = $pdo->prepare("SELECT * FROM itens_combo WHERE combo_id = ?");
     $st_comb->execute([$id_ed]);
-    $prod_comb =$st_comb->fetchAll(PDO::FETCH_ASSOC);
+    $prod_comb = $st_comb->fetchAll(PDO::FETCH_ASSOC);
 
     echo json_encode([
         'produto' => $prod_data,
@@ -26,44 +33,51 @@ if (isset($_GET['obter_produto'])) {
     exit;
 }
 
-require_once __DIR__ . '/../../php/conexao.php'; 
 $mensagem_sucesso = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $acao =$_POST['acao'] ?? '';
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Ação não autorizada.');
+    }
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+    $acao = $_POST['acao'] ?? '';
 
     if ($acao === 'deletar') {
         try {
-            $stmtImg =$pdo->prepare("SELECT imagem_caminho FROM produtos WHERE id = ?");
+            $stmtImg = $pdo->prepare("SELECT imagem_caminho FROM produtos WHERE id = ?");
             $stmtImg->execute([$_POST['id_produto']]);
-            $imgAntiga =$stmtImg->fetchColumn();
+            $imgAntiga = $stmtImg->fetchColumn();
             
             if ($imgAntiga && file_exists($imgAntiga)) {
                 unlink($imgAntiga);
             }
 
-            $stmtDel =$pdo->prepare("DELETE FROM produtos WHERE id = ?");
+            $stmtDel = $pdo->prepare("DELETE FROM produtos WHERE id = ?");
             $stmtDel->execute([$_POST['id_produto']]);
         } catch (PDOException $e) {}
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
-    } elseif ($acao === 'editar' ||$acao === 'cadastrar') {
-        $id_produto  =$_POST['id_produto'] ?? null;
+    } elseif ($acao === 'editar' || $acao === 'cadastrar') {
+        $id_produto  = $_POST['id_produto'] ?? null;
         $nome        = trim($_POST['nome'] ?? '');
-        $categoria   =$_POST['categorias'] ?? 'hamburguer';
+        $categoria   = $_POST['categorias'] ?? 'hamburguer';
         $descricao   = trim($_POST['descricao'] ?? '');
         $preco_venda = filter_var($_POST['preco_venda'] ?? 0, FILTER_VALIDATE_FLOAT);
         $visivel     = isset($_POST['visivel']) ? 1 : 0;
         
-        if (in_array($categoria, ['hamburguer', 'porcoes', 'combos', 'sobremesa_gelada', 'extras'])) {$make_or_buy = 'produto_acabado';
+        if (in_array($categoria, ['hamburguer', 'porcoes', 'combos', 'sobremesa_gelada', 'extras'])) {
+            $make_or_buy = 'produto_acabado';
         } else {
-            $make_or_buy =$_POST['make_or_buy'] ?? 'revenda';
+            $make_or_buy = $_POST['make_or_buy'] ?? 'revenda';
         }
 
         $tem_combo = false;
         if (isset($_POST['combo_itens']) && is_array($_POST['combo_itens'])) {
-            foreach ($_POST['combo_itens'] as$filho_id => $marcado) {$qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 0);
-                if ($qtd > 0) {$tem_combo = true;
+            foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_combo = true;
                     break;
                 }
             }
@@ -71,8 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $tem_receita = false;
         if (isset($_POST['ingredientes']) && is_array($_POST['ingredientes'])) {
-            foreach ($_POST['ingredientes'] as$ingred_id => $marcado) {$qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
-                if ($qtd > 0) {$tem_receita = true;
+            foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                if ($qtd > 0) {
+                    $tem_receita = true;
                     break;
                 }
             }
@@ -83,15 +99,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ativo = 0;
         } elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && !$tem_receita) {
             $ativo = 0;
-        } elseif ($make_or_buy === 'revenda' && empty($_POST['estoque_revenda_id'])) {$ativo = 0;
+        } elseif ($make_or_buy === 'revenda' && empty($_POST['estoque_revenda_id'])) {
+            $ativo = 0;
         }
 
-        if (!empty($nome) && $preco_venda !== false &&$preco_venda >= 0) {
+        if (!empty($nome) && $preco_venda !== false && $preco_venda >= 0) {
             try {
                 $pdo->beginTransaction();
 
-                if ($acao === 'editar' && !empty($id_produto)) {$sql_produto = "UPDATE produtos SET categorias = :cat, nome = :nome, ativo = :ativo, descricao = :desc, preco_venda = :preco, visivel = :visivel, make_or_buy = :mob WHERE id = :id";
-                    $stmt =$pdo->prepare($sql_produto);$stmt->execute([
+                if ($acao === 'editar' && !empty($id_produto)) {
+                    $sql_produto = "UPDATE produtos SET categorias = :cat, nome = :nome, ativo = :ativo, descricao = :desc, preco_venda = :preco, visivel = :visivel, make_or_buy = :mob WHERE id = :id";
+                    $stmt = $pdo->prepare($sql_produto);
+                    $stmt->execute([
                         ':cat'     => $categoria,
                         ':nome'    => $nome,
                         ':ativo'   => $ativo,
@@ -101,10 +120,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':mob'     => $make_or_buy,
                         ':id'      => $id_produto
                     ]);
-                    $alvo_id =$id_produto;
+                    $alvo_id = $id_produto;
                 } else {
                     $sql_produto = "INSERT INTO produtos (categorias, nome, ativo, descricao, preco_venda, visivel, make_or_buy) VALUES (:cat, :nome, :ativo, :desc, :preco, :visivel, :mob)";
-                    $stmt =$pdo->prepare($sql_produto);$stmt->execute([
+                    $stmt = $pdo->prepare($sql_produto);
+                    $stmt->execute([
                         ':cat'     => $categoria,
                         ':nome'    => $nome,
                         ':ativo'   => $ativo,
@@ -113,27 +133,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ':visivel' => $visivel,
                         ':mob'     => $make_or_buy
                     ]);
-                    $alvo_id =$pdo->lastInsertId();
+                    $alvo_id = $pdo->lastInsertId();
                 }
 
-                if (isset($_FILES['imagem_arquivo']) && $_FILES['imagem_arquivo']['error'] === UPLOAD_ERR_OK) {$pasta_destino = '../../img/uploads/';
-                    if (!is_dir($pasta_destino)) mkdir($pasta_destino, 0755, true);$extensao = strtolower(pathinfo($_FILES['imagem_arquivo']['name'], PATHINFO_EXTENSION));$extensoes_permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+                if (isset($_FILES['imagem_arquivo']) && $_FILES['imagem_arquivo']['error'] === UPLOAD_ERR_OK) {
+                    $pasta_destino = '../../img/uploads/';
+                    if (!is_dir($pasta_destino)) mkdir($pasta_destino, 0755, true);
+                    $extensao = strtolower(pathinfo($_FILES['imagem_arquivo']['name'], PATHINFO_EXTENSION));
 
-                    if (in_array($extensao,$extensoes_permitidas)) {
-                        $stmt_old =$pdo->prepare("SELECT imagem_caminho FROM produtos WHERE id = ?");
-                        $stmt_old->execute([$alvo_id]);
-                        $caminho_antigo =$stmt_old->fetchColumn();
+                    $stmt_old = $pdo->prepare("SELECT imagem_caminho FROM produtos WHERE id = ?");
+                    $stmt_old->execute([$alvo_id]);
+                    $caminho_antigo = $stmt_old->fetchColumn();
 
-                        if ($caminho_antigo && file_exists($caminho_antigo)) {
-                            unlink($caminho_antigo);
-                        }
+                    if ($caminho_antigo && file_exists($caminho_antigo)) {
+                        unlink($caminho_antigo);
+                    }
 
-                        $versao_imagem = uniqid();$caminho_completo = $pasta_destino . 'produto_' .$alvo_id . '_' . $versao_imagem . '.' .$extensao;
-                        
-                        if (move_uploaded_file($_FILES['imagem_arquivo']['tmp_name'],$caminho_completo)) {
-                            $stmt_img =$pdo->prepare("UPDATE produtos SET imagem_caminho = :caminho WHERE id = :id");
-                            $stmt_img->execute([':caminho' => $caminho_completo, ':id' =>$alvo_id]);
-                        }
+                    $versao_imagem = uniqid();
+                    $caminho_completo = $pasta_destino . 'produto_' . $alvo_id . '_' . $versao_imagem . '.' . $extensao;
+                    
+                    if (move_uploaded_file($_FILES['imagem_arquivo']['tmp_name'], $caminho_completo)) {
+                        $stmt_img = $pdo->prepare("UPDATE produtos SET imagem_caminho = :caminho WHERE id = :id");
+                        $stmt_img->execute([':caminho' => $caminho_completo, ':id' => $alvo_id]);
                     }
                 }
                 
@@ -141,24 +162,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $pdo->prepare("DELETE FROM receitas WHERE produto_id = ?")->execute([$alvo_id]);
 
                 if ($categoria === 'combos' && isset($_POST['combo_itens'])) {
-                    $stmtCombo =$pdo->prepare("INSERT INTO itens_combo (combo_id, produto_filho_id, quantidade) VALUES (:combo, :filho, :qtd)");
-                    foreach ($_POST['combo_itens'] as$filho_id => $marcado) {$qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 1);
-                        if ($qtd > 0) $stmtCombo->execute([':combo' =>$alvo_id, ':filho' => $filho_id, ':qtd' =>$qtd]);
+                    $stmtCombo = $pdo->prepare("INSERT INTO itens_combo (combo_id, produto_filho_id, quantidade) VALUES (:combo, :filho, :qtd)");
+                    foreach ($_POST['combo_itens'] as $filho_id => $marcado) {
+                        $qtd = (int)($_POST['combo_qtd'][$filho_id] ?? 1);
+                        if ($qtd > 0) $stmtCombo->execute([':combo' => $alvo_id, ':filho' => $filho_id, ':qtd' => $qtd]);
                     }
                 } 
                 elseif ($make_or_buy === 'revenda' && !empty($_POST['estoque_revenda_id'])) {
-                    $stmtReceita =$pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, 1)");
-                    $stmtReceita->execute([':prod' => $alvo_id, ':ing'  =>$_POST['estoque_revenda_id']]);
+                    $stmtReceita = $pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, 1)");
+                    $stmtReceita->execute([':prod' => $alvo_id, ':ing' => $_POST['estoque_revenda_id']]);
                 }
                 elseif ($make_or_buy === 'produto_acabado' && $categoria !== 'combos' && isset($_POST['ingredientes'])) {
-                    $stmtReceita =$pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, :qtd)");
-                    foreach ($_POST['ingredientes'] as$ingred_id => $marcado) {$qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
-                        if ($qtd > 0) $stmtReceita->execute([':prod' =>$alvo_id, ':ing' => $ingred_id, ':qtd' =>$qtd]);
+                    $stmtReceita = $pdo->prepare("INSERT INTO receitas (produto_id, ingrediente_id, quantidade_usada) VALUES (:prod, :ing, :qtd)");
+                    foreach ($_POST['ingredientes'] as $ingred_id => $marcado) {
+                        $qtd = (float)($_POST['ingrediente_qtd'][$ingred_id] ?? 0);
+                        if ($qtd > 0) $stmtReceita->execute([':prod' => $alvo_id, ':ing' => $ingred_id, ':qtd' => $qtd]);
                     }
                 }
 
                 $pdo->commit();
-            } catch (PDOException $e) {$pdo->rollBack();
+            } catch (PDOException $e) {
+                $pdo->rollBack();
             }
         }
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -166,25 +190,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$lista_estoque_ingredientes = [];$lista_estoque_revenda = [];
-$lista_produtos = [];$produtos_por_categoria = [];
-$produtosAtivos = [];$produtosPendentes = [];
+$lista_estoque_ingredientes = [];
+$lista_estoque_revenda = [];
+$lista_produtos = [];
+$produtos_por_categoria = [];
+$produtosAtivos = [];
+$produtosPendentes = [];
 
 try {
-    $stmtEstIng =$pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 0 ORDER BY nome ASC");
-    $lista_estoque_ingredientes =$stmtEstIng->fetchAll(PDO::FETCH_ASSOC);
+    $stmtEstIng = $pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 0 ORDER BY nome ASC");
+    $lista_estoque_ingredientes = $stmtEstIng->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtEstRev =$pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 1 ORDER BY nome ASC");
-    $lista_estoque_revenda =$stmtEstRev->fetchAll(PDO::FETCH_ASSOC);
+    $stmtEstRev = $pdo->query("SELECT id, nome, unidade_medida FROM estoque WHERE eh_revenda = 1 ORDER BY nome ASC");
+    $lista_estoque_revenda = $stmtEstRev->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtProd =$pdo->query("SELECT id, nome, categorias FROM produtos WHERE categorias != 'combos' AND ativo = 1 ORDER BY nome ASC");
-    $lista_produtos =$stmtProd->fetchAll(PDO::FETCH_ASSOC);
+    $stmtProd = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE categorias != 'combos' AND ativo = 1 ORDER BY nome ASC");
+    $lista_produtos = $stmtProd->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach($lista_produtos as $p) {$produtos_por_categoria[$p['categorias']][] =$p;
+    foreach($lista_produtos as $p) {
+        $produtos_por_categoria[$p['categorias']][] = $p;
     }
 
-    $produtosAtivos =$pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $produtosPendentes =$pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 0 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $produtosAtivos = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+    $produtosPendentes = $pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 0 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {}
 ?>
 <!DOCTYPE html>
@@ -201,7 +229,7 @@ try {
     <div>
         <h2>PRODUTOS CADASTRADOS</h2>
         <div>
-            <?php foreach($produtosAtivos as$p): ?>
+            <?php foreach($produtosAtivos as $p): ?>
                 <button onclick="abrirAcoes(<?= $p['id'] ?>)">
                     <?= htmlspecialchars($p['nome']) ?>
                 </button>
@@ -212,7 +240,7 @@ try {
     <div>
         <h2>PENDÊNCIAS (PRODUTOS INATIVOS)</h2>
         <div>
-            <?php foreach($produtosPendentes as$p): ?>
+            <?php foreach($produtosPendentes as $p): ?>
                 <button onclick="abrirAcoes(<?= $p['id'] ?>)">
                     <?= htmlspecialchars($p['nome']) ?>
                 </button>
@@ -227,7 +255,8 @@ try {
 <dialog id="modalCadastro">
     <h1 id="modalTituloCadastro">Cadastrar Novo Produto</h1>
 
-    <form method="POST" action="" enctype="multipart/form-data" onsubmit="habilitarCamposAntesDeEnviar()">
+    <form id="formProduto" method="POST" action="" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
         <input type="hidden" id="form_acao" name="acao" value="cadastrar">
         <input type="hidden" id="form_id_produto" name="id_produto" value="">
 
@@ -274,7 +303,7 @@ try {
             <label for="estoque_revenda_id">Item para baixa automática:</label>
             <select id="estoque_revenda_id" name="estoque_revenda_id">
                 <option value="">-- Selecione --</option>
-                <?php foreach($lista_estoque_revenda as$item): ?>
+                <?php foreach($lista_estoque_revenda as $item): ?>
                     <option value="<?= $item['id'] ?>"><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</option>
                 <?php endforeach; ?>
             </select>
@@ -288,7 +317,7 @@ try {
                     <tr><th>Incluir</th><th>Ingrediente</th><th>Quantidade</th></tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($lista_estoque_ingredientes as$item): ?>
+                    <?php foreach ($lista_estoque_ingredientes as $item): ?>
                         <tr>
                             <td><input type="checkbox" id="chk_ing_<?= $item['id'] ?>" name="ingredientes[<?= $item['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_ing_<?= $item['id'] ?>')"></td>
                             <td><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</td>
@@ -307,21 +336,21 @@ try {
                 <div style="margin-bottom: 15px;">
                     <?php 
                     $primeira_cat = array_key_first($produtos_por_categoria);
-                    foreach(array_keys($produtos_por_categoria) as$cat): ?>
+                    foreach(array_keys($produtos_por_categoria) as $cat): ?>
                         <button type="button" onclick="mostrarCategoriaCombo('<?= $cat ?>')">
                             <?= ucfirst(str_replace('_', ' ', $cat)) ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
 
-                <?php foreach ($produtos_por_categoria as $cat =>$produtos): ?>
-                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" style="display: <?= $cat ===$primeira_cat ? 'block' : 'none' ?>;">
+                <?php foreach ($produtos_por_categoria as $cat => $produtos): ?>
+                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" style="display: <?= $cat === $primeira_cat ? 'block' : 'none' ?>;">
                         <table>
                             <thead>
                                 <tr><th>Incluir</th><th>Produto</th><th>Quantidade</th></tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($produtos as$prod): ?>
+                                <?php foreach ($produtos as $prod): ?>
                                     <tr>
                                         <td><input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')"></td>
                                         <td><?= htmlspecialchars($prod['nome']) ?></td>
@@ -363,7 +392,7 @@ try {
     
     <div>
         <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()" disabled>Editar</button>
-        <button type="button" style="color: red;" onclick="abrirModalDeletar()">Excluir</button>
+        <button type="button" onclick="abrirModalDeletar()">Excluir</button>
         <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
     </div>
 </dialog>
@@ -373,18 +402,38 @@ try {
     <p>Tem certeza que deseja excluir este produto? Esta ação não poderá ser desfeita.</p>
     
     <form method="POST" action="">
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
         <input type="hidden" name="acao" value="deletar">
         <input type="hidden" name="id_produto" id="deletar_id_produto" value="">
         
         <div>
-            <button type="submit" style="color: red;">Sim, Excluir</button>
+            <button type="submit">Sim, Excluir</button>
             <button type="button" onclick="document.getElementById('modalDeletar').close()">Cancelar</button>
         </div>
     </form>
 </dialog>
 
+<dialog id="modalConfirmacaoCustom">
+    <h3 id="tituloConfirmacao">Confirmação</h3>
+    <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
+    <button type="button" id="btnSimConfirmacao">Sim</button>
+    <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+</dialog>
+
 <script>
 let produtoAtualData = null;
+let callbackConfirmacao = null;
+
+function dispararConfirmacao(mensagem, callback) {
+    document.getElementById('mensagemConfirmacao').innerText = mensagem;
+    callbackConfirmacao = callback;
+    document.getElementById('modalConfirmacaoCustom').showModal();
+}
+
+document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+    document.getElementById('modalConfirmacaoCustom').close();
+    if (callbackConfirmacao) callbackConfirmacao();
+});
 
 function resetarFormulario() {
     document.getElementById('modalCadastro').querySelector('form').reset();
@@ -421,7 +470,7 @@ async function abrirAcoes(id) {
         try {
             produtoAtualData = JSON.parse(textoBruto);
         } catch (e) {
-            document.getElementById('detalhes_produto_info').innerHTML = "<p style='color:red;'>Erro na leitura dos dados.</p>";
+            document.getElementById('detalhes_produto_info').innerHTML = "<p>Erro na leitura dos dados.</p>";
             return;
         }
 
@@ -430,8 +479,8 @@ async function abrirAcoes(id) {
         document.getElementById('tituloAcoes').innerText = "Produto: " + p.nome;
 
         let precoFmt = parseFloat(p.preco_venda).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        let statusText = p.ativo == 1 ? "<span style='color: green;'>Ativo</span>" : "<span style='color: red;'>Inativo (Pendente)</span>";
-        let statusImagem = (p.imagem_caminho && p.imagem_caminho.trim() !== '') ? "<span style='color: green;'>✔ Com imagem</span>" : "<span style='color: orange;'>❌ Sem imagem</span>";
+        let statusText = p.ativo == 1 ? "<span>Ativo</span>" : "<span>Inativo (Pendente)</span>";
+        let statusImagem = (p.imagem_caminho && p.imagem_caminho.trim() !== '') ? "<span>✔ Com imagem</span>" : "<span>❌ Sem imagem</span>";
 
         document.getElementById('detalhes_produto_info').innerHTML = `
             <p><strong>Categoria:</strong> ${p.categorias.toUpperCase()}</p>
@@ -443,57 +492,59 @@ async function abrirAcoes(id) {
         document.getElementById('btnEditarAcoes').disabled = false;
 
     } catch (err) {
-        document.getElementById('detalhes_produto_info').innerHTML = "<p style='color:red;'>Falha de conexão.</p>";
+        document.getElementById('detalhes_produto_info').innerHTML = "<p>Falha de conexão.</p>";
     }
 }
 
 function carregarDadosEdicao() {
     if (!produtoAtualData) return;
-    document.getElementById('modalAcoes').close();
-    resetarFormulario();
+    dispararConfirmacao("Deseja editar este produto?", function() {
+        document.getElementById('modalAcoes').close();
+        resetarFormulario();
 
-    let data = produtoAtualData;
-    let p = data.produto;
+        let data = produtoAtualData;
+        let p = data.produto;
 
-    document.getElementById('form_acao').value = 'editar';
-    document.getElementById('form_id_produto').value = p.id;
-    document.getElementById('modalTituloCadastro').innerText = 'Editar Produto: ' + p.nome;
-    document.getElementById('btnSubmitModal').innerText = 'Salvar Alterações';
-    
-    document.getElementById('nome').value = p.nome;
-    document.getElementById('categorias').value = p.categorias;
-    document.getElementById('descricao').value = p.descricao;
-    document.getElementById('preco_venda').value = p.preco_venda;
-    document.getElementById('make_or_buy').value = p.make_or_buy;
-    document.getElementById('visivel').checked = (p.visivel == 1);
+        document.getElementById('form_acao').value = 'editar';
+        document.getElementById('form_id_produto').value = p.id;
+        document.getElementById('modalTituloCadastro').innerText = 'Editar Produto: ' + p.nome;
+        document.getElementById('btnSubmitModal').innerText = 'Salvar Alterações';
+        
+        document.getElementById('nome').value = p.nome;
+        document.getElementById('categorias').value = p.categorias;
+        document.getElementById('descricao').value = p.descricao;
+        document.getElementById('preco_venda').value = p.preco_venda;
+        document.getElementById('make_or_buy').value = p.make_or_buy;
+        document.getElementById('visivel').checked = (p.visivel == 1);
 
-    if (p.imagem_caminho) document.getElementById('status_imagem_cadastrada').innerHTML = "<span style='color: green;'>✔ Imagem salva</span>";
+        if (p.imagem_caminho) document.getElementById('status_imagem_cadastrada').innerHTML = "<span>✔ Imagem salva</span>";
 
-    atualizarFormulario();
+        atualizarFormulario();
 
-    if (p.categorias === 'combos') {
-        data.combos.forEach(c => {
-            let chk = document.getElementById('chk_combo_' + c.produto_filho_id);
-            if (chk) {
-                chk.checked = true;
-                let inp = document.getElementById('qtd_combo_' + c.produto_filho_id);
-                inp.value = c.quantidade; inp.style.display = 'block'; inp.disabled = false;
-            }
-        });
-    } else if (p.make_or_buy === 'revenda') {
-        if (data.receitas.length > 0) document.getElementById('estoque_revenda_id').value = data.receitas[0].ingrediente_id;
-    } else {
-        data.receitas.forEach(r => {
-            let chk = document.getElementById('chk_ing_' + r.ingrediente_id);
-            if (chk) {
-                chk.checked = true;
-                let inp = document.getElementById('qtd_ing_' + r.ingrediente_id);
-                inp.value = r.quantidade_usada; inp.style.display = 'block'; inp.disabled = false;
-            }
-        });
-    }
+        if (p.categorias === 'combos') {
+            data.combos.forEach(c => {
+                let chk = document.getElementById('chk_combo_' + c.produto_filho_id);
+                if (chk) {
+                    chk.checked = true;
+                    let inp = document.getElementById('qtd_combo_' + c.produto_filho_id);
+                    inp.value = c.quantidade; inp.style.display = 'block'; inp.disabled = false;
+                }
+            });
+        } else if (p.make_or_buy === 'revenda') {
+            if (data.receitas.length > 0) document.getElementById('estoque_revenda_id').value = data.receitas[0].ingrediente_id;
+        } else {
+            data.receitas.forEach(r => {
+                let chk = document.getElementById('chk_ing_' + r.ingrediente_id);
+                if (chk) {
+                    chk.checked = true;
+                    let inp = document.getElementById('qtd_ing_' + r.ingrediente_id);
+                    inp.value = r.quantidade_usada; inp.style.display = 'block'; inp.disabled = false;
+                }
+            });
+        }
 
-    document.getElementById('modalCadastro').showModal();
+        document.getElementById('modalCadastro').showModal();
+    });
 }
 
 function abrirModalDeletar() {
@@ -553,6 +604,5 @@ function habilitarCamposAntesDeEnviar() {
     if (mbSel.disabled) { mbHid.disabled = false; mbHid.value = mbSel.value; }
 }
 </script>
-
 </body>
 </html>

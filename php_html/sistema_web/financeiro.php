@@ -1,11 +1,18 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../php/conexao.php';
+require_once __DIR__ . '/verificar_login.php';
 
-// tomar cuidado com as datas !precisa arrumar!
-// add dialogs para segurança de exclusao e update
-// pensar em uma dash que mostre as contas prestes a vencer, design intuitivo, com cores e alertas visuais
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Ação não autorizada.');
+    }
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
     $acao = $_POST['acao'] ?? '';
     $origem = $_POST['origem'] ?? '';
 
@@ -47,9 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $categorias = $pdo->query("SELECT * FROM categorias_financeiras ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
-$contas = $pdo->query("SELECT c.*, f.nome_razao_social, cat.nome as categoria_nome FROM contas_a_pagar c LEFT JOIN fornecedores f ON c.fornecedor_id = f.id JOIN categorias_financeiras cat ON c.categoria_id = cat.id ORDER BY c.data_vencimento ASC")->fetchAll(PDO::FETCH_ASSOC);
-$fornecedores = $pdo->query("SELECT id, nome_razao_social FROM fornecedores WHERE ativo = 1")->fetchAll(PDO::FETCH_ASSOC);
-$categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHERE tipo = 'saida'")->fetchAll(PDO::FETCH_ASSOC);
+$contas = $pdo->query("SELECT c.*, f.nome_razao_social, f.cnpj_cpf, cat.nome as categoria_nome FROM contas_a_pagar c LEFT JOIN fornecedores f ON c.fornecedor_id = f.id JOIN categorias_financeiras cat ON c.categoria_id = cat.id ORDER BY c.data_vencimento ASC")->fetchAll(PDO::FETCH_ASSOC);
+$fornecedores = $pdo->query("SELECT id, nome_razao_social, cnpj_cpf FROM fornecedores WHERE ativo = 1")->fetchAll(PDO::FETCH_ASSOC);
+$categorias_saida = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras WHERE tipo = 'saida'")->fetchAll(PDO::FETCH_ASSOC);
+$hoje = date('Y-m-d');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -73,11 +81,12 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
                 <td><?= htmlspecialchars($cat['grupo_dre']) ?></td>
                 <td>
                     <button onclick='editarCategoria(<?= json_encode($cat) ?>)'>Editar</button>
-                    <form method="POST" style="display:inline;">
+                    <form id="formDelCat_<?= $cat['id'] ?>" method="POST" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="origem" value="categoria">
                         <input type="hidden" name="acao" value="deletar">
                         <input type="hidden" name="id" value="<?= $cat['id'] ?>">
-                        <button type="submit">Excluir</button>
+                        <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta categoria?', document.getElementById('formDelCat_<?= $cat['id'] ?>'))">Excluir</button>
                     </form>
                 </td>
             </tr>
@@ -91,28 +100,40 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
         <thead><tr><th>Descrição</th><th>Fornecedor</th><th>Categoria</th><th>Valor</th><th>Vencimento</th><th>Status</th><th>Ações</th></tr></thead>
         <tbody>
             <?php foreach ($contas as $c): ?>
+            <?php 
+                $avisoVencimento = '';
+                if ($c['status_pagamento'] === 'pendente') {
+                    if ($c['data_vencimento'] < $hoje) {
+                        $avisoVencimento = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
+                    } elseif ($c['data_vencimento'] === $hoje) {
+                        $avisoVencimento = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
+                    }
+                }
+            ?>
             <tr>
                 <td><?= htmlspecialchars($c['descricao']) ?></td>
                 <td><?= htmlspecialchars($c['nome_razao_social'] ?? 'Avulso') ?></td>
                 <td><?= htmlspecialchars($c['categoria_nome']) ?></td>
                 <td>R$ <?= number_format($c['valor'], 2, ',', '.') ?></td>
-                <td><?= date('d/m/Y', strtotime($c['data_vencimento'])) ?></td>
+                <td><?= date('d/m/Y', strtotime($c['data_vencimento'])) ?><?= $avisoVencimento ?></td>
                 <td><?= htmlspecialchars($c['status_pagamento']) ?></td>
                 <td>
                     <?php if ($c['status_pagamento'] === 'pendente'): ?>
-                    <form method="POST" style="display:inline;">
+                    <form id="formPagar_<?= $c['id'] ?>" method="POST" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="origem" value="conta">
                         <input type="hidden" name="acao" value="pagar">
                         <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                        <button type="submit">Marcar Pago</button>
+                        <button type="button" onclick="dispararConfirmacao('Confirmar baixa de pagamento desta conta?', document.getElementById('formPagar_<?= $c['id'] ?>'))">Marcar Pago</button>
                     </form>
                     <?php endif; ?>
                     <button onclick='editarConta(<?= json_encode($c) ?>)'>Editar</button>
-                    <form method="POST" style="display:inline;">
+                    <form id="formDelConta_<?= $c['id'] ?>" method="POST" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="origem" value="conta">
                         <input type="hidden" name="acao" value="deletar">
                         <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                        <button type="submit">Excluir</button>
+                        <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta conta?', document.getElementById('formDelConta_<?= $c['id'] ?>'))">Excluir</button>
                     </form>
                 </td>
             </tr>
@@ -122,6 +143,7 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
 
     <dialog id="modalCategoria">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="categoria">
             <input type="hidden" name="acao" value="salvar">
             <input type="hidden" name="id" id="form_cat_id">
@@ -157,6 +179,7 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
 
     <dialog id="modalConta">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="conta">
             <input type="hidden" name="acao" value="salvar">
             <input type="hidden" name="id" id="form_conta_id">
@@ -165,13 +188,22 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
                 <label>Fornecedor:</label>
                 <select name="fornecedor_id" id="form_conta_fornecedor">
                     <option value="">Nenhum (Avulso)</option>
-                    <?php foreach ($fornecedores as $f): ?><option value="<?= $f['id'] ?>"><?= htmlspecialchars($f['nome_razao_social']) ?></option><?php endforeach; ?>
+                    <?php foreach ($fornecedores as $f): ?>
+                        <option value="<?= $f['id'] ?>">
+                            <?= htmlspecialchars($f['nome_razao_social']) ?> 
+                            <?= !empty($f['cnpj_cpf']) ? ' - Doc: ' . htmlspecialchars($f['cnpj_cpf']) : '' ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div>
                 <label>Categoria:</label>
                 <select name="categoria_id" id="form_conta_categoria" required>
-                    <?php foreach ($categorias_saida as $cs): ?><option value="<?= $cs['id'] ?>"><?= htmlspecialchars($cs['nome']) ?></option><?php endforeach; ?>
+                    <?php foreach ($categorias_saida as $cs): ?>
+                        <option value="<?= $cs['id'] ?>">
+                            [<?= strtoupper($cs['tipo']) ?>] <?= htmlspecialchars($cs['nome']) ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div><label>Valor (R$):</label><input type="number" step="0.01" name="valor" id="form_conta_valor" required></div>
@@ -181,7 +213,29 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
         </form>
     </dialog>
 
+    <dialog id="modalConfirmacaoCustom">
+        <h3 id="tituloConfirmacao">Confirmação</h3>
+        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
+        <button type="button" id="btnSimConfirmacao">Sim</button>
+        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    </dialog>
+
     <script>
+    let formParaSubmeter = null;
+
+    function dispararConfirmacao(mensagem, form) {
+        formParaSubmeter = form;
+        document.getElementById('mensagemConfirmacao').innerText = mensagem;
+        document.getElementById('modalConfirmacaoCustom').showModal();
+    }
+
+    document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+        document.getElementById('modalConfirmacaoCustom').close();
+        if (formParaSubmeter) {
+            formParaSubmeter.submit();
+        }
+    });
+
     function abrirModalCategoria() {
         document.getElementById('form_cat_id').value = '';
         document.getElementById('form_cat_nome').value = '';
@@ -192,12 +246,14 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
     }
     
     function editarCategoria(cat) {
-        document.getElementById('form_cat_id').value = cat.id;
-        document.getElementById('form_cat_nome').value = cat.nome;
-        document.getElementById('form_cat_tipo').value = cat.tipo;
-        document.getElementById('form_cat_tipo_saida').value = cat.tipo_saida;
-        document.getElementById('form_cat_grupo_dre').value = cat.grupo_dre;
-        document.getElementById('modalCategoria').showModal();
+        dispararConfirmacao("Deseja editar esta categoria financeira?", function() {
+            document.getElementById('form_cat_id').value = cat.id;
+            document.getElementById('form_cat_nome').value = cat.nome;
+            document.getElementById('form_cat_tipo').value = cat.tipo;
+            document.getElementById('form_cat_tipo_saida').value = cat.tipo_saida;
+            document.getElementById('form_cat_grupo_dre').value = cat.grupo_dre;
+            document.getElementById('modalCategoria').showModal();
+        });
     }
 
     function abrirModalConta() {
@@ -211,13 +267,15 @@ $categorias_saida = $pdo->query("SELECT id, nome FROM categorias_financeiras WHE
     }
     
     function editarConta(c) {
-        document.getElementById('form_conta_id').value = c.id;
-        document.getElementById('form_conta_descricao').value = c.descricao;
-        document.getElementById('form_conta_valor').value = c.valor;
-        document.getElementById('form_conta_vencimento').value = c.data_vencimento;
-        document.getElementById('form_conta_fornecedor').value = c.fornecedor_id || '';
-        document.getElementById('form_conta_categoria').value = c.categoria_id;
-        document.getElementById('modalConta').showModal();
+        dispararConfirmacao("Deseja editar esta conta a pagar?", function() {
+            document.getElementById('form_conta_id').value = c.id;
+            document.getElementById('form_conta_descricao').value = c.descricao;
+            document.getElementById('form_conta_valor').value = c.valor;
+            document.getElementById('form_conta_vencimento').value = c.data_vencimento;
+            document.getElementById('form_conta_fornecedor').value = c.fornecedor_id || '';
+            document.getElementById('form_conta_categoria').value = c.categoria_id;
+            document.getElementById('modalConta').showModal();
+        });
     }
     </script>
 </body>

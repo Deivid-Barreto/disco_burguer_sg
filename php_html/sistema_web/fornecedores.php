@@ -3,11 +3,18 @@ session_start();
 require_once __DIR__ . '/../../php/conexao.php';
 require_once __DIR__ . '/verificar_login.php'; 
 
-// add um dialog de segurança para confirmar a exclusão de um fornecedor ou atualização
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 $funcionario_id = $_SESSION['funcionario_id']; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Ação não autorizada.');
+    }
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
     $acao = $_POST['acao'] ?? '';
     if ($acao === 'deletar') {
         $stmt = $pdo->prepare("DELETE FROM fornecedores WHERE id = ?");
@@ -45,10 +52,11 @@ $fornecedores = $pdo->query("SELECT * FROM fornecedores ORDER BY nome_razao_soci
                 <td><?= $f['ativo'] ? 'Sim' : 'Não' ?></td>
                 <td>
                     <button onclick='editar(<?= json_encode($f) ?>)'>Editar</button>
-                    <form method="POST" style="display:inline;">
+                    <form id="formDelFornecedor_<?= $f['id'] ?>" method="POST" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="acao" value="deletar">
                         <input type="hidden" name="id" value="<?= $f['id'] ?>">
-                        <button type="submit">Excluir</button>
+                        <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR este fornecedor?', document.getElementById('formDelFornecedor_<?= $f['id'] ?>'))">Excluir</button>
                     </form>
                 </td>
             </tr>
@@ -58,6 +66,7 @@ $fornecedores = $pdo->query("SELECT * FROM fornecedores ORDER BY nome_razao_soci
 
     <dialog id="modalFornecedor">
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="salvar">
             <input type="hidden" name="id" id="form_id">
             <div><label>Razão Social / Nome:</label><input type="text" name="nome_razao_social" id="form_nome" required></div>
@@ -69,7 +78,29 @@ $fornecedores = $pdo->query("SELECT * FROM fornecedores ORDER BY nome_razao_soci
         </form>
     </dialog>
 
+    <dialog id="modalConfirmacaoCustom">
+        <h3 id="tituloConfirmacao">Confirmação</h3>
+        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
+        <button type="button" id="btnSimConfirmacao">Sim</button>
+        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    </dialog>
+
     <script>
+    let formParaSubmeter = null;
+
+    function dispararConfirmacao(mensagem, form) {
+        formParaSubmeter = form;
+        document.getElementById('mensagemConfirmacao').innerText = mensagem;
+        document.getElementById('modalConfirmacaoCustom').showModal();
+    }
+
+    document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+        document.getElementById('modalConfirmacaoCustom').close();
+        if (formParaSubmeter) {
+            formParaSubmeter.submit();
+        }
+    });
+
     function abrirModal() {
         document.getElementById('form_id').value = '';
         document.getElementById('form_nome').value = '';
@@ -78,13 +109,16 @@ $fornecedores = $pdo->query("SELECT * FROM fornecedores ORDER BY nome_razao_soci
         document.getElementById('form_ativo').checked = true;
         document.getElementById('modalFornecedor').showModal();
     }
+    
     function editar(f) {
-        document.getElementById('form_id').value = f.id;
-        document.getElementById('form_nome').value = f.nome_razao_social;
-        document.getElementById('form_doc').value = f.cnpj_cpf;
-        document.getElementById('form_telefone').value = f.telefone;
-        document.getElementById('form_ativo').checked = f.ativo == 1;
-        document.getElementById('modalFornecedor').showModal();
+        dispararConfirmacao("Deseja editar este fornecedor?", function() {
+            document.getElementById('form_id').value = f.id;
+            document.getElementById('form_nome').value = f.nome_razao_social;
+            document.getElementById('form_doc').value = f.cnpj_cpf;
+            document.getElementById('form_telefone').value = f.telefone;
+            document.getElementById('form_ativo').checked = f.ativo == 1;
+            document.getElementById('modalFornecedor').showModal();
+        });
     }
     </script>
 </body>

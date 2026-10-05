@@ -1,28 +1,22 @@
 <?php
 session_start();
+require_once __DIR__ . '/../../php/conexao.php';
+require_once __DIR__ . '/verificar_login.php';
 
-require_once __DIR__ . '/../../php/conexao.php'; 
-
-$funcionario_id = $_SESSION['funcionario_id'] ?? null;
-
-
-/* =========================
-   AÇÕES POST
-========================= */
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die('Ação não autorizada.');
+    }
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
     $acao = $_POST['acao'] ?? '';
 
-
-    /* =========================
-       ADICIONAR MESA
-    ========================= */
-
     if ($acao === 'adicionar_mesa') {
-
         try {
-
             $numero = (int) ($_POST['numero'] ?? 0);
             $quantidade = (int) ($_POST['quantidade_lugares'] ?? 0);
 
@@ -31,14 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            /* Verifica se já existe */
-
-            $stmt = $pdo->prepare("
-                SELECT id
-                FROM mesas
-                WHERE numero = ?
-            ");
-
+            $stmt = $pdo->prepare("SELECT id FROM mesas WHERE numero = ?");
             $stmt->execute([$numero]);
 
             if ($stmt->fetch()) {
@@ -46,25 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-
-            /* Cadastra */
-
-            $stmt = $pdo->prepare("
-                INSERT INTO mesas
-                (
-                    numero,
-                    quantidade_lugares
-                )
-                VALUES (?, ?)
-            ");
-
-            $stmt->execute([
-                $numero,
-                $quantidade
-            ]);
-
+            $stmt = $pdo->prepare("INSERT INTO mesas (numero, quantidade_lugares) VALUES (?, ?)");
+            $stmt->execute([$numero, $quantidade]);
             $id = $pdo->lastInsertId();
-
 
             echo "
                 <div id='mesa-{$id}'>
@@ -76,25 +47,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <hr>
             ";
-
         } catch (PDOException $e) {
-
             echo "Erro ao cadastrar mesa: " . $e->getMessage();
-
         }
-
         exit;
     }
 
-
-    /* =========================
-       EDITAR MESA
-    ========================= */
-
     if ($acao === 'editar_mesa') {
-
         try {
-
             $id = (int) ($_POST['id'] ?? 0);
             $numero = (int) ($_POST['numero'] ?? 0);
             $quantidade = (int) ($_POST['quantidade_lugares'] ?? 0);
@@ -105,36 +65,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
 
-            $stmt = $pdo->prepare("
-                UPDATE mesas
-                SET numero = ?, quantidade_lugares = ?, status = ?
-                WHERE id = ?
-            ");
-
+            $stmt = $pdo->prepare("UPDATE mesas SET numero = ?, quantidade_lugares = ?, status = ? WHERE id = ?");
             $stmt->execute([$numero, $quantidade, $status, $id]);
 
             echo "ok";
-
         } catch (PDOException $e) {
-
             echo "Erro ao editar mesa: " . $e->getMessage();
-
         }
-
         exit;
     }
 
-
-    /* =========================
-       DELETAR MESA
-    ========================= */
-
     if ($acao === 'deletar_mesa') {
-
         try {
-
             $id = (int) ($_POST['id'] ?? 0);
-
             if ($id <= 0) {
                 echo "Mesa inválida.";
                 exit;
@@ -144,40 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$id]);
 
             echo "ok";
-
         } catch (PDOException $e) {
-
             echo "Erro ao excluir mesa: " . $e->getMessage();
-
         }
-
         exit;
     }
 
-
-    /* =========================
-       LISTAR MESAS
-    ========================= */
-
     if ($acao === 'listar_mesas') {
-
         try {
-
-            $mesas = $pdo->query("
-                SELECT
-                    id,
-                    numero,
-                    status,
-                    quantidade_lugares
-                FROM mesas
-                ORDER BY numero ASC
-            ")->fetchAll(PDO::FETCH_ASSOC);
-
+            $mesas = $pdo->query("SELECT id, numero, status, quantidade_lugares FROM mesas ORDER BY numero ASC")->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($mesas as $mesa) {
-
                 $status_esc = htmlspecialchars($mesa['status'], ENT_QUOTES);
-
                 echo "
                     <div id='mesa-{$mesa['id']}'>
                         <b>Mesa {$mesa['numero']}</b>
@@ -190,42 +111,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ";
             }
 
-
             if (empty($mesas)) {
-
                 echo "<p>Nenhuma mesa cadastrada.</p>";
             }
-
         } catch (PDOException $e) {
-
             echo "Erro ao carregar mesas: " . $e->getMessage();
-
         }
-
         exit;
     }
-
-
     exit;
 }
 
-
-/* =========================
-   DADOS INICIAIS
-========================= */
-
-$mesas = $pdo->query("
-    SELECT
-        id,
-        numero,
-        status,
-        quantidade_lugares
-    FROM mesas
-    ORDER BY numero ASC
-")->fetchAll(PDO::FETCH_ASSOC);
-
+$mesas = $pdo->query("SELECT id, numero, status, quantidade_lugares FROM mesas ORDER BY numero ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -234,68 +132,36 @@ $mesas = $pdo->query("
 </head>
 <body>
 
-
-<!-- =========================
-     ÁREA MESAS
-========================= -->
-
 <div id="areaMesas">
-
     <h2>Mesas</h2>
-
     <button onclick="abrirAdicionarMesa()">ADICIONAR MESA</button>
-
     <br><br>
-
     <div id="containerMesas">
-
         <?php if (empty($mesas)): ?>
-
             <p>Nenhuma mesa cadastrada.</p>
-
         <?php else: ?>
-
             <?php foreach ($mesas as $mesa): ?>
-
                 <div id="mesa-<?= $mesa['id'] ?>">
-
                     <b>Mesa <?= $mesa['numero'] ?></b>
-
                     <p>Lugares: <?= $mesa['quantidade_lugares'] ?></p>
-
                     <p>Status: <?= htmlspecialchars($mesa['status']) ?></p>
-
                     <button onclick="abrirEditarMesa(<?= $mesa['id'] ?>, <?= $mesa['numero'] ?>, <?= $mesa['quantidade_lugares'] ?>, '<?= htmlspecialchars($mesa['status'], ENT_QUOTES) ?>')">
                         EDITAR
                     </button>
-
                     <button onclick="deletarMesa(<?= $mesa['id'] ?>)">
                         EXCLUIR
                     </button>
-
                 </div>
-
                 <hr>
-
             <?php endforeach; ?>
-
         <?php endif; ?>
-
     </div>
-
 </div>
 
-
-<!-- =========================
-     MODAL MESA
-========================= -->
-
 <dialog id="modalMesa">
-
     <h3 id="tituloModalMesa">Adicionar Mesa</h3>
-
     <form id="formMesa" onsubmit="salvarMesa(event)">
-
+        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
         <input type="hidden" name="acao" id="acaoMesa" value="adicionar_mesa">
         <input type="hidden" name="id" id="idMesa" value="">
 
@@ -303,16 +169,12 @@ $mesas = $pdo->query("
             <label>Número da Mesa:</label>
             <input type="number" name="numero" id="numeroMesa" min="1" required>
         </div>
-
         <br>
-
         <div>
             <label>Quantidade de Lugares:</label>
             <input type="number" name="quantidade_lugares" id="lugaresMesa" min="1" required>
         </div>
-
         <br>
-
         <div id="campoStatusMesa" style="display:none;">
             <label>Status:</label>
             <select name="status" id="statusMesa">
@@ -322,21 +184,32 @@ $mesas = $pdo->query("
             </select>
             <br><br>
         </div>
-
         <button type="button" onclick="document.getElementById('modalMesa').close()">CANCELAR</button>
-
         <button type="submit">SALVAR</button>
-
     </form>
-
 </dialog>
 
+<dialog id="modalConfirmacaoCustom">
+    <h3 id="tituloConfirmacao">Confirmação</h3>
+    <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
+    <button type="button" id="btnSimConfirmacao">Sim</button>
+    <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+</dialog>
 
 <script>
+let callbackConfirmacao = null;
+let idMesaParaExcluir = null;
 
-/* =========================
-   AÇÕES DE MESAS (CRUD)
-========================= */
+function dispararConfirmacao(mensagem, callback) {
+    document.getElementById('mensagemConfirmacao').innerText = mensagem;
+    callbackConfirmacao = callback;
+    document.getElementById('modalConfirmacaoCustom').showModal();
+}
+
+document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+    document.getElementById('modalConfirmacaoCustom').close();
+    if (callbackConfirmacao) callbackConfirmacao();
+});
 
 function abrirAdicionarMesa() {
     document.getElementById('formMesa').reset();
@@ -348,31 +221,35 @@ function abrirAdicionarMesa() {
 }
 
 function abrirEditarMesa(id, numero, quantidade, status) {
-    document.getElementById('tituloModalMesa').innerText = 'Editar Mesa';
-    document.getElementById('acaoMesa').value = 'editar_mesa';
-    document.getElementById('idMesa').value = id;
-    document.getElementById('numeroMesa').value = numero;
-    document.getElementById('lugaresMesa').value = quantidade;
-    document.getElementById('statusMesa').value = status;
-    document.getElementById('campoStatusMesa').style.display = 'block';
-    document.getElementById('modalMesa').showModal();
+    dispararConfirmacao("Deseja editar esta mesa?", function() {
+        document.getElementById('tituloModalMesa').innerText = 'Editar Mesa';
+        document.getElementById('acaoMesa').value = 'editar_mesa';
+        document.getElementById('idMesa').value = id;
+        document.getElementById('numeroMesa').value = numero;
+        document.getElementById('lugaresMesa').value = quantidade;
+        document.getElementById('statusMesa').value = status;
+        document.getElementById('campoStatusMesa').style.display = 'block';
+        document.getElementById('modalMesa').showModal();
+    });
 }
 
-async function deletarMesa(id) {
-    if (!confirm('Deseja realmente excluir esta mesa?')) return;
+function deletarMesa(id) {
+    idMesaParaExcluir = id;
+    dispararConfirmacao("Deseja realmente excluir esta mesa?", async function() {
+        const dados = new FormData();
+        dados.append('csrf_token', '<?= $_SESSION['csrf_token'] ?>');
+        dados.append('acao', 'deletar_mesa');
+        dados.append('id', idMesaParaExcluir);
 
-    const dados = new FormData();
-    dados.append('acao', 'deletar_mesa');
-    dados.append('id', id);
+        const resposta = await fetch('', { method: 'POST', body: dados });
+        const texto = await resposta.text();
 
-    const resposta = await fetch('', { method: 'POST', body: dados });
-    const texto = await resposta.text();
-
-    if (texto.trim() === 'ok') {
-        carregarMesas();
-    } else {
-        alert(texto);
-    }
+        if (texto.trim() === 'ok') {
+            carregarMesas();
+        } else {
+            alert(texto);
+        }
+    });
 }
 
 async function carregarMesas() {
@@ -409,8 +286,6 @@ async function salvarMesa(e) {
     form.reset();
     document.getElementById('modalMesa').close();
 }
-
 </script>
-
 </body>
 </html>
