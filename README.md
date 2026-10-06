@@ -8,6 +8,3 @@ Projeto do sistema/site para a hamburgueria **Disco Burguer SG**.
 
 ## Como rodar o projeto
 1. Clone este repositório
-2. Abra o arquivo `index.html` no navegador
-
-

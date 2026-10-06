@@ -12,9 +12,10 @@
 
 <body>
     <header>
-        <?php include __DIR__ . "/../../header.php"; ?>
-    </header>
-
+    <?php
+    include __DIR__ . "/../../includes/header.php";
+    ?>
+  </header>
     <main>
         <div class="container-fluid p-0 ">
 
@@ -29,7 +30,7 @@
                                 <span class="">Quem</span>
                                 <span class="somos">Somos</span>
                             </h1>
-                            <h2>O Disco Burguer nasceu da paixão por música boa e hambúrguer de verdade. Fundado em 2024, trazemos uma experiência retro-moderna para os nossos clientes.</h2>
+                            <h2 class="text-center text-md-start mt-3 mt-md-0">O Disco Burguer nasceu da paixão por música boa e hambúrguer de verdade. Fundado em 2024, trazemos uma experiência retro-moderna para os nossos clientes.</h2>
                         </div>
 
                     
@@ -103,7 +104,9 @@
     </main>
 
     <footer  id="contato">
-        <?php include __DIR__ . "/../../footer.php"; ?>
+       <?php
+    include __DIR__ . "/../../includes/footer.php";
+    ?>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

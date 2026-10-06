@@ -1,133 +1,49 @@
 <?php
-// Array com os dados de cada item do cardápio
-$hamburgueres = [
-  [
-    "nome" => "NOSTALGIA 80",
-    "descricao" => "Pão brioche, hambúrguer artesanal, cheddar, bacon crocante, onion rings e molho especial da casa.",
-    "preco" => "R$ 36,90",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "CLÁSSICO DISCO",
-    "descricao" => "Pão brioche, hambúrguer artesanal, queijo prato, alface, tomate, cebola roxa e molho da casa.",
-    "preco" => "R$ 32,90",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "DANCE BURGUER",
-    "descricao" => "Pão brioche, hambúrguer artesanal, queijo prato, bacon, alface, tomate e maionese temperada.",
-    "preco" => "R$ 34,90",
-    "imagem" => "../../img/whats.jpeg"
-  ]
-];
+// Configuração da conexão com o banco de dados via MySQLi
+$host    = '127.0.0.1';
+$user    = 'root';
+$pass    = '';
+$db      = 'discoburguer';
 
-$combos = [
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ]
-];
+$conn = new mysqli($host, $user, $pass, $db);
 
-$shakes = [
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ]
-];
+if ($conn->connect_error) {
+    die("Erro de conexão com o banco de dados: " . $conn->connect_error);
+}
 
-$porções = [
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ]
-];
+$conn->set_charset("utf8mb4");
 
-$sobremesas = [
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ],
-  [
-    "nome" => "2 burgers + 1 fritas grande",
-    "descricao" => "Acompanha um chiken jr e um duplo cheddar , com as fritas grandes",
-    "preco" => "R$ 60,00",
-    "imagem" => "../../img/whats.jpeg"
-  ]
-];
+// Função auxiliar para consultar e formatar os produtos do banco por categoria usando MySQLi
+function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
+    $sql = "SELECT 
+                nome, 
+                descricao, 
+                preco_venda, 
+                COALESCE(NULLIF(imagem_caminho, ''), '../../img/whats.jpeg') AS imagem 
+            FROM produtos 
+            WHERE categorias = ? AND ativo = 1 AND visivel = 1";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $categoria);
+    $stmt->execute();
+    
+    $result = $stmt->get_result();
+    $produtos = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    foreach ($produtos as &$item) {
+        $item['preco'] = 'R$ ' . number_format($item['preco_venda'], 2, ',', '.');
+    }
+
+    return $produtos;
+}
+
+// Carregamento dinâmico do banco de dados
+$hamburgueres = buscarProdutosPorCategoria($conn, 'hamburguer');
+$combos       = buscarProdutosPorCategoria($conn, 'combos');
+$shakes       = buscarProdutosPorCategoria($conn, 'bebidas');
+$porções      = buscarProdutosPorCategoria($conn, 'porcoes');
+$sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
 ?>
 
 <!DOCTYPE html>
@@ -145,9 +61,21 @@ $sobremesas = [
 </head>
 
 <body>
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disco Burguer Cardápio</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="../../css/divulgacao/cardapio.css?v=<?php echo filemtime('../../css/divulgacao/cardapio.css'); ?>">
+  <link rel="stylesheet" href="/../css/header.css">
+  <link rel="stylesheet" href="/../css/footer.css">
+</head>
+
+<body>
   <header>
     <?php
-    include __DIR__ . "/../../header.php";
+    include __DIR__ . "/../../includes/header.php";
     ?>
   </header>
 
@@ -322,7 +250,7 @@ $sobremesas = [
 
   <footer id="contato">
     <?php
-    include __DIR__ . "/../../footer.php";
+    include __DIR__ . "/../../includes/footer.php";
     ?>
   </footer>
 
