@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 -- Active: 1791082059994@@127.0.0.1@3306@discoburguer
+=======
+-- Active: 1789956522689@@127.0.0.1@3306@discoburguer
+>>>>>>> Stashed changes
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
