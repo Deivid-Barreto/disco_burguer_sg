@@ -19,7 +19,7 @@
 
   <header>
   <nav class="navbar navbar-expand-lg">
-      <div class="container-fluid ps-5  pe-5 align-items-center">
+      <div class="container-fluid ps-md-5 pe-md-5 align-items-center">
 
         <a class="navbar-brand icone_header order-1" href="#">
           <img src="../../img/icone-disco-burguer.png" alt="Logo">
@@ -46,7 +46,7 @@
             </li>
            
             <li class="nav-item me-4">
-             <a class="nav-link" href="php_html/divulgacao/fee">Feedback</a>
+             <a class="nav-link" href="php_html/divulgacao/feedback.php">Feedback</a>
             </li>
             <li class="nav-item me-4">
               <a class="nav-link" href="php_html/divulgacao/quem_somos.php">Quem Somos</a>
@@ -90,7 +90,8 @@
     </div>
   </section>
 </div>
-  
+  <div class="checker"></div>
+
 
   <div class="container-fluid p-0">
     <section class="Mais-Pedidos">
@@ -137,6 +138,7 @@
       </div>
     </section>
   </div>
+<div class="checker"></div>
 
  <section class="feedback" id="feedback">
     <div class="container">
@@ -207,7 +209,7 @@
 
  <footer id="contato">
     <?php
-    include __DIR__ . "../footer.php";
+    include __DIR__ . "../includes/footer.php";
     ?>
   </footer> 
 

@@ -1,0 +1,184 @@
+.feedback {
+    background-image: url(../../img/fundo-feedback.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: calc(100vh - 100px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    padding: clamp(60px, 20vh, 180px) 15px; 
+}
+
+.titulo-feedback {
+    color: white;
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.titulo-feedback h1 {
+    font-family: 'Righteous', 'Poppins', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.8rem); 
+    letter-spacing: 2px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700;
+    white-space: normal; 
+    text-shadow:
+        0 0 8px rgba(255, 215, 107, 0.8),
+        0 0 24px rgba(255, 138, 61, 0.6), 
+        0 0 48px rgba(255, 138, 61, 0.35);
+}
+
+.titulo-feedback p {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    margin-top: 10px;
+}
+
+.card-feedback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 8, 45, 0.85);
+    border: 2px solid #ff3d9a;
+    border-radius: 24px;
+    padding: clamp(20px, 5vw, 40px);
+    width: 100%; /* Largura total da coluna Bootstrap */
+    max-width: 700px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(255, 61, 154, 0.3);
+}   
+
+.feedback-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    width: 100%; 
+}
+
+.feedback-label:not(:first-child) {
+    margin-top: 30px;
+}
+
+.feedback-label h3 {
+    color: #ff3d9a;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem); 
+    text-transform: uppercase;
+    margin: 0px;
+    border-bottom: 2px solid #ff3d9a;
+    padding-bottom: 4px;
+    flex: 1;
+}
+
+.icone-label {
+    width: clamp(30px, 8vw, 40px);
+    height: clamp(30px, 8vw, 40px);
+    min-width: clamp(30px, 8vw, 40px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #ff3d9a;
+    color: #ff3d9a;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+}
+
+.campo-comentario {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: clamp(12px, 3vw, 16px);
+    color: white;
+    resize: vertical;
+    min-height: 130px;
+}
+
+.campo-comentario::placeholder {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.campo-comentario:focus {
+    outline: none;
+    border-color: #ff3d9a;
+    box-shadow: 0 0 10px rgba(255, 61, 154, 0.5);
+}
+
+.avaliacao-estrelas {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: clamp(5px, 2vw, 12px);
+    font-size: clamp(2.5rem, 8vw, 3rem); 
+    margin-top: 10px;
+}
+
+.avaliacao-estrelas input {
+    display: none;
+}
+
+.avaliacao-estrelas label {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #ffd93d;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.avaliacao-estrelas label:hover {
+    transform: scale(1.2);
+}
+
+.avaliacao-estrelas label:hover,
+.avaliacao-estrelas label:hover ~ label,
+.avaliacao-estrelas input:checked ~ label {
+    color: #ffd93d;
+    text-shadow: 0 0 15px rgba(255, 217, 61, 0.6);
+}
+
+.texto-ajuda {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    margin-top: 8px;
+}
+
+/* --- ESTILOS DO BOTÃO COM ANIMAÇÃO --- */
+.btn-enviar-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+    padding: clamp(12px, 3vw, 16px) 0px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.15rem);
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(90deg, #ff3d9a, #ff8a3d);
+    box-shadow: 0 0 15px rgba(255, 61, 154, 0.4);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-enviar-feedback:hover {
+    transform: translateY(-5px) scale(1.02); /* Sobe um pouco e cresce */
+    box-shadow: 0 10px 25px rgba(255, 61, 154, 0.8), 0 0 15px rgba(255, 138, 61, 0.6); /* Brilho neon intenso */
+    background: linear-gradient(90deg, #ff1c86, #ff7b24); /* Cores ficam mais vibrantes */
+}
+
+.btn-enviar-feedback:active {
+    transform: translateY(2px) scale(0.98); /* Efeito de clique */
+    box-shadow: 0 5px 15px rgba(255, 61, 154, 0.6);
+}

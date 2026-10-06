@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <link rel="stylesheet" href="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        
+<div class="container">
+
+<h2>Cadastro de Funcionário</h2>
+
+<form method="POST">
+
+<label>Nome:</label>
+<input type="nome" name="nome" required>
+
+<label>Email:</label>
+<input type="email" name="email" required>
+
+<label>Senha:</label>
+<input type="password" name="senha" required>
+
+<label>Telefone:</label>
+<input type="tel" id="numero_telefone" name="numero_telefone" placeholder="(99) 99999-9999" required>
+
+<label>Escolha um cargo:</label>
+
+<select id="cargo" name="cargo" required>
+  <option value="" selected disabled>Cargos</option>
+  <option value="admin">Administrador</option>
+  <option value="gar">Garçom</option>
+  <option value="coz">Cozinheiro</option>
+  <option value="coz">Balconista</option>
+</select>
+
+<label>Situação:</label>
+
+<input type="radio" id="sim" name="ativo" value="1">
+<label for="sim">Ativo</label><br>
+
+<input type="radio" id="nao" name="ativo" value="0">
+<label for="nao">Desativado</label><br>
+
+<button type="submit">Criar</button>
+</form>
+</div>
+</body>
+</html>

@@ -147,7 +147,7 @@ $sobremesas = [
 <body>
   <header>
     <?php
-    include __DIR__ . "/../../header.php";
+    include __DIR__ . "/../../includes/header.php";
     ?>
   </header>
 
@@ -322,7 +322,7 @@ $sobremesas = [
 
   <footer id="contato">
     <?php
-    include __DIR__ . "/../../footer.php";
+    include __DIR__ . "/../../includes/footer.php";
     ?>
   </footer>
 

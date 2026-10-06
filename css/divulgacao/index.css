@@ -1,6 +1,6 @@
 
    .hero {
-    background-image: url(../../img/fundo_inicio2.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -106,7 +106,7 @@ z-index: 10;
 }
 
 .Mais-Pedidos {
-    background-image: url(../../img/fundo_inicio2.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -321,7 +321,7 @@ z-index: 10;
 /*FEEDBACK*/
 
 .feedback {
-    background-image: url(../../img/fundo_inicio2.png);
+    background-image: url(../../img/fundo_inicio.png);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -491,4 +491,12 @@ z-index: 10;
 
 .btn-enviar-feedback:hover {
     opacity: 0.9;
+}
+
+.checker {
+    height: 1px;
+    width: 100%;
+    background-color: white;
+    background-size: 34px 34px;
+    background-position: 0 0, 17px 17px;
 }

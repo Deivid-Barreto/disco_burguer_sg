@@ -1,0 +1,39 @@
+
+*{
+    padding: 0px;
+    margin: 0px;
+}
+body{
+    background-image: url(../../img/fundo_sobre.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    min-height: 650px;
+    display: flex;
+    justify-content: center;
+}
+.sobre-nos{
+margin-left: 5%;
+    padding: 10vw 20px  20px;
+color: white;
+}
+    
+.img-grupo{
+margin-left: 10%;
+width: 500px;
+height: 500px;
+}
+.titulo-sobre{
+
+    text-align: center;
+    color: white;
+    
+}
+.img-bola_cristal{
+
+    width:400px;
+    height: auto;
+    
+}
+
