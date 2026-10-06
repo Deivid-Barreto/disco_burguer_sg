@@ -168,8 +168,11 @@ $hoje = date('Y-m-d');
                 <select name="grupo_dre" id="form_cat_grupo_dre" required>
                     <option value="nao_aplicavel">Não Aplicável</option>
                     <option value="receita_bruta">Receita Bruta</option>
-                    <option value="despesa_operacional">Despesa Operacional</option>
+                    <option value="deducao_venda">Dedução Venda</option>
                     <option value="custo_mercadoria">Custo de Mercadoria</option>
+                    <option value="despesa_operacional">Despesa Operacional</option>
+                    <option value="despesa_financeira">Despesa Financeira</option>
+                    <option value="receita_financeira">Receita Financeira</option>
                 </select>
             </div>
             <button type="submit">Salvar</button>

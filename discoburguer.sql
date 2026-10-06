@@ -32,12 +32,10 @@ CREATE TABLE IF NOT EXISTS `categorias_financeiras` (
     `grupo_dre` ENUM(
         'receita_bruta',
         'deducao_venda',
-        'imposto_venda',
         'custo_mercadoria',
         'despesa_operacional',
         'despesa_financeira',
         'receita_financeira',
-        'imposto_lucro',
         'nao_aplicavel'
     ) NOT NULL DEFAULT 'nao_aplicavel',
     PRIMARY KEY (`id`)
