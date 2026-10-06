@@ -1,12 +1,5 @@
-
-  
     <link rel="stylesheet" href="../../css/header.css">
   
- 
-  
-
-
- 
     <nav class="navbar navbar-expand-lg">
      <div class="container-fluid ps-md-5 pe-md-5 align-items-center">
 
@@ -55,9 +48,3 @@
      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
-      
- 
- 
-  
-
-    
