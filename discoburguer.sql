@@ -1,4 +1,4 @@
--- Active: 1791082059994@@127.0.0.1@3306@discoburguer
+-- Active: 1734093673833@@127.0.0.1@3306@mysql
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `estoque` (
     `eh_revenda` TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
+
 
 
 CREATE TABLE IF NOT EXISTS `produtos` (
