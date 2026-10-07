@@ -30,7 +30,6 @@ main {
   gap: 20px;
   padding-top: 25vh;
   
-  /* Ajustes de Fonte com clamp para responsividade */
   font-family: 'Oswald', 'Impact', sans-serif;
   font-size: clamp(3.5rem, 10vw, 100px); 
   font-weight: 900;
@@ -38,7 +37,6 @@ main {
   text-transform: uppercase;
   letter-spacing: 2px;
 
-  /* Gradiente e Efeitos */
   background: linear-gradient(90deg, #ffb300 0%, #ff007f 50%, #5d00ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -47,17 +45,16 @@ main {
   filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)) drop-shadow(0 0 30px rgba(255, 0, 127, 0.4));
 }
 
-/* Menu de categorias: Força tudo na mesma linha */
 .menu-categorias {
   display: flex;
-  flex-wrap: nowrap; /* Impede a quebra de linha */
-  justify-content: space-between; /* Distribui o espaço uniformemente */
+  flex-wrap: nowrap; 
+  justify-content: space-between; 
   align-items: center;
-  gap: clamp(2px, 1vw, 10px); /* Espaço mínimo entre os botões */
+  gap: clamp(2px, 1vw, 10px); 
   background-color: #12032b;
-  padding: 8px 5px; /* Redução do padding para maximizar o espaço interno */
+  padding: 8px 5px; 
   border-radius: 35px;
-  width: 98%; /* Ocupa quase toda a largura do telemóvel */
+  width: 98%; 
   max-width: 800px; 
   margin: 5vh auto;
   box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
@@ -77,20 +74,18 @@ main {
   flex-direction: column;
 }
 
-/* Ícones mais pequenos para caberem 5 na mesma linha */
 .menu-categorias img {
   width: clamp(25px, 6vw, 100px); 
   height: auto;
 }
 
-/* Ajuste dos botões: Quase sem espaço lateral interno e espremidos igualmente */
 .btn-categoria {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   color: #ffffff;
   text-decoration: none;
   background-color: transparent;
-  padding: 5px 2px; /* Padding minúsculo para caberem todos */
+  padding: 5px 2px; 
   border-radius: 30px;
   transition: all 0.3s ease;
   cursor: pointer;
@@ -98,12 +93,11 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1; /* Faz com que todos os botões ocupem a mesma proporção de espaço */
+  flex: 1; 
 }
 
-/* Texto das categorias muito mais pequeno no telemóvel */
 .btn-categoria span {
-  font-size: clamp(0.5rem, 1.8vw, 1rem); /* Fonte a 8px no telemóvel */
+  font-size: clamp(0.5rem, 1.8vw, 1rem); 
   margin-top: 3px;
 }
 
@@ -121,8 +115,6 @@ main {
   transform: scale(1.05);
 }
 
-/* ITENS CARDAPIO */
-
 #itens-cardapio-secao {
   background-image: url(../../img/fundo_cardapio.png);
   background-color: #0b021a; 
@@ -134,7 +126,6 @@ main {
   min-height: 100vh;
 }
 
-/* Diminuir os títulos das secções no telemóvel */
 .titulo-section {
   padding: 40px 0px 10px 0px;
   color: #ff007f;
@@ -162,15 +153,20 @@ main {
   border-radius: 2px;
 }
 
+/* --- Layout Flexbox Responsivo e sem quebra para os itens --- */
 .itens-cardapio {
-  padding-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; 
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(5px, 2vw, 15px); 
+  padding: 10px;
   margin: 3vh 0vh;
   background-color: #0d001a; 
   border: 1px solid #7b2cbf;
   border-radius: 15px;
-  padding: 15px;
   box-shadow: 0 0 15px rgba(123, 44, 191, 0.15); 
-  align-items: center;
   transition: all 0.3s ease; 
 }
 
@@ -181,11 +177,11 @@ main {
 }
 
 .itens-cardapio img {
-  width: 100%;
-  max-width: 110px; /* Reduzido para ficar mais proporcional no telemóvel */
+  width: clamp(50px, 12vw, 110px); 
   height: auto;
   border-radius: 10px;
   transition: transform 0.4s ease; 
+  flex-shrink: 0; 
 }
 
 .itens-cardapio:hover img {
@@ -195,35 +191,51 @@ main {
 .text-itens-cardapio {
   display: flex;
   flex-direction: column;
+  text-align: left;
+  flex-grow: 1; 
+  min-width: 0; 
 }
 
 .itens-cardapio h2 {
   color: white;
-  font-size: clamp(1.5rem, 4vw, 28px);
+  font-size: clamp(0.8rem, 3vw, 28px); 
   font-weight: 900;
   font-style: italic;
   letter-spacing: 1px;
+  margin: 0 0 2px 0;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .itens-cardapio h3 {
   color: #b3b3b3;
-  font-size: clamp(0.9rem, 2.5vw, 16px);
+  font-size: clamp(0.6rem, 2vw, 16px);
   font-weight: normal;
-  line-height: 1.4;
+  line-height: 1.2;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .preco-itens-cardapio h3 {
   color: white;
-  font-size: clamp(1.5rem, 5vw, 32px);
+  font-size: clamp(0.9rem, 3.5vw, 32px);
   font-weight: 900;
   font-style: italic; 
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .div-button-itens-cardapio {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .button-itens-cardapio {
@@ -232,7 +244,8 @@ main {
   font-weight: bold;
   border: none;
   border-radius: 8px; 
-  padding: clamp(10px, 2vw, 13px) clamp(20px, 5vw, 50px);
+  padding: clamp(6px, 1.5vw, 13px) clamp(10px, 2.5vw, 50px);
+  font-size: clamp(0.7rem, 2vw, 1rem); 
   transition: all 0.3s ease;
   cursor: pointer;
   text-transform: uppercase;
@@ -246,10 +259,8 @@ main {
   background-color: #ff1a8c; 
 }
 
-
 /* =========================================
    EFEITOS DE TRANSIÇÃO E ANIMAÇÃO
-   (bloco adicionado no final; o código acima não foi alterado)
    ========================================= */
 
 @keyframes subir-suave {
@@ -262,22 +273,18 @@ main {
   to   { opacity: 1; }
 }
 
-/* ---------- Entrada da página ---------- */
 .inicio-cardapio h1 {
   animation: subir-suave 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
-/* Só opacidade, para não conflitar com o transform do .fixo */
 .menu-categorias {
   animation: aparecer 1s ease 0.4s backwards;
 }
 
-/* ---------- Menu de categorias ---------- */
 .btn-categoria:active {
   transform: scale(0.95);
 }
 
-/* ---------- Linha neon pulsando de leve ---------- */
 @keyframes pulsar-linha {
   0%, 100% { box-shadow: 0 0 8px #ff007f, 0 0 12px #ff007f; }
   50%      { box-shadow: 0 0 14px #ff007f, 0 0 26px #ff007f; }
@@ -287,26 +294,10 @@ main {
   animation: pulsar-linha 3.5s ease-in-out infinite;
 }
 
-/* ---------- Itens do cardápio ---------- */
-.itens-cardapio {
-  transition:
-    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.itens-cardapio img {
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 .button-itens-cardapio:active {
   transform: scale(0.95);
 }
 
-/* ---------- Aparecer ao rolar a página (só CSS, sem JS) ----------
-   Funciona em navegadores que suportam scroll-driven animations
-   (Chrome/Edge). Nos outros, os elementos aparecem normalmente.
-   "backwards" garante que o hover continue funcionando depois. */
 @supports (animation-timeline: view()) {
   .linha,
   .itens-cardapio {
@@ -316,7 +307,6 @@ main {
   }
 }
 
-/* ---------- Respeita quem desativa animações no sistema ---------- */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

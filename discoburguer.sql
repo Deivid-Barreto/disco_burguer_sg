@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
     INDEX `idx_produtos_categorias` (`categorias`),
     INDEX `idx_produtos_status` (`ativo`, `visivel`),
     INDEX `idx_produtos_estoque` (`estoque_id`),
-    CONSTRAINT `fk_produtos_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  x''     CONSTRAINT `fk_produtos_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `lotes_estoque` (
