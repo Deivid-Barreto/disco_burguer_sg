@@ -1,8 +1,4 @@
-<<<<<<< Updated upstream
 -- Active: 1791082059994@@127.0.0.1@3306@discoburguer
-=======
--- Active: 1789956522689@@127.0.0.1@3306@discoburguer
->>>>>>> Stashed changes
 CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -16,6 +12,8 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
         'operador_caixa',
         'cozinheiro'
     ) NOT NULL,
+    `reset_token` VARCHAR(64) NULL,
+    `reset_expira` DATETIME NULL,
     `nome` VARCHAR(100) NOT NULL,
     `ativo` TINYINT(1) NOT NULL DEFAULT 1 CHECK (`ativo` IN (0, 1)),
     `email` VARCHAR(255) NOT NULL UNIQUE,
