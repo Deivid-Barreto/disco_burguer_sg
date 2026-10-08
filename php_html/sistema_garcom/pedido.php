@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
     if ($acao === 'deletar') {
         try {
-            $stmtDel = $pdo->prepare("UPDATE FROM pedidos WHERE id = ?");
+            $stmtDel = $pdo->prepare("DELETE FROM pedidos WHERE id = ?");
             $stmtDel->execute([$_POST['id_pedido']]);
         } catch (PDOException $e) {}
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         
     } elseif ($acao === 'cadastrar') {
 
-          $atendente_id = 1;
+        $atendente_id = 1;
 
         $nome_cliente = trim($_POST['nome_cliente'] ?? '');
         $tipo = $_POST['tipo'] ?? '';
@@ -293,52 +293,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
              )
             ");
 
-            $stmtCustomizacao = $pdo->prepare("
-            INSERT INTO customizacoes_item_pedido
-            (
-             item_pedido_id,
-             produto_id,
-             tipo_acao,
-             quantidade
-            )
-            VALUES
-            (
-             ?,
-             ?,
-             ?,
-             ?
-            )
-           ");
-
             foreach ($itens_pedido as $item) {
 
-            $stmtItem->execute([
-             $pedido_id,
-             (int)$item['id'],
-             (int)$item['quantidade']
-            ]);
+                $stmtItem->execute([
+                $pedido_id,
+                (int)$item['id'],
+                (int)$item['quantidade']
+                ]);
 
-            $item_pedido_id = $pdo->lastInsertId();
+                $item_pedido_id = $pdo->lastInsertId();
 
-              if (!empty($item['customizacoes'])) {
-
-                foreach ($item['customizacoes'] as $customizacao) {
- 
-                    $stmtCustomizacao->execute([
-                      $item_pedido_id,
-                      (int)$customizacao['produto_id'],
-                      $customizacao['tipo_acao'],
-                      (float)$customizacao['quantidade']
-                    ]);
-
-                }
             }
-        }
 
-        $pdo->commit();
+            $pdo->commit();
 
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
 
         } catch (PDOException $e) {
 
@@ -349,7 +319,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             die("Erro ao cadastrar pedido: " . $e->getMessage());
         }
     }
+
 }
+   
 
 $mesas = [];
 $delivery = [];
@@ -484,7 +456,7 @@ $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);
 
                 <div class="grade-produtos">
                     <?php foreach ($produtosAtivos as $produto): ?>
-                        <button type="button" class="card-produto"
+                        <button type="button" class="card-produto" 
                             data-categoria="<?= htmlspecialchars($produto['categorias'] ?? '') ?>"
                             onclick="adicionarProduto(<?= $produto['id'] ?>,
                                 '<?= htmlspecialchars($produto['nome'], ENT_QUOTES) ?>',
@@ -495,10 +467,6 @@ $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);
                                         src="<?= htmlspecialchars($produto['imagem_caminho']) ?>"
                                         alt="<?= htmlspecialchars($produto['nome']) ?>"
                                     >
-                                <?php else: ?>
-                                    <div class="sem-imagem">
-                                        🍔
-                                    </div>
                                 <?php endif; ?>
                             </div>
                             <p><?= htmlspecialchars($produto['nome']) ?></p>
@@ -536,6 +504,17 @@ $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);
         <button type="button" onclick="document.getElementById('modalCadastro').close()">Fechar</button>
 
     </form>
+</dialog>
+
+<dialog id="modalObservacao">
+    <h3>Personalizar produto</h3>
+    <p><strong id="nomeProdutoObservacao"></strong></p>
+    <label for="observacaoProduto">Observação</label>
+    <br>
+    <textarea id="observacaoProduto" rows="4" placeholder="Ex.: sem cebola, sem tomate, molho separado..."></textarea>
+    <br><br>
+    <button type="button" onclick="salvarObservacao()">Adicionar ao pedido</button>
+    <button type="button" onclick="document.getElementById('modalObservacao').close()">Cancelar</button>
 </dialog>
 
 <dialog id="modalPedido">
@@ -687,17 +666,15 @@ function abrirDelivery(pedidoId) {
 
 function resetarFormulario() {
     const form = document.getElementById('modalCadastro').querySelector('form');
-
     form.reset();
-
     produtosPedido = [];
-
+    produtoCustomizando = null;
+    document.getElementById('observacaoProduto').value = '';
     document.getElementById('listaProdutosPedido').innerHTML = `
         <div class="pedido-vazio">
             Nenhum produto adicionado.
         </div>
     `;
-
     document.getElementById('valorTotalTexto').innerText = 'R$ 0,00';
     document.getElementById('valor_total').value = '0.00';
     document.getElementById('secao-mesas').style.display = 'none';
@@ -718,7 +695,6 @@ function gerarChaveDeValidacao(){
 }
 
 function abrirPedido(pedido, itens) {
-
     pedidoAtualData = {pedido: pedido,itens: itens};
     document.getElementById('tituloAcoes').innerText =
         pedido.tipo === 'local'
@@ -733,31 +709,34 @@ function abrirPedido(pedido, itens) {
 }
 
 function adicionarProduto(id, nome, preco) {
+     produtoCustomizando = {
+        id: id,
+        nome: nome,
+        preco: preco,
+        quantidade: 1,
+        observacao: ''
+    };
+    document.getElementById('nomeProdutoObservacao').innerText = nome;
+    document.getElementById('observacaoProduto').value = '';
+    document.getElementById('modalObservacao').showModal();
+}
 
-    let produtoExistente = produtosPedido.find(produto => produto.id === id);
-    if (produtoExistente) {
-        produtoExistente.quantidade++;
-        atualizarListaProdutos();
-        abrirCustomizacao(produtoExistente);
-    } else {
-        const novoProduto = {
-            id: id,
-            nome: nome,
-            preco: preco,
-            quantidade: 1,
-            customizacoes: []
-        };
-        produtosPedido.push(novoProduto);
-        atualizarListaProdutos();
-        abrirCustomizacao(novoProduto);
+function salvarObservacao() {
+    if (!produtoCustomizando) {
+        return;
     }
+    produtoCustomizando.observacao = document.getElementById('observacaoProduto').value.trim();
+    produtosPedido.push(produtoCustomizando);
+    atualizarListaProdutos();
+    document.getElementById('modalObservacao').close();
+    produtoCustomizando = null;
 }
 
 function atualizarListaProdutos() {
+
     const lista = document.getElementById('listaProdutosPedido');
     lista.innerHTML = '';
     let total = 0;
-
     if (produtosPedido.length === 0) {
         lista.innerHTML = `
             <div class="pedido-vazio">
@@ -768,28 +747,50 @@ function atualizarListaProdutos() {
         document.getElementById('valor_total').value = '0.00';
         return;
     }
-
-    produtosPedido.forEach((produto, index) => {
+    produtosPedido.forEach(function(produto, index) {
         const subtotal = produto.preco * produto.quantidade;
         total += subtotal;
-
         const item = document.createElement('div');
         item.className = 'item-pedido';
+        let observacao = '';
+        if (produto.observacao) {
+            observacao = `
+                <div>
+                    <strong>Observação:</strong>
+                    ${escapeHtml(produto.observacao)}
+                </div>
+            `;
+        }
         item.innerHTML = `
-            <strong>${produto.nome}</strong>
-            <span>${produto.quantidade}x</span>
-            <span>
-                R$ ${subtotal.toFixed(2).replace('.', ',')}
-            </span>
-            <button type="button" onclick="removerProduto(${index})">
-                Remover
-            </button>
+            <div>
+                <strong>
+                    ${escapeHtml(produto.nome)}
+                </strong>
+                <span>
+                    ${produto.quantidade}x
+                </span>
+            </div>
+            <div>
+                R$ ${subtotal
+                    .toFixed(2)
+                    .replace('.', ',')}
+            </div>
+            ${observacao}
+            <button type="button" onclick="removerProduto(${index})">Remover</button>
         `;
         lista.appendChild(item);
     });
+    document.getElementById('valorTotalTexto').innerText =
+        'R$ ' +
+        total.toFixed(2).replace('.', ',');
+    document.getElementById('valor_total').value =
+        total.toFixed(2);
+}
 
-    document.getElementById('valorTotalTexto').innerText ='R$ ' + total.toFixed(2).replace('.', ',');
-    document.getElementById('valor_total').value = total.toFixed(2);
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function removerProduto(index) {
@@ -820,56 +821,6 @@ function filtrarProdutos(categoria, botao) {
     document.querySelectorAll('.categoria-btn').forEach(function(btn) {btn.classList.remove('ativo');});
     botao.classList.add('ativo');
     
-}
-
-function abrirCustomizacao(produto) {
-
-    produtoCustomizando = produto;
-    document.getElementById('nomeProdutoCustomizacao').innerText = produto.nome;
-    atualizarCustomizacoesSelecionadas();
-    document.getElementById('modalCustomizacao').showModal();
-}
-
-function customizar(id, nome, acao) {
-    let item = produtoCustomizando.customizacoes.find(
-        x => x.produto_id === id && x.tipo_acao === acao
-    );
-    if (item) {
-        produtoCustomizando.customizacoes.splice(
-            produtoCustomizando.customizacoes.indexOf(item), 1
-        );
-    } else {
-        produtoCustomizando.customizacoes.push({
-            produto_id: id,
-            nome: nome,
-            tipo_acao: acao,
-            quantidade: 1
-        });
-    }
-    mostrarCustomizacoes();
-}
-
-function mostrarCustomizacoes() {
-    const lista = document.getElementById('customizacoesSelecionadas');
-    lista.innerHTML = '';
-    produtoCustomizando.customizacoes.forEach(item => {
-        lista.innerHTML += `
-            <p>
-                ${item.tipo_acao === 'adicionar' ? '+' : '-'}
-                ${item.nome}
-            </p>
-        `;
-    });
-}
-
-function fecharCustomizacao() {
-    document.getElementById('modalCustomizacao').close();
-    produtoCustomizando = null;
-}
-
-function fecharCustomizacao() {
-    produtoCustomizando = null;
-    document.getElementById('modalCustomizacao').close();
 }
 
 function atualizarFormulario() {
