@@ -6,13 +6,13 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>EAI ADM!!</h1>
+    <h1>E AI, ADM!!</h1>
     <a href="fornecedores.php">Fornecedores</a>
     <a href="caixas_diarios.php">Caixas diarios</a>
     <a href="estoque.php">Estoque</a>
     <a href="financeiro.php">Financeiro</a>
     <a href="funcionarios.php">Funcionario</a>
     <a href="produto.php">Produto</a>
-    <a href="estoque.php">Estoque</a>
+    <a href="mesas.php">Mesas</a>
 </body>
 </html>

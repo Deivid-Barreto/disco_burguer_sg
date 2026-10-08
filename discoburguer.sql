@@ -1,5 +1,5 @@
--- Active: 1734093795787@@127.0.0.1@3306
-CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+-- Active: 1791477043339@@127.0.0.1@3306
+CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
 
@@ -117,7 +117,6 @@ CREATE TABLE IF NOT EXISTS `movimentacoes_estoque` (
     `funcionario_id` INT NULL,
     `tipo_movimentacao` ENUM(
         'entrada',
-        'saida_venda',
         'perda_validade',
         'ajuste',
         'descarte'
@@ -170,8 +169,7 @@ CREATE TABLE IF NOT EXISTS `mesas` (
     `numero` INT NOT NULL UNIQUE,
     `status` ENUM(
         'livre',
-        'em_atendimento',
-        'reservada'
+        'em_atendimento'
     ) NOT NULL DEFAULT 'livre',
     `quantidade_lugares` INT NOT NULL DEFAULT 2 CHECK (`quantidade_lugares` > 0),
     PRIMARY KEY (`id`)
@@ -246,7 +244,7 @@ CREATE TABLE IF NOT EXISTS `customizacoes_item_pedido` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `item_pedido_id` INT NOT NULL,
     `produto_id` INT NOT NULL,
-    `tipo_acao` ENUM('adicionar', 'remover') NOT NULL,
+    `tipo_acao` ENUM('adicionar') NOT NULL,
     `quantidade` DECIMAL(10, 2) NOT NULL DEFAULT 1.00 CHECK (`quantidade` > 0),
     PRIMARY KEY (`id`),
     INDEX `idx_custom_item` (`item_pedido_id`),
