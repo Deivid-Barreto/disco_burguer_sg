@@ -160,8 +160,9 @@ main {
   flex-wrap: nowrap; 
   align-items: center;
   justify-content: space-between;
-  gap: clamp(5px, 2vw, 15px); 
-  padding: 10px;
+  /* Espaço equilibrado entre a foto, o texto e o botão */
+  gap: clamp(6px, 2.5vw, 20px); 
+  padding: clamp(10px, 2vw, 16px);
   margin: 3vh 0vh;
   background-color: #0d001a; 
   border: 1px solid #7b2cbf;
@@ -177,7 +178,8 @@ main {
 }
 
 .itens-cardapio img {
-  width: clamp(50px, 12vw, 110px); 
+  /* Tamanho intermédio: 60px no telemóvel, 130px no PC */
+  width: clamp(60px, 13vw, 130px); 
   height: auto;
   border-radius: 10px;
   transition: transform 0.4s ease; 
@@ -198,11 +200,12 @@ main {
 
 .itens-cardapio h2 {
   color: white;
-  font-size: clamp(0.8rem, 3vw, 28px); 
+  /* Título equilibrado */
+  font-size: clamp(0.9rem, 3.5vw, 30px); 
   font-weight: 900;
   font-style: italic;
   letter-spacing: 1px;
-  margin: 0 0 2px 0;
+  margin: 0 0 3px 0;
   white-space: nowrap; 
   overflow: hidden;
   text-overflow: ellipsis; 
@@ -210,9 +213,9 @@ main {
 
 .itens-cardapio h3 {
   color: #b3b3b3;
-  font-size: clamp(0.6rem, 2vw, 16px);
+  font-size: clamp(0.65rem, 2vw, 17px);
   font-weight: normal;
-  line-height: 1.2;
+  line-height: 1.25;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2; 
@@ -222,7 +225,8 @@ main {
 
 .preco-itens-cardapio h3 {
   color: white;
-  font-size: clamp(0.9rem, 3.5vw, 32px);
+  /* Preço no ponto certo */
+  font-size: clamp(1rem, 4vw, 34px);
   font-weight: 900;
   font-style: italic; 
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
@@ -244,8 +248,9 @@ main {
   font-weight: bold;
   border: none;
   border-radius: 8px; 
-  padding: clamp(6px, 1.5vw, 13px) clamp(10px, 2.5vw, 50px);
-  font-size: clamp(0.7rem, 2vw, 1rem); 
+  /* Botão equilibrado */
+  padding: clamp(6px, 1.8vw, 14px) clamp(12px, 3vw, 55px);
+  font-size: clamp(0.75rem, 2vw, 1.1rem); 
   transition: all 0.3s ease;
   cursor: pointer;
   text-transform: uppercase;
