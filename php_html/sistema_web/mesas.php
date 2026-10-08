@@ -1,4 +1,6 @@
 <?php
+//Arrumar modal de confirmação
+
 session_start();
 require_once __DIR__ . '/../../php/conexao.php';
 require_once __DIR__ . '/verificar_login.php';
@@ -11,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die('Ação não autorizada.');
     }
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
     $acao = $_POST['acao'] ?? '';
 
@@ -175,7 +176,7 @@ $mesas = $pdo->query("SELECT id, numero, status, quantidade_lugares FROM mesas O
             <input type="number" name="quantidade_lugares" id="lugaresMesa" min="1" required>
         </div>
         <br>
-        <div id="campoStatusMesa" style="display:none;">
+        <div id="campoStatusMesa" hidden>
             <label>Status:</label>
             <select name="status" id="statusMesa">
                 <option value="livre">Livre</option>
@@ -216,7 +217,7 @@ function abrirAdicionarMesa() {
     document.getElementById('tituloModalMesa').innerText = 'Adicionar Mesa';
     document.getElementById('acaoMesa').value = 'adicionar_mesa';
     document.getElementById('idMesa').value = '';
-    document.getElementById('campoStatusMesa').style.display = 'none';
+    document.getElementById('campoStatusMesa').hidden = true;
     document.getElementById('modalMesa').showModal();
 }
 
@@ -228,7 +229,7 @@ function abrirEditarMesa(id, numero, quantidade, status) {
         document.getElementById('numeroMesa').value = numero;
         document.getElementById('lugaresMesa').value = quantidade;
         document.getElementById('statusMesa').value = status;
-        document.getElementById('campoStatusMesa').style.display = 'block';
+        document.getElementById('campoStatusMesa').hidden = false;
         document.getElementById('modalMesa').showModal();
     });
 }
@@ -236,8 +237,9 @@ function abrirEditarMesa(id, numero, quantidade, status) {
 function deletarMesa(id) {
     idMesaParaExcluir = id;
     dispararConfirmacao("Deseja realmente excluir esta mesa?", async function() {
+        const token = document.querySelector('input[name="csrf_token"]').value;
         const dados = new FormData();
-        dados.append('csrf_token', '<?= $_SESSION['csrf_token'] ?>');
+        dados.append('csrf_token', token);
         dados.append('acao', 'deletar_mesa');
         dados.append('id', idMesaParaExcluir);
 
@@ -253,7 +255,9 @@ function deletarMesa(id) {
 }
 
 async function carregarMesas() {
+    const token = document.querySelector('input[name="csrf_token"]').value;
     const dados = new FormData();
+    dados.append('csrf_token', token);
     dados.append('acao', 'listar_mesas');
 
     const resposta = await fetch('', { method: 'POST', body: dados });

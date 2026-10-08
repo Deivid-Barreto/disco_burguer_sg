@@ -20,12 +20,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($acao === 'abrir') {
         $stmt = $pdo->prepare("INSERT INTO caixas_diarios (funcionario_abertura_id, saldo_inicial, status) VALUES (?, ?, 'aberto')");
         $stmt->execute([$funcionario_id, $_POST['saldo_inicial']]);
+    } elseif ($acao === 'editar_caixa') {
+        $stmt = $pdo->prepare("UPDATE caixas_diarios SET saldo_inicial=? WHERE id=? AND status='aberto'");
+        $stmt->execute([$_POST['saldo_inicial'], $_POST['id']]);
     } elseif ($acao === 'fechar') {
         $stmt = $pdo->prepare("UPDATE caixas_diarios SET funcionario_fechamento_id=?, data_fechamento=CURRENT_TIMESTAMP, saldo_final_sistema=?, saldo_final_gaveta=?, status='fechado' WHERE id=?");
         $stmt->execute([$funcionario_id, $_POST['saldo_sistema'], $_POST['saldo_gaveta'], $_POST['id']]);
     } elseif ($acao === 'movimentacao') {
         $stmt = $pdo->prepare("INSERT INTO fluxo_caixa (categoria_id, funcionario_id, descricao, valor) VALUES (?, ?, ?, ?)");
         $stmt->execute([$_POST['categoria_id'], $funcionario_id, $_POST['descricao'], $_POST['valor']]);
+    } elseif ($acao === 'editar_movimentacao') {
+        $stmt = $pdo->prepare("UPDATE fluxo_caixa SET categoria_id=?, descricao=?, valor=? WHERE id=?");
+        $stmt->execute([$_POST['categoria_id'], $_POST['descricao'], $_POST['valor'], $_POST['id']]);
     }
     
     header("Location: " . $_SERVER['PHP_SELF']);
@@ -74,6 +80,7 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <td><?= htmlspecialchars($c['status']) ?></td>
                 <td>
                     <?php if ($c['status'] === 'aberto'): ?>
+                    <button onclick='editarCaixa(<?= $c['id'] ?>, <?= $c['saldo_inicial'] ?>)'>Editar</button>
                     <button onclick='fecharCaixa(<?= $c['id'] ?>)'>Fechar Caixa</button>
                     <?php endif; ?>
                 </td>
@@ -91,6 +98,7 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <th>Categoria</th>
                 <th>Tipo</th>
                 <th>Valor</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -101,13 +109,17 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <td><?= htmlspecialchars($f['cat_nome']) ?></td>
                 <td><?= htmlspecialchars($f['tipo']) ?></td>
                 <td>R$ <?= number_format($f['valor'], 2, ',', '.') ?></td>
+                <td>
+                    <button onclick='editarMovimentacao(<?= json_encode($f) ?>)'>Editar</button>
+                </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 
+    <!-- MODAL DE ABERTURA -->
     <dialog id="modalAbertura">
-        <form method="POST">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja abrir um novo caixa com este saldo inicial?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="abrir">
             <div>
@@ -119,8 +131,24 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
         </form>
     </dialog>
 
+    <!-- MODAL DE EDIÇÃO DO CAIXA -->
+    <dialog id="modalEditarCaixa">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar as alterações do caixa inicial?', this)">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="acao" value="editar_caixa">
+            <input type="hidden" name="id" id="edit_caixa_id">
+            <div>
+                <label>Saldo Inicial na Gaveta (R$):</label>
+                <input type="number" step="0.01" name="saldo_inicial" id="edit_caixa_saldo" required>
+            </div>
+            <button type="submit">Salvar Alterações</button>
+            <button type="button" onclick="document.getElementById('modalEditarCaixa').close()">Cancelar</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL DE FECHAMENTO -->
     <dialog id="modalFechamento">
-        <form id="formFechamento" method="POST">
+        <form id="formFechamento" method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Atenção: Os valores estão corretos? Deseja realmente FECHAR o caixa?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="fechar">
             <input type="hidden" name="id" id="fechar_id">
@@ -132,13 +160,14 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
                 <label>Dinheiro Físico na Gaveta (R$):</label>
                 <input type="number" step="0.01" name="saldo_gaveta" required>
             </div>
-            <button type="button" onclick="pedirConfirmacaoFechamento()">Confirmar Fechamento</button>
+            <button type="submit">Confirmar Fechamento</button>
             <button type="button" onclick="document.getElementById('modalFechamento').close()">Cancelar</button>
         </form>
     </dialog>
 
+    <!-- MODAL DE LANÇAR MOVIMENTAÇÃO -->
     <dialog id="modalFluxo">
-        <form method="POST">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja gravar esta nova movimentação?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="acao" value="movimentacao">
             <div>
@@ -162,9 +191,37 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
         </form>
     </dialog>
 
+    <!-- MODAL DE EDITAR MOVIMENTAÇÃO -->
+    <dialog id="modalEditarFluxo">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar as alterações desta movimentação?', this)">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="acao" value="editar_movimentacao">
+            <input type="hidden" name="id" id="edit_fluxo_id">
+            <div>
+                <label>Descrição:</label>
+                <input type="text" name="descricao" id="edit_fluxo_descricao" required>
+            </div>
+            <div>
+                <label>Categoria:</label>
+                <select name="categoria_id" id="edit_fluxo_categoria" required>
+                    <?php foreach ($categorias as $cat): ?>
+                        <option value="<?= $cat['id'] ?>">[<?= strtoupper($cat['tipo']) ?>] <?= htmlspecialchars($cat['nome']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div>
+                <label>Valor (R$):</label>
+                <input type="number" step="0.01" name="valor" id="edit_fluxo_valor" required>
+            </div>
+            <button type="submit">Salvar Alterações</button>
+            <button type="button" onclick="document.getElementById('modalEditarFluxo').close()">Cancelar</button>
+        </form>
+    </dialog>
+
+    <!-- MODAL GLOBAL DE CONFIRMAÇÃO -->
     <dialog id="modalConfirmacaoCustom">
         <h3 id="tituloConfirmacao">Confirmação</h3>
-        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir com o fechamento?</p>
+        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
         <button type="button" id="btnSimConfirmacao">Sim</button>
         <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
     </dialog>
@@ -189,9 +246,19 @@ $categorias = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras")->
         document.getElementById('fechar_id').value = id;
         document.getElementById('modalFechamento').showModal();
     }
+    
+    function editarCaixa(id, saldo_inicial) {
+        document.getElementById('edit_caixa_id').value = id;
+        document.getElementById('edit_caixa_saldo').value = saldo_inicial;
+        document.getElementById('modalEditarCaixa').showModal();
+    }
 
-    function pedirConfirmacaoFechamento() {
-        dispararConfirmacao("Atenção: Os valores estão corretos? Deseja realmente FECHAR o caixa?", document.getElementById('formFechamento'));
+    function editarMovimentacao(mov) {
+        document.getElementById('edit_fluxo_id').value = mov.id;
+        document.getElementById('edit_fluxo_descricao').value = mov.descricao;
+        document.getElementById('edit_fluxo_categoria').value = mov.categoria_id;
+        document.getElementById('edit_fluxo_valor').value = mov.valor;
+        document.getElementById('modalEditarFluxo').showModal();
     }
     </script>
 </body>

@@ -3,166 +3,31 @@ session_start();
 require_once __DIR__ . '/../../php/conexao.php'; 
 require_once __DIR__ . '/verificar_login.php';
 
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+
+if (empty($_SESSION['csrf_token'])) {$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$funcionario_id = $_SESSION['funcionario_id'] ?? null;
+$funcionario_id =$_SESSION['funcionario_id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !==$_SESSION['csrf_token']) {
         die('Ação não autorizada.');
     }
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-    $acao = $_POST['acao'] ?? '';
+    $acao =$_POST['acao'] ?? '';
 
-    if ($acao === 'adicionar_ocorrencia') {
-        $pedido_id = $_POST['pedido_id'] ?? null;
-        $item_pedido_id = $_POST['item_pedido_id'] ?? null;
-        $tipo = $_POST['tipo'] ?? '';
-        $motivo = trim($_POST['motivo'] ?? '');
-        $retornou_estoque = $_POST['retornou_estoque'] ?? 0;
-
-        if (!$pedido_id || !$item_pedido_id || !$tipo || !$motivo) {
-            echo "Erro: preencha todos os campos obrigatórios.";
-            exit;
-        }
-        
-        if (!in_array($tipo, ['cancelamento', 'troca'])) {
-            echo "Erro: tipo de ocorrência inválido.";
-            exit;
-        }
-
-        $retornou_estoque = (int)$retornou_estoque;
-
-        if (!in_array($retornou_estoque, [0, 1])) {
-            echo "Erro: valor de retorno ao estoque inválido.";
-            exit;
-        }
-
-        $stmt = $pdo->prepare("SELECT id FROM pedidos WHERE id = ?");
-        $stmt->execute([$pedido_id]);
-
-        if (!$stmt->fetch()) {
-            echo "Erro: pedido não encontrado.";
-            exit;
-        }
-
-        $stmt = $pdo->prepare("SELECT id, pedido_id FROM itens_pedidos WHERE id = ?");
-        $stmt->execute([$item_pedido_id]);
-        $item = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$item) {
-            echo "Erro: item do pedido não encontrado.";
-            exit;
-        }
-
-        if ($item['pedido_id'] != $pedido_id) {
-            echo "Erro: o item selecionado não pertence ao pedido informado.";
-            exit;
-        }
-
-        $stmt = $pdo->prepare("
-            INSERT INTO ocorrencias_pedido (
-                pedido_id,
-                item_pedido_id,
-                funcionario_id,
-                tipo,
-                motivo,
-                retornou_estoque
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
-        ");
-
-        $stmt->execute([
-            $pedido_id,
-            $item_pedido_id,
-            $funcionario_id,
-            $tipo,
-            $motivo,
-            $retornou_estoque
-        ]);
-
-        echo "Ocorrência adicionada com sucesso!";
-        exit;
-    }
-
-    if ($acao === 'listar_ocorrencias') {
-        $stmt = $pdo->query("
-            SELECT
-                op.id,
-                op.pedido_id,
-                op.item_pedido_id,
-                op.tipo,
-                op.motivo,
-                op.retornou_estoque,
-                op.data_ocorrencia
-            FROM ocorrencias_pedido op
-            ORDER BY op.data_ocorrencia DESC
-        ");
-
-        $ocorrencias = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!$ocorrencias) {
-            echo "<p>Nenhuma ocorrência cadastrada.</p>";
-            exit;
-        }
-
-        foreach ($ocorrencias as $ocorrencia) {
-            $tipo = [
-                'cancelamento' => 'Cancelamento',
-                'troca' => 'Troca'
-            ];
-
-            $estoque = [
-                0 => 'Não',
-                1 => 'Sim'
-            ];
-
-            echo "
-                <div>
-                    <strong>Ocorrência #{$ocorrencia['id']}</strong><br>
-                    Pedido: #{$ocorrencia['pedido_id']}<br>
-                    Item: #{$ocorrencia['item_pedido_id']}<br>
-                    Tipo: " . ($tipo[$ocorrencia['tipo']] ?? $ocorrencia['tipo']) . "<br>
-                    Motivo: " . htmlspecialchars($ocorrencia['motivo']) . "<br>
-                    Retornou ao estoque: " . ($estoque[$ocorrencia['retornou_estoque']] ?? 'Não') . "<br>
-                    Data: " . date('d/m/Y H:i', strtotime($ocorrencia['data_ocorrencia'])) . "
-                </div>
-                <hr>
-            ";
-        }
-        exit;
-    }
-
-    if ($acao === 'listar_pedidos') {
-        $stmt = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC");
-        $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        if (!$pedidos) {
-            echo "<option value=''>Nenhum pedido encontrado</option>";
-            exit;
-        }
-
-        echo "<option value=''>Selecione o pedido</option>";
-        foreach ($pedidos as $pedido) {
-            echo "<option value='{$pedido['id']}'>Pedido #{$pedido['id']}</option>";
-        }
-        exit;
-    }
-
+   
     if ($acao === 'listar_itens') {
-        $pedido_id = $_POST['pedido_id'] ?? null;
+        $pedido_id =$_POST['pedido_id'] ?? null;
 
         if (!$pedido_id) {
             echo "<option value=''>Selecione um pedido primeiro</option>";
             exit;
         }
 
-        $stmt = $pdo->prepare("SELECT id FROM itens_pedidos WHERE pedido_id = ? ORDER BY id ASC");
+        $stmt =$pdo->prepare("SELECT id FROM itens_pedidos WHERE pedido_id = ? ORDER BY id ASC");
         $stmt->execute([$pedido_id]);
-        $itens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $itens =$stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$itens) {
             echo "<option value=''>Nenhum item encontrado</option>";
@@ -170,27 +35,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         echo "<option value=''>Selecione o item</option>";
-        foreach ($itens as $item) {
+        foreach ($itens as$item) {
             echo "<option value='{$item['id']}'>Item #{$item['id']}</option>";
         }
         exit;
     }
+
+  
+    if ($acao === 'salvar_ocorrencia') {
+        $id =$_POST['id'] ?? null;
+        $pedido_id =$_POST['pedido_id'] ?? null;
+        $item_pedido_id =$_POST['item_pedido_id'] ?? null;
+        $tipo =$_POST['tipo'] ?? '';
+        $motivo = trim($_POST['motivo'] ?? '');
+        $retornou_estoque =$_POST['retornou_estoque'] ?? 0;
+
+        if ($id) {
+        
+            $stmt =$pdo->prepare("UPDATE ocorrencias_pedido SET pedido_id=?, item_pedido_id=?, tipo=?, motivo=?, retornou_estoque=? WHERE id=?");
+            $stmt->execute([$pedido_id,$item_pedido_id, $tipo,$motivo, $retornou_estoque,$id]);
+        } else {
+            
+            $stmt =$pdo->prepare("INSERT INTO ocorrencias_pedido (pedido_id, item_pedido_id, funcionario_id, tipo, motivo, retornou_estoque) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$pedido_id,$item_pedido_id, $funcionario_id,$tipo, $motivo,$retornou_estoque]);
+        }
+        
+        
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    }
 }
 
-$ocorrencias = $pdo->query("
-    SELECT
-        op.id,
-        op.pedido_id,
-        op.item_pedido_id,
-        op.tipo,
-        op.motivo,
-        op.retornou_estoque,
-        op.data_ocorrencia
-    FROM ocorrencias_pedido op
-    ORDER BY op.data_ocorrencia DESC
-")->fetchAll(PDO::FETCH_ASSOC);
-
-$pedidos = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
+$ocorrencias =$pdo->query("SELECT * FROM ocorrencias_pedido ORDER BY data_ocorrencia DESC")->fetchAll(PDO::FETCH_ASSOC);
+$pedidos =$pdo->query("SELECT id FROM pedidos ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -200,14 +77,13 @@ $pedidos = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC")->fetchAll(PDO:
 </head>
 <body>
     <h1>Ocorrências dos Pedidos</h1>
-    <button onclick="abrirOcorrencia()">NOVA OCORRÊNCIA</button>
-    <button onclick="carregarOcorrencias()">ATUALIZAR</button>
+    <button onclick="abrirModalOcorrencia()">NOVA OCORRÊNCIA</button>
 
-    <div id="container-ocorrencias">
+    <div id="container-ocorrencias" style="margin-top: 20px;">
         <?php if (!$ocorrencias): ?>
             <p>Nenhuma ocorrência cadastrada.</p>
         <?php else: ?>
-            <?php foreach ($ocorrencias as $ocorrencia): ?>
+            <?php foreach ($ocorrencias as$ocorrencia): ?>
                 <?php
                 $tipos = [
                     'cancelamento' => 'Cancelamento',
@@ -221,71 +97,99 @@ $pedidos = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC")->fetchAll(PDO:
                     Tipo: <?= htmlspecialchars($tipos[$ocorrencia['tipo']] ?? $ocorrencia['tipo']) ?><br>
                     Motivo: <?= htmlspecialchars($ocorrencia['motivo']) ?><br>
                     Retornou ao estoque: <?= $ocorrencia['retornou_estoque'] ? 'Sim' : 'Não' ?><br>
-                    Data: <?= date('d/m/Y H:i', strtotime($ocorrencia['data_ocorrencia'])) ?>
+                    Data: <?= date('d/m/Y H:i', strtotime($ocorrencia['data_ocorrencia'])) ?><br><br>
+                    <button onclick='editarOcorrencia(<?= json_encode($ocorrencia) ?>)'>Editar</button>
                 </div>
                 <hr>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
+    <!-- MODAL DE OCORRÊNCIA (Criar / Editar) -->
     <dialog id="modalOcorrencia">
-        <h2>Nova Ocorrência</h2>
-        <form id="formOcorrencia" onsubmit="salvarOcorrencia(event)">
+        <h2 id="tituloModal">Nova Ocorrência</h2>
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar as informações desta ocorrência?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <input type="hidden" name="acao" value="adicionar_ocorrencia">
+            <input type="hidden" name="acao" value="salvar_ocorrencia">
+            <input type="hidden" name="id" id="form_id">
 
-            <label>Pedido:</label>
-            <select name="pedido_id" id="pedidoSelect" required>
-                <option value="">Selecione o pedido</option>
-                <?php foreach ($pedidos as $pedido): ?>
-                    <option value="<?= $pedido['id'] ?>">Pedido #<?= $pedido['id'] ?></option>
-                <?php endforeach; ?>
-            </select>
-            <br><br>
+            <div>
+                <label>Pedido:</label>
+                <select name="pedido_id" id="form_pedido_id" required>
+                    <option value="">Selecione o pedido</option>
+                    <?php foreach ($pedidos as$pedido): ?>
+                        <option value="<?= $pedido['id'] ?>">Pedido #<?= $pedido['id'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <br>
 
-            <label>Item do pedido:</label>
-            <select name="item_pedido_id" id="itemSelect" required>
-                <option value="">Selecione o pedido primeiro</option>
-            </select>
-            <br><br>
+            <div>
+                <label>Item do pedido:</label>
+                <select name="item_pedido_id" id="form_item_id" required>
+                    <option value="">Selecione o pedido primeiro</option>
+                </select>
+            </div>
+            <br>
 
-            <label>Tipo:</label>
-            <select name="tipo" required>
-                <option value="">Selecione</option>
-                <option value="cancelamento">Cancelamento</option>
-                <option value="troca">Troca</option>
-            </select>
-            <br><br>
+            <div>
+                <label>Tipo:</label>
+                <select name="tipo" id="form_tipo" required>
+                    <option value="">Selecione</option>
+                    <option value="cancelamento">Cancelamento</option>
+                    <option value="troca">Troca</option>
+                </select>
+            </div>
+            <br>
 
-            <label>Motivo:</label><br>
-            <textarea name="motivo" rows="4" required></textarea>
-            <br><br>
+            <div>
+                <label>Motivo:</label><br>
+                <textarea name="motivo" id="form_motivo" rows="4" required></textarea>
+            </div>
+            <br>
 
-            <label>Retornou ao estoque?</label>
-            <select name="retornou_estoque" required>
-                <option value="0">Não</option>
-                <option value="1">Sim</option>
-            </select>
-            <br><br>
+            <div>
+                <label>Retornou ao estoque?</label>
+                <select name="retornou_estoque" id="form_estoque" required>
+                    <option value="0">Não</option>
+                    <option value="1">Sim</option>
+                </select>
+            </div>
+            <br>
 
             <button type="submit">SALVAR</button>
-            <button type="button" onclick="fecharOcorrencia()">CANCELAR</button>
+            <button type="button" onclick="document.getElementById('modalOcorrencia').close()">CANCELAR</button>
         </form>
     </dialog>
 
+    <!-- MODAL DE CONFIRMAÇÃO PADRÃO -->
+    <dialog id="modalConfirmacaoCustom">
+        <h3 id="tituloConfirmacao">Confirmação</h3>
+        <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
+        <button type="button" id="btnSimConfirmacao">Sim</button>
+        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    </dialog>
+
     <script>
-        function abrirOcorrencia() {
-            document.getElementById('modalOcorrencia').showModal();
+        let formParaSubmeter = null;
+
+        // Função do modal de confirmação
+        function dispararConfirmacao(mensagem, form) {
+            formParaSubmeter = form;
+            document.getElementById('mensagemConfirmacao').innerText = mensagem;
+            document.getElementById('modalConfirmacaoCustom').showModal();
         }
 
-        function fecharOcorrencia() {
-            document.getElementById('modalOcorrencia').close();
-        }
+        document.getElementById('btnSimConfirmacao').addEventListener('click', function() {
+            document.getElementById('modalConfirmacaoCustom').close();
+            if (formParaSubmeter) {
+                formParaSubmeter.submit(); 
+            }
+        });
 
-        document.getElementById('pedidoSelect').addEventListener('change', async function() {
-            let pedido_id = this.value;
-            let selectItem = document.getElementById('itemSelect');
-
+        
+        async function carregarItens(pedido_id, item_selecionado = null) {
+            let selectItem = document.getElementById('form_item_id');
             if (!pedido_id) {
                 selectItem.innerHTML = `<option value="">Selecione o pedido primeiro</option>`;
                 return;
@@ -294,34 +198,46 @@ $pedidos = $pdo->query("SELECT id FROM pedidos ORDER BY id DESC")->fetchAll(PDO:
             let formData = new FormData();
             formData.append('acao', 'listar_itens');
             formData.append('pedido_id', pedido_id);
+            formData.append('csrf_token', '<?= $_SESSION['csrf_token'] ?>');
 
             let req = await fetch('', { method: 'POST', body: formData });
             selectItem.innerHTML = await req.text();
-        });
 
-        async function salvarOcorrencia(e) {
-            e.preventDefault();
-            let form = e.target;
-            let req = await fetch('', { method: 'POST', body: new FormData(form) });
-            let texto = await req.text();
-
-            alert(texto);
-
-            if (!texto.startsWith('Erro')) {
-                form.reset();
-                document.getElementById('itemSelect').innerHTML = `<option value="">Selecione o pedido primeiro</option>`;
-                fecharOcorrencia();
-                carregarOcorrencias();
+            if (item_selecionado) {
+                selectItem.value = item_selecionado;
             }
         }
 
-        async function carregarOcorrencias() {
-            let formData = new FormData();
-            formData.append('acao', 'listar_ocorrencias');
+       
+        document.getElementById('form_pedido_id').addEventListener('change', function() {
+            carregarItens(this.value);
+        });
 
-            let req = await fetch('', { method: 'POST', body: formData });
-            let html = await req.text();
-            document.getElementById('container-ocorrencias').innerHTML = html;
+        function abrirModalOcorrencia() {
+            document.getElementById('form_id').value = '';
+            document.getElementById('form_pedido_id').value = '';
+            document.getElementById('form_item_id').innerHTML = '<option value="">Selecione o pedido primeiro</option>';
+            document.getElementById('form_tipo').value = '';
+            document.getElementById('form_motivo').value = '';
+            document.getElementById('form_estoque').value = '0';
+            
+            document.getElementById('tituloModal').innerText = 'Nova Ocorrência';
+            document.getElementById('modalOcorrencia').showModal();
+        }
+
+        function editarOcorrencia(oc) {
+            document.getElementById('form_id').value = oc.id;
+            document.getElementById('form_pedido_id').value = oc.pedido_id;
+            document.getElementById('form_tipo').value = oc.tipo;
+            document.getElementById('form_motivo').value = oc.motivo;
+            document.getElementById('form_estoque').value = oc.retornou_estoque;
+            
+            document.getElementById('tituloModal').innerText = 'Editar Ocorrência';
+            
+            
+            carregarItens(oc.pedido_id, oc.item_pedido_id);
+            
+            document.getElementById('modalOcorrencia').showModal();
         }
     </script>
 </body>

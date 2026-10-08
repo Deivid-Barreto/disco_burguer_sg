@@ -7,13 +7,12 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-$funcionario_id = $_SESSION['funcionario_id'];
+$funcionario_id = $_SESSION['funcionario_id'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die('Ação não autorizada.');
     }
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
     $acao = $_POST['acao'] ?? '';
 
@@ -24,9 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda]);
         $id = $pdo->lastInsertId();
         
-        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES);
-        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES);
-        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES);
+        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES, 'UTF-8');
+        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
+        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $nome_js = addslashes($nome_esc);
+        $cod_js = addslashes($cod_esc);
+        $un_js = addslashes($un_esc);
 
         echo "
         <div id='estoque-{$id}'>
@@ -34,13 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span id='cabecalho-estoque-{$id}'>
                     <b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})
                 </span>
-                <button onclick='abrirModalEditEstoque({$id}, \"{$nome_esc}\", \"{$cod_esc}\", \"{$un_esc}\", {$_POST['estoque_minimo']}, {$eh_revenda})'>EDITAR INSUMO</button>
+                <button onclick='abrirModalEditEstoque({$id}, \"{$nome_js}\", \"{$cod_js}\", \"{$un_js}\", {$_POST['estoque_minimo']}, {$eh_revenda})'>EDITAR INSUMO</button>
                 <button onclick='deletarEstoque({$id})'>EXCLUIR INSUMO</button>
             </div>
             <div id='lista-lotes-{$id}'>
                 <p id='sem-lotes-{$id}'>Nenhum lote cadastrado.</p>
                 <div id='container-btn-{$id}'>
-                    <button onclick='abrirModalLote({$id}, \"{$un_esc}\")'>ADICIONAR NOVO LOTE</button>
+                    <button onclick='abrirModalLote({$id}, \"{$un_js}\")'>ADICIONAR NOVO LOTE</button>
                 </div>
             </div>
         </div>";
@@ -52,10 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE estoque SET nome=?, codigo=?, unidade_medida=?, estoque_minimo=?, eh_revenda=? WHERE id=?");
         $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda, $_POST['estoque_id']]);
         
-        $nome_esc = htmlspecialchars($_POST['nome']);
-        $cod_esc = htmlspecialchars($_POST['codigo']);
+        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES, 'UTF-8');
+        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
+        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
 
-        echo "<b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$_POST['unidade_medida']})";
+        echo "<b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})";
         exit;
     }
 
@@ -98,8 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $dataBR = date('d/m/Y', strtotime($dataVal));
-        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES);
-        $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES);
+        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES, 'UTF-8');
+        $num_lote_js = addslashes($num_lote_esc);
+        $un_js = addslashes($un);
+        $fornecedor_js = addslashes((string)$fornecedor_id);
         
         echo "
         <div id='lote-{$id_lote}'>
@@ -107,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR}{$avisoValidade} | Qtd: {$_POST['quantidade']}{$un}
             </div>
             <div>
-                <button onclick='abrirModalEditLote({$id_lote}, \"{$num_lote_esc}\", \"{$fornecedor_id}\", \"{$_POST['data_validade']}\", {$_POST['quantidade']}, {$_POST['preco_custo']}, \"{$un}\")'>EDITAR LOTE</button>
+                <button onclick='abrirModalEditLote({$id_lote}, \"{$num_lote_js}\", \"{$fornecedor_js}\", \"{$_POST['data_validade']}\", {$_POST['quantidade']}, {$_POST['preco_custo']}, \"{$un_js}\")'>EDITAR LOTE</button>
                 <button onclick='deletarLote({$id_lote})'>EXCLUIR LOTE</button>
             </div>
         </div>";
@@ -132,8 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $dataBR = date('d/m/Y', strtotime($dataVal));
-        $un = htmlspecialchars($_POST['unidade_medida']);
-        $num_lote_esc = htmlspecialchars($_POST['numero_lote']);
+        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES, 'UTF-8');
         
         echo "Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR}{$avisoValidade} | Qtd: {$_POST['quantidade']}{$un}";
         exit;
@@ -150,8 +156,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $obsFormulario = $_POST['observacao'] ?? '';
             $novaObservacao = trim("Lote excluído: " . $numLote . ". " . $obsFormulario);
 
-            $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, 0, ?)");
-            $stmtMov->execute([$_POST['lote_id'], $funcionario_id, $_POST['tipo_movimentacao'], $novaObservacao]);
+            // Tenta desvincular ou registrar movimentação desvinculada caso haja FK estrita
+            $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (NULL, ?, ?, 0, ?)");
+            $stmtMov->execute([$funcionario_id, $_POST['tipo_movimentacao'], $novaObservacao]);
 
             $stmt = $pdo->prepare("DELETE FROM lotes_estoque WHERE id = ?");
             $stmt->execute([$_POST['lote_id']]);
@@ -193,7 +200,7 @@ $hoje = date('Y-m-d');
                     <span id="cabecalho-estoque-<?= $item['id'] ?>">
                         <b><?= htmlspecialchars($item['nome']) ?></b> (Cód: <?= htmlspecialchars($item['codigo']) ?> | Min: <?= $item['estoque_minimo'] ?><?= htmlspecialchars($item['unidade_medida']) ?>)
                     </span>
-                    <button onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= htmlspecialchars($item['nome'], ENT_QUOTES) ?>', '<?= htmlspecialchars($item['codigo'], ENT_QUOTES) ?>', '<?= htmlspecialchars($item['unidade_medida'], ENT_QUOTES) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR INSUMO</button>
+                    <button onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['nome'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['codigo'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR INSUMO</button>
                     <button onclick="deletarEstoque(<?= $item['id'] ?>)">EXCLUIR INSUMO</button>
                 </div>
                 
@@ -217,7 +224,7 @@ $hoje = date('Y-m-d');
                                     Qtd: <?= $lote['quantidade_estoque'] ?><?= htmlspecialchars($item['unidade_medida']) ?>
                                 </div>
                                 <div>
-                                    <button onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= htmlspecialchars($lote['numero_lote'], ENT_QUOTES) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= htmlspecialchars($item['unidade_medida'], ENT_QUOTES) ?>')">EDITAR LOTE</button>
+                                    <button onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= addslashes(htmlspecialchars($lote['numero_lote'], ENT_QUOTES)) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">EDITAR LOTE</button>
                                     <button onclick="deletarLote(<?= $lote['id'] ?>)">EXCLUIR LOTE</button>
                                 </div>
                             </div>
@@ -228,7 +235,7 @@ $hoje = date('Y-m-d');
                     <?php endif; ?>
 
                     <div id="container-btn-<?= $item['id'] ?>">
-                        <button onclick="abrirModalLote(<?= $item['id'] ?>, '<?= htmlspecialchars($item['unidade_medida'], ENT_QUOTES) ?>')">ADICIONAR NOVO LOTE</button>
+                        <button onclick="abrirModalLote(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">ADICIONAR NOVO LOTE</button>
                     </div>
 
                 </div>
@@ -534,7 +541,11 @@ $hoje = date('Y-m-d');
             let form = e.target;
             let req = await fetch('', { method: 'POST', body: new FormData(form) });
             document.getElementById('container-estoque').insertAdjacentHTML('beforeend', await req.text());
+            
+            let csrfVal = form.querySelector('input[name="csrf_token"]').value;
             form.reset();
+            form.querySelector('input[name="csrf_token"]').value = csrfVal;
+            
             document.getElementById('modalEstoque').close();
         }
 
@@ -548,7 +559,11 @@ $hoje = date('Y-m-d');
             if(txtVazio) txtVazio.remove();
 
             document.getElementById('container-btn-' + id_estoque).insertAdjacentHTML('beforebegin', await req.text());
+            
+            let csrfVal = form.querySelector('input[name="csrf_token"]').value;
             form.reset();
+            form.querySelector('input[name="csrf_token"]').value = csrfVal;
+            
             document.getElementById('modalLote').close();
         }
 
@@ -611,7 +626,11 @@ $hoje = date('Y-m-d');
             } else {
                 alert('Erro ao excluir o lote.');
             }
+            
+            let csrfVal = form.querySelector('input[name="csrf_token"]').value;
             form.reset();
+            form.querySelector('input[name="csrf_token"]').value = csrfVal;
+            
             document.getElementById('modalDelLote').close();
         }
     </script>

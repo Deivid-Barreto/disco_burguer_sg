@@ -127,7 +127,6 @@ $hoje = date('Y-m-d');
                         <button type="button" onclick="dispararConfirmacao('Confirmar baixa de pagamento desta conta?', document.getElementById('formPagar_<?= $c['id'] ?>'))">Marcar Pago</button>
                     </form>
                     <?php endif; ?>
-                    <button onclick='editarConta(<?= json_encode($c) ?>)'>Editar</button>
                     <form id="formDelConta_<?= $c['id'] ?>" method="POST" style="display:inline;">
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="origem" value="conta">
@@ -142,7 +141,7 @@ $hoje = date('Y-m-d');
     </table>
 
     <dialog id="modalCategoria">
-        <form method="POST">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar as alterações da categoria?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="categoria">
             <input type="hidden" name="acao" value="salvar">
@@ -181,7 +180,7 @@ $hoje = date('Y-m-d');
     </dialog>
 
     <dialog id="modalConta">
-        <form method="POST">
+        <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar esta nova conta?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="conta">
             <input type="hidden" name="acao" value="salvar">
@@ -249,14 +248,12 @@ $hoje = date('Y-m-d');
     }
     
     function editarCategoria(cat) {
-        dispararConfirmacao("Deseja editar esta categoria financeira?", function() {
-            document.getElementById('form_cat_id').value = cat.id;
-            document.getElementById('form_cat_nome').value = cat.nome;
-            document.getElementById('form_cat_tipo').value = cat.tipo;
-            document.getElementById('form_cat_tipo_saida').value = cat.tipo_saida;
-            document.getElementById('form_cat_grupo_dre').value = cat.grupo_dre;
-            document.getElementById('modalCategoria').showModal();
-        });
+        document.getElementById('form_cat_id').value = cat.id;
+        document.getElementById('form_cat_nome').value = cat.nome;
+        document.getElementById('form_cat_tipo').value = cat.tipo;
+        document.getElementById('form_cat_tipo_saida').value = cat.tipo_saida;
+        document.getElementById('form_cat_grupo_dre').value = cat.grupo_dre;
+        document.getElementById('modalCategoria').showModal();
     }
 
     function abrirModalConta() {
@@ -267,18 +264,6 @@ $hoje = date('Y-m-d');
         document.getElementById('form_conta_fornecedor').value = '';
         document.getElementById('form_conta_categoria').value = '';
         document.getElementById('modalConta').showModal();
-    }
-    
-    function editarConta(c) {
-        dispararConfirmacao("Deseja editar esta conta a pagar?", function() {
-            document.getElementById('form_conta_id').value = c.id;
-            document.getElementById('form_conta_descricao').value = c.descricao;
-            document.getElementById('form_conta_valor').value = c.valor;
-            document.getElementById('form_conta_vencimento').value = c.data_vencimento;
-            document.getElementById('form_conta_fornecedor').value = c.fornecedor_id || '';
-            document.getElementById('form_conta_categoria').value = c.categoria_id;
-            document.getElementById('modalConta').showModal();
-        });
     }
     </script>
 </body>
