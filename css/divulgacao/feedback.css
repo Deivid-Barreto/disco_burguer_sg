@@ -51,7 +51,7 @@
     border: 2px solid #ff3d9a;
     border-radius: 24px;
     padding: clamp(20px, 5vw, 40px);
-    width: 100%; /* Largura total da coluna Bootstrap */
+    width: 100%; 
     max-width: 700px;
     box-sizing: border-box;
     margin: 0 auto;
@@ -95,6 +95,8 @@
     font-size: clamp(1rem, 3vw, 1.3rem);
 }
 
+/* --- ESTILOS COMPARTILHADOS: INPUTS DE TEXTO E TEXTAREA --- */
+.campo-input,
 .campo-comentario {
     width: 100%;
     background: rgba(255, 255, 255, 0.06);
@@ -102,19 +104,25 @@
     border-radius: 12px;
     padding: clamp(12px, 3vw, 16px);
     color: white;
+}
+
+.campo-comentario {
     resize: vertical;
     min-height: 130px;
 }
 
+.campo-input::placeholder,
 .campo-comentario::placeholder {
     color: rgba(255, 255, 255, 0.55);
 }
 
+.campo-input:focus,
 .campo-comentario:focus {
     outline: none;
     border-color: #ff3d9a;
     box-shadow: 0 0 10px rgba(255, 61, 154, 0.5);
 }
+/* ----------------------------------------------------------- */
 
 .avaliacao-estrelas {
     display: flex;
@@ -173,12 +181,352 @@
 }
 
 .btn-enviar-feedback:hover {
-    transform: translateY(-5px) scale(1.02); /* Sobe um pouco e cresce */
-    box-shadow: 0 10px 25px rgba(255, 61, 154, 0.8), 0 0 15px rgba(255, 138, 61, 0.6); /* Brilho neon intenso */
-    background: linear-gradient(90deg, #ff1c86, #ff7b24); /* Cores ficam mais vibrantes */
+    transform: translateY(-5px) scale(1.02); 
+    box-shadow: 0 10px 25px rgba(255, 61, 154, 0.8), 0 0 15px rgba(255, 138, 61, 0.6); 
+    background: linear-gradient(90deg, #ff1c86, #ff7b24); 
 }
 
 .btn-enviar-feedback:active {
-    transform: translateY(2px) scale(0.98); /* Efeito de clique */
+    transform: translateY(2px) scale(0.98); 
+    box-shadow: 0 5px 15px rgba(255, 61, 154, 0.6);
+}
+
+/* ==========================================================================
+   1. SEÇÃO DE COMENTÁRIOS (CARROSSEL COM SCROLL)
+   ========================================================================== */
+
+/* Configuração do Fundo da Seção de Comentários */
+.comentarios {
+    background-image: url('../../img/fundo-feedback.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: calc(100vh - 100px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: clamp(60px, 10vh, 120px) 15px; 
+}
+
+/* Título Neon dos Comentários */
+.titulo-comentario {
+    font-family: 'Righteous', 'Poppins', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem); 
+    letter-spacing: 2px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 107, 193, 0.8), 0 0 24px rgba(209, 15, 235, 0.6), 0 0 48px rgba(240, 29, 205, 0.35);
+}
+
+/* Sistema de Scroll Responsivo */
+.container-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: clamp(15px, 3vw, 30px); 
+    padding: 20px; 
+    scroll-behavior: smooth;
+    scrollbar-width: none; 
+    cursor: grab; /* Mostra a mãozinha aberta */
+}
+
+/* Quando o usuário clica e segura, a mãozinha fecha */
+.container-scroll:active {
+    cursor: grabbing;
+}
+
+/* Oculta a barra de rolagem */
+
+.container-scroll::-webkit-scrollbar {
+    display: none; /* Esconde barra no Chrome/Safari/Edge */
+}
+
+/* Largura fluida dos itens do Carrossel */
+.item {
+    flex: 0 0 auto; 
+    /* LARGURA FLUIDA: Mínimo de 280px, Ideal de 80vw, Máximo de 450px (PCs) */
+    width: clamp(280px, 80vw, 450px);   
+}
+
+/* Design dos Cards de Comentário */
+.card-comentario {
+    background-color: rgba(255, 0, 255, 0.08); 
+    border: 2px solid #ff00ff;
+    border-radius: clamp(15px, 3vw, 25px); 
+    padding: clamp(20px, 5vw, 35px); /* Respiro interno adaptável */
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5), inset 0 0 10px rgba(255, 0, 255, 0.2);
+    transition: all 0.3s ease-in-out; 
+    cursor: default;
+}
+
+.card-comentario:hover {
+    transform: translateY(-10px); 
+    box-shadow: 0 0 35px #ff00ff, inset 0 0 25px rgba(255, 0, 255, 0.4);
+    background-color: rgba(255, 0, 255, 0.15);
+}
+
+/* Interior do Card (Foto e Fontes Adaptáveis) */
+.foto-perfil {
+    width: clamp(55px, 10vw, 85px); 
+    height: clamp(55px, 10vw, 85px);
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: clamp(2px, 0.5vw, 3px) solid #ff00ff; 
+    box-shadow: 0 0 15px #ff00ff;
+}
+
+.card-comentario h2 {
+    color: white;
+    font-size: clamp(1.2rem, 4vw, 1.6rem); 
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    margin: 0 0 0 clamp(10px, 3vw, 20px); 
+}
+
+.estrelas {
+    font-size: clamp(1rem, 3vw, 1.3rem); 
+    margin-bottom: clamp(10px, 2vw, 15px);
+    letter-spacing: clamp(1px, 0.5vw, 3px);
+}
+
+.card-comentario h3 {
+    color: #e0e0e0;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem); 
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Setas Neon Clicáveis (Tamanho Fluido) */
+.seta-scroll {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: clamp(40px, 8vw, 60px);
+    height: clamp(40px, 8vw, 60px);
+    font-size: clamp(1.2rem, 3vw, 1.5rem);
+    border-radius: 50%;
+    background-color: rgba(10, 10, 10, 0.8); 
+    border: 2px solid #ff00ff;
+    color: #ff00ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+    transition: all 0.3s ease;
+}
+
+.seta-scroll:hover {
+    background-color: #ff00ff;
+    color: white;
+    box-shadow: 0 0 30px #ff00ff;
+}
+
+.seta-esquerda { left: clamp(-10px, -2vw, -20px); }
+.seta-direita { right: clamp(-10px, -2vw, -20px); }
+
+
+
+/* ==========================================================================
+   2. SEÇÃO DE FEEDBACK (FORMULÁRIO DE AVALIAÇÃO)
+   ========================================================================== */
+
+/* Configuração do Fundo da Seção de Feedback */
+.feedback {
+    background-image: url('../../img/fundo-feedback.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+    min-height: calc(100vh - 100px); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    padding: clamp(60px, 20vh, 180px) 15px; 
+}
+
+/* Títulos do Formulário */
+.titulo-feedback {
+    color: white;
+    width: 100%;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.titulo-feedback h1 {
+    font-family: 'Righteous', 'Poppins', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.8rem); 
+    letter-spacing: 2px;
+    color: white;
+    text-transform: uppercase;
+    font-weight: 700;
+    white-space: normal; 
+    text-shadow: 0 0 8px rgba(255, 215, 107, 0.8), 0 0 24px rgba(255, 138, 61, 0.6), 0 0 48px rgba(255, 138, 61, 0.35);
+}
+
+.titulo-feedback p {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    margin-top: 10px;
+}
+
+/* Estrutura do Card de Feedback */
+.card-feedback {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(30, 8, 45, 0.85);
+    border: 2px solid #ff3d9a;
+    border-radius: 24px;
+    padding: clamp(20px, 5vw, 40px);
+    width: 100%; 
+    max-width: 700px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    z-index: 2;
+    box-shadow: 0 0 20px rgba(255, 61, 154, 0.3);
+}   
+
+/* Labels do Formulário (Títulos de cada campo) */
+.feedback-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    width: 100%; 
+}
+
+.feedback-label:not(:first-child) {
+    margin-top: 30px;
+}
+
+.feedback-label h3 {
+    color: #ff3d9a;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem); 
+    text-transform: uppercase;
+    margin: 0px;
+    border-bottom: 2px solid #ff3d9a;
+    padding-bottom: 4px;
+    flex: 1;
+}
+
+.icone-label {
+    width: clamp(30px, 8vw, 40px);
+    height: clamp(30px, 8vw, 40px);
+    min-width: clamp(30px, 8vw, 40px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 2px solid #ff3d9a;
+    color: #ff3d9a;
+    font-size: clamp(1rem, 3vw, 1.3rem);
+}
+
+/* Estilos Compartilhados: Inputs (Nome, Ticket) e Textarea (Comentário) */
+.campo-input,
+.campo-comentario {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 12px;
+    padding: clamp(12px, 3vw, 16px);
+    color: white;
+}
+
+.campo-comentario {
+    resize: vertical;
+    min-height: 130px;
+}
+
+.campo-input::placeholder,
+.campo-comentario::placeholder {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.campo-input:focus,
+.campo-comentario:focus {
+    outline: none;
+    border-color: #ff3d9a;
+    box-shadow: 0 0 10px rgba(255, 61, 154, 0.5);
+}
+
+/* Sistema de Avaliação por Estrelas */
+.avaliacao-estrelas {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: clamp(5px, 2vw, 12px);
+    font-size: clamp(2.5rem, 8vw, 3rem); 
+    margin-top: 10px;
+}
+
+.avaliacao-estrelas input {
+    display: none;
+}
+
+.avaliacao-estrelas label {
+    color: transparent;
+    -webkit-text-stroke: 1.5px #ffd93d;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.avaliacao-estrelas label:hover {
+    transform: scale(1.2);
+}
+
+.avaliacao-estrelas label:hover,
+.avaliacao-estrelas label:hover ~ label,
+.avaliacao-estrelas input:checked ~ label {
+    color: #ffd93d;
+    text-shadow: 0 0 15px rgba(255, 217, 61, 0.6);
+}
+
+.texto-ajuda {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    margin-top: 8px;
+}
+
+/* Botão de Enviar Animado e Neon */
+.btn-enviar-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 30px;
+    padding: clamp(12px, 3vw, 16px) 0px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.15rem);
+    text-transform: uppercase;
+    color: white;
+    background: linear-gradient(90deg, #ff3d9a, #ff8a3d);
+    box-shadow: 0 0 15px rgba(255, 61, 154, 0.4);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.btn-enviar-feedback:hover {
+    transform: translateY(-5px) scale(1.02); 
+    box-shadow: 0 10px 25px rgba(255, 61, 154, 0.8), 0 0 15px rgba(255, 138, 61, 0.6); 
+    background: linear-gradient(90deg, #ff1c86, #ff7b24); 
+}
+
+.btn-enviar-feedback:active {
+    transform: translateY(2px) scale(0.98); 
     box-shadow: 0 5px 15px rgba(255, 61, 154, 0.6);
 }

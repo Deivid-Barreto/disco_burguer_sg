@@ -9,7 +9,7 @@
     min-height: clamp(250px, 100vh, 1100px); 
     
     display: flex;
-    align-items: center; /* Mantém tudo centralizado verticalmente */
+    align-items: center; 
     padding: 20px 0;
 }
 
@@ -500,3 +500,32 @@ z-index: 10;
     background-size: 34px 34px;
     background-position: 0 0, 17px 17px;
 }
+@keyframes subir-suave {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes aparecer {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  
+  /* ---------- Entrada da página ---------- */
+  .neon-disco {
+    animation: subir-suave 1.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+  
+  /* Só opacidade, para não conflitar com o transform do .fixo */
+  .neon-burguer {
+    animation: aparecer 1.8s ease 0.4s backwards;
+  }
+  .button-hero {
+    animation: aparecer 2.5s ease 0.4s backwards;
+  }
+  
+  /* ---------- Menu de categorias ---------- */
+  .button-hero {
+    transform: scale(0.95);
+  }
+  
+  

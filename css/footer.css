@@ -1,10 +1,11 @@
 footer {
-background: linear-gradient(45deg, #ffaa00 0%, #37006b 60%, #050110 100%);
+
+background-color: black;
     color: #ffffff;;
 }
 
 .row-footer {
-    padding: 10vh 5vh;
+    padding: 8vh 5vh;
 }
 
 .img-icone-footer {

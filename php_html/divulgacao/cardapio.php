@@ -1,4 +1,4 @@
- <?php
+<?php
 // Configuração da conexão com o banco de dados via MySQLi
 $host    = '127.0.0.1';
 $user    = 'root';
@@ -48,15 +48,11 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
-
-<body>
-  <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Disco Burguer Cardápio</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="stylesheet" href="../../css/divulgacao/cardapio.css?v=<?php echo filemtime('../../css/divulgacao/cardapio.css'); ?>">
   <link rel="stylesheet" href="/../css/header.css">
   <link rel="stylesheet" href="/../css/footer.css">
@@ -64,9 +60,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
 
 <body>
   <header>
-    <?php
-    include __DIR__ . "/../../includes/header.php";
-    ?>
+    <?php include __DIR__ . "/../../includes/header.php"; ?>
   </header>
 
   <main>
@@ -116,18 +110,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
             <span class="linha-neon"></span>
           </div>
           <?php foreach ($hamburgueres as $lanche): ?>
-            <div class="row itens-cardapio align-items-center text-center text-md-start">
-              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>" class="img-fluid">
-              </div>
-              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+            <div class="itens-cardapio">
+              <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>">
+              <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($lanche['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($lanche['descricao']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+              <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($lanche['preco']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+              <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio">ola</button>
               </div>
             </div>
@@ -141,18 +133,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
             <span class="linha-neon"></span>
           </div>
           <?php foreach ($combos as $combo): ?>
-            <div class="row itens-cardapio align-items-center text-center text-md-start">
-              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>" class="img-fluid">
-              </div>
-              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+            <div class="itens-cardapio">
+              <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>">
+              <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($combo['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($combo['descricao']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+              <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($combo['preco']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+              <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio">ola</button>
               </div>
             </div>
@@ -166,18 +156,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
             <span class="linha-neon"></span>
           </div>
           <?php foreach ($shakes as $shake): ?>
-            <div class="row itens-cardapio align-items-center text-center text-md-start">
-              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>" class="img-fluid">
-              </div>
-              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+            <div class="itens-cardapio">
+              <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>">
+              <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($shake['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($shake['descricao']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+              <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($shake['preco']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+              <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio">ola</button>
               </div>
             </div>
@@ -191,18 +179,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
             <span class="linha-neon"></span>
           </div>
           <?php foreach ($porções as $porção): ?>
-            <div class="row itens-cardapio align-items-center text-center text-md-start">
-              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>" class="img-fluid">
-              </div>
-              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+            <div class="itens-cardapio">
+              <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>">
+              <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($porção['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($porção['descricao']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+              <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($porção['preco']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+              <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio">ola</button>
               </div>
             </div>
@@ -216,18 +202,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
             <span class="linha-neon"></span>
           </div>
           <?php foreach ($sobremesas as $sobremesa): ?>
-            <div class="row itens-cardapio align-items-center text-center text-md-start">
-              <div class="col-12 col-md-2 mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start">
-                <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>" class="img-fluid">
-              </div>
-              <div class="col-12 col-md-6 text-itens-cardapio mb-3 mb-md-0 d-flex flex-column align-items-center align-items-md-start">
+            <div class="itens-cardapio">
+              <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>">
+              <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($sobremesa['nome']); ?></h2>
                 <h3><?php echo htmlspecialchars($sobremesa['descricao']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 preco-itens-cardapio mb-3 mb-md-0 d-flex justify-content-center justify-content-md-start align-items-center">
+              <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($sobremesa['preco']); ?></h3>
               </div>
-              <div class="col-12 col-md-2 div-button-itens-cardapio d-flex justify-content-center justify-content-md-end align-items-center">
+              <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio">ola</button>
               </div>
             </div>
@@ -239,12 +223,10 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
   </main>
 
   <footer id="contato">
-    <?php
-    include __DIR__ . "/../../includes/footer.php";
-    ?>
+    <?php include __DIR__ . "/../../includes/footer.php"; ?>
   </footer>
 
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="../../js/cardapio.js"></script>
   <script src="../../js/scroll.js"></script>
 

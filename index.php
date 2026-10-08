@@ -263,7 +263,7 @@
   <div class="container">
     <div class="row">
 
-      <div class="col-12 pt-5 pb-5 text-center" >
+      <div class="col-12 pt-4 pb-4 text-center" >
         <h3 class="text-oficial">#DISCOBURGUER@OFICIAL</h3>
       </div>
     </div>
