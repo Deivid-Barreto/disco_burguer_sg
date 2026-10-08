@@ -1,5 +1,5 @@
--- Active: 1734093673833@@127.0.0.1@3306@mysql
-CREATE DATABASE IF NOT EXISTS `discoburguer` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+-- Active: 1791415866216@@127.0.0.1@3306@discoburguer@mysql
+CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8_unicode_ci;
 
 USE `discoburguer`;
 
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
     INDEX `idx_produtos_categorias` (`categorias`),
     INDEX `idx_produtos_status` (`ativo`, `visivel`),
     INDEX `idx_produtos_estoque` (`estoque_id`),
-  x''     CONSTRAINT `fk_produtos_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT `fk_produtos_estoque` FOREIGN KEY (`estoque_id`) REFERENCES `estoque` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE IF NOT EXISTS `lotes_estoque` (
@@ -342,3 +342,17 @@ CREATE TABLE IF NOT EXISTS `caixas_diarios` (
     CONSTRAINT `fk_caixa_abertura` FOREIGN KEY (`funcionario_abertura_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_caixa_fechamento` FOREIGN KEY (`funcionario_fechamento_id`) REFERENCES `funcionarios` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB;
+
+use discoburguer;
+INSERT INTO produtos (nome, descricao, preco_venda, imagem_caminho, categorias, ativo, visivel) VALUES
+('Disco Classic', 'Pão brioche, artesanal 180g, queijo cheddar fatiado e molho da casa.', 28.90, '../../img/burguer.png', 'hamburguer', 1, 1),
+('Disco Bacon', 'Pão australiano, artesanal 180g, dobro de bacon crocante e queijo prato.', 34.00, '../../img/burguer.png', 'hamburguer', 1, 1),
+('Disco Sem Foto', 'Hambúrguer de teste para verificar a imagem padrão.', 25.00, NULL, 'hamburguer', 1, 1),
+('Combo Smash Single', '1 Smash Burger, 1 Batata P, 1 Refrigerante Lata 350ml.', 38.00, '../../img/combos.png', 'combos', 1, 1),
+('Combo Disco Duplo', '1 Disco Bacon, 1 Batata M com Cheddar, 1 Shake 300ml.', 52.90, '../../img/combos.png', 'combos', 1, 1),
+('Milkshake de Nutella', 'Creme de baunilha, Nutella pura e chantilly 400ml.', 18.50, '../../img/shakes.png', 'bebidas', 1, 1),
+('Milkshake de Morango', 'Sorvete artesanal de morango com pedaços da fruta 400ml.', 16.50, '../../img/shakes.png', 'bebidas', 1, 1),
+('Batata Frita Especial', 'Batata palito crocante coberta com molho cheddar e bacon em cubos.', 26.00, '../../img/porcoes.png', 'porcoes', 1, 1),
+('Nuggets de Frango', '10 unidades de nuggets empanados e temperados com molho barbecue.', 22.00, '../../img/porcoes.png', 'porcoes', 1, 1),
+('Bolo de Pote Chocolate', 'Bolo caseiro recheado com brigadeiro artesanal e raspas de chocolate.', 14.00, '../../img/bolo.png', 'sobremesa_gelada', 1, 1),
+('Torta Gelada de Limão', 'Massa crocante, creme de limão e cobertura de suspiro queimado.', 15.50, '../../img/bolo.png', 'sobremesa_gelada', 1, 1);

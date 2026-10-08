@@ -25,69 +25,152 @@
     </header>
 
     <main>
-        <section class="feedback" id="feedback">
-            <div class="container h-100 d-flex flex-column justify-content-center">
-                
-                <!-- Bloco do Título -->
-                <div class="row justify-content-center">
-                    <div class="col-12 d-flex justify-content-center">
-                        <div class="titulo-feedback">
-                            <h1>Deixe sua opinião</h1>
-                            <p>Sua opinião é muito importante para melhorarmos sempre!</p>
-                        </div>
-                    </div>
+       <section class="feedback" id="feedback">
+    <div class="container h-100 d-flex flex-column justify-content-center">
+        
+        <!-- Bloco do Título -->
+        <div class="row justify-content-center">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="titulo-feedback">
+                    <h1>Deixe sua opinião</h1>
+                    <p>Sua opinião é muito importante para melhorarmos sempre!</p>
                 </div>
-
-                <!-- Bloco do Formulário Completo -->
-                <div class="row justify-content-center w-100 m-0">
-                    <div class="col-12 col-md-10 col-lg-8 d-flex justify-content-center">
-                        <form class="card-feedback w-100" id="form-feedback" method="post" action="processa_feedback.php">
-
-                            <div class="feedback-label">
-                                <span class="icone-label">
-                                    <i class="bi bi-chat-dots"></i>
-                                </span>
-                                <h3>Seu Comentário</h3>
-                            </div>
-
-                            <textarea class="campo-comentario" id="comentario" name="comentario"
-                                placeholder="Escreva aqui seu comentário..." rows="5" required></textarea>
-
-                            <div class="feedback-label">
-                                <span class="icone-label">
-                                    <i class="bi bi-star"></i>
-                                </span>
-                                <h3>Avalie Nossa Loja</h3>
-                            </div>
-
-                            <div class="avaliacao-estrelas" id="avaliacao-estrelas">
-                                <input type="radio" name="avaliacao" id="estrela5" value="5">
-                                <label for="estrela5" title="5 estrelas">&#9733;</label>
-
-                                <input type="radio" name="avaliacao" id="estrela4" value="4">
-                                <label for="estrela4" title="4 estrelas">&#9733;</label>
-
-                                <input type="radio" name="avaliacao" id="estrela3" value="3">
-                                <label for="estrela3" title="3 estrelas">&#9733;</label>
-
-                                <input type="radio" name="avaliacao" id="estrela2" value="2">
-                                <label for="estrela2" title="2 estrelas">&#9733;</label>
-
-                                <input type="radio" name="avaliacao" id="estrela1" value="1">
-                                <label for="estrela1" title="1 estrela">&#9733;</label>
-                            </div>
-
-                            <p class="texto-ajuda">Clique nas estrelas para avaliar</p>
-
-                            <!-- Botão atualizado com nova classe -->
-                            <button type="submit" class="btn-enviar-feedback">Enviar Feedback</button>
-
-                        </form>
-                    </div>
-                </div>
-
             </div>
-        </section>
+        </div>
+
+        <!-- Bloco do Formulário Completo -->
+        <div class="row justify-content-center w-100 m-0">
+            <div class="col-12 col-md-10 col-lg-8 d-flex justify-content-center">
+                <form class="card-feedback w-100" id="form-feedback" method="post" action="processa_feedback.php">
+
+                    <!-- NOVO CAMPO: NOME -->
+                    <div class="feedback-label">
+                        <span class="icone-label">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <h3>Seu Nome</h3>
+                    </div>
+                    <input type="text" class="campo-input" id="nome" name="nome" placeholder="Como devemos te chamar?" required>
+
+                    <!-- NOVO CAMPO: TICKET / CÓDIGO -->
+                    <div class="feedback-label">
+                        <span class="icone-label">
+                            <i class="bi bi-ticket-perforated"></i>
+                        </span>
+                        <h3>Código do Ticket</h3>
+                    </div>
+                    <input type="text" class="campo-input" id="codigo" name="codigo" placeholder="Digite o código do seu recibo" required>
+
+                    <!-- CAMPO: COMENTÁRIO -->
+                    <div class="feedback-label">
+                        <span class="icone-label">
+                            <i class="bi bi-chat-dots"></i>
+                        </span>
+                        <h3>Seu Comentário</h3>
+                    </div>
+                    <textarea class="campo-comentario" id="comentario" name="comentario"
+                        placeholder="Escreva aqui seu comentário..." rows="5" required></textarea>
+
+                    <!-- CAMPO: ESTRELAS -->
+                    <div class="feedback-label">
+                        <span class="icone-label">
+                            <i class="bi bi-star"></i>
+                        </span>
+                        <h3>Avalie Nossa Loja</h3>
+                    </div>
+
+                    <div class="avaliacao-estrelas" id="avaliacao-estrelas">
+                        <input type="radio" name="avaliacao" id="estrela5" value="5">
+                        <label for="estrela5" title="5 estrelas">&#9733;</label>
+
+                        <input type="radio" name="avaliacao" id="estrela4" value="4">
+                        <label for="estrela4" title="4 estrelas">&#9733;</label>
+
+                        <input type="radio" name="avaliacao" id="estrela3" value="3">
+                        <label for="estrela3" title="3 estrelas">&#9733;</label>
+
+                        <input type="radio" name="avaliacao" id="estrela2" value="2">
+                        <label for="estrela2" title="2 estrelas">&#9733;</label>
+
+                        <input type="radio" name="avaliacao" id="estrela1" value="1" required>
+                        <label for="estrela1" title="1 estrela">&#9733;</label>
+                    </div>
+
+                    <p class="texto-ajuda">Clique nas estrelas para avaliar</p>
+
+                    <!-- Botão de Enviar -->
+                    <button type="submit" class="btn-enviar-feedback">Enviar Feedback</button>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+      <section class="comentarios d-flex align-items-center justify-content-center">
+    <div class="container position-relative"> 
+        
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center titulo-comentario mb-5">Comentários!</h1> 
+            </div>
+        </div>
+
+        <!-- Envoltório do Carrossel com Setas -->
+        <div class="row position-relative w-100 m-0 d-flex align-items-center">
+            
+            <!-- Seta Esquerda -->
+            <button class="seta-scroll seta-esquerda" id="btn-esquerda">❮</button>
+
+            <div class="col-12 p-0">
+                <!-- Contêiner do Scroll (com ID para o JS) -->
+                <div class="container-scroll" id="scroll-cards">
+
+                    <!-- Card 1 -->
+                    <div class="card-comentario item d-flex flex-column">
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="../../img/shakes.png" alt="Foto de Perfil" class="foto-perfil">
+                            <h2>Santos do Roque</h2>
+                        </div>
+                        <p class="estrelas">⭐⭐⭐⭐⭐</p>
+                        <h3>"Simplesmente incrível! O ambiente é ótimo e o shake é o melhor que já provei. Voltarei mais vezes com certeza."</h3>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="card-comentario item d-flex flex-column">
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="../../img/shakes.png" alt="Foto de Perfil" class="foto-perfil">
+                            <h2>Maria Silva</h2>
+                        </div>
+                        <p class="estrelas">⭐⭐⭐⭐⭐</p>
+                        <h3>"Atendimento impecável e o sabor é maravilhoso. Super recomendo para quem quer algo saudável e gostoso!"</h3>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="card-comentario item d-flex flex-column">
+                        <div class="d-flex align-items-center mb-4">
+                            <img src="../../img/shakes.png" alt="Foto de Perfil" class="foto-perfil">
+                            <h2>Naruto</h2>
+                        </div>
+                        <p class="estrelas">⭐⭐⭐⭐</p>
+                        <h3>"Muito bom! O lugar tem uma energia fantástica. Só achei que poderia ter mais opções de sabores, mas é excelente."</h3>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Seta Direita -->
+            <button class="seta-scroll seta-direita" id="btn-direita">❯</button>
+
+        </div>
+    </div>
+</section>
+
+<!-- SCRIPT PARA AS SETAS FUNCIONAREM -->
+
+  <script src="../../js/scroll-comentarios.js"></script>
+
     </main>
 
     <footer id="contato">
