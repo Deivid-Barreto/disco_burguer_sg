@@ -16,7 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Requisição inválida ou não autorizada.");
     }
 
-
     $acao = $_POST['acao'] ?? 'login';
 
     if ($acao === 'login') {
@@ -51,8 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $erro = "Por favor, preencha todos os campos.";
         }
     } 
-    
-    
     elseif ($acao === 'recuperar') {
         $email_recuperacao = trim($_POST['email_recuperacao'] ?? '');
 
@@ -60,6 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("SELECT id FROM funcionarios WHERE email = ? AND ativo = 1");
             $stmt->execute([$email_recuperacao]);
             $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            $mensagem_recuperacao = "Se o e-mail estiver cadastrado, um link de redefinição foi enviado para sua caixa de entrada.";
 
             if ($funcionario) {
                 $token_reset = bin2hex(random_bytes(32));
@@ -73,13 +72,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $caminho = dirname($_SERVER['REQUEST_URI']);
                 $link_redefinicao = "{$protocolo}://{$dominio}{$caminho}/redefinir_senha.php?token={$token_reset}";
 
-                $mensagem_recuperacao = "
-                    <strong>Link gerado com sucesso!</strong><br><br>
-                    Clique abaixo para testar a redefinição:<br>
-                    <a href='{$link_redefinicao}' style='word-break: break-all;'>{$link_redefinicao}</a>
-                ";
-            } else {
-                $mensagem_recuperacao = "Se o e-mail estiver cadastrado, o link será gerado.";
+               
+                $apiKey = "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"; 
+
+                $payload = [
+                    "sender" => [
+                        "name" => "Discoburguer 80s",
+                        "email" => "discoburguer80@gmail.com"
+                    ],
+                    "to" => [
+                        ["email" => $email_recuperacao]
+                    ],
+                    "subject" => "Redefinição de Senha",
+                    "htmlContent" => "
+                        <h2>Redefinição de Senha</h2>
+                        <p>Você solicitou a redefinição de senha para acessar o sistema.</p>
+                        <p>Clique no link abaixo para criar uma nova senha (válido por 1 hora):</p>
+                        <p><a href='{$link_redefinicao}'>Redefinir Minha Senha</a></p>
+                        <p>Se o link não funcionar, copie e cole no navegador:</p>
+                        <p>{$link_redefinicao}</p>
+                    "
+                ];
+
+                $ch = curl_init("https://api.brevo.com/v3/smtp/email");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    "accept: application/json",
+                    "api-key: " . $apiKey,
+                    "content-type: application/json"
+                ]);
+
+                curl_exec($ch);
+                curl_close($ch);
             }
         } else {
             $erro = "Por favor, informe seu e-mail.";
@@ -94,7 +120,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <script>
-       
         function mostrarRecuperacao() {
             document.getElementById('form-login').style.display = 'none';
             document.getElementById('form-recuperar').style.display = 'block';
@@ -106,31 +131,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 </head>
 <body>
-    <div class="login-box">
+    <div>
         <h1>Acesso ao Sistema</h1>
 
         <?php if (!empty($erro)): ?>
-            <div style="color: red; margin-bottom: 15px;"><?= htmlspecialchars($erro) ?></div>
+            <div><?= htmlspecialchars($erro) ?></div>
         <?php endif; ?>
 
         <?php if (!empty($mensagem_recuperacao)): ?>
-            <div>
-                <?= $mensagem_recuperacao ?>
-            </div>
+            <div><?= htmlspecialchars($mensagem_recuperacao) ?></div>
         <?php endif; ?>
 
-        <!-- ÁREA DE LOGIN -->
         <div id="form-login" style="<?= (isset($_POST['acao']) && $_POST['acao'] === 'recuperar') ? 'display: none;' : 'display: block;' ?>">
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <input type="hidden" name="acao" value="login"> 
 
-                <div class="campo">
+                <div>
                     <label for="email">E-mail</label>
                     <input type="email" id="email" name="email" required autofocus placeholder="Digite seu e-mail">
                 </div>
 
-                <div class="campo">
+                <div>
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" name="senha" required placeholder="Digite sua senha">
                 </div>
@@ -138,31 +160,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Entrar</button>
             </form>
             
-            <div style="margin-top: 15px;">
+            <div>
                 <a href="#" onclick="mostrarRecuperacao(); return false;">Esqueceu a senha?</a>
             </div>
         </div>
 
-   
         <div id="form-recuperar" style="<?= (isset($_POST['acao']) && $_POST['acao'] === 'recuperar') ? 'display: block;' : 'display: none;' ?>">
-            <p>Informe seu e-mail para gerar o link de acesso.</p>
+            <p>Informe seu e-mail para receber o link de redefinição.</p>
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <input type="hidden" name="acao" value="recuperar">
 
-                <div class="campo">
+                <div>
                     <label for="email_recuperacao">E-mail cadastrado</label>
                     <input type="email" id="email_recuperacao" name="email_recuperacao" required placeholder="Digite seu e-mail">
                 </div>
 
-                <button type="submit">Gerar link</button>
+                <button type="submit">Enviar link</button>
             </form>
             
             <div>
                 <a href="#" onclick="mostrarLogin(); return false;">Voltar para o Login</a>
             </div>
         </div>
-
     </div>
 </body>
 </html>

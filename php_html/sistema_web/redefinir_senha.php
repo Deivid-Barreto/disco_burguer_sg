@@ -14,7 +14,6 @@ if (empty($token)) {
     die("Acesso inválido: Token de redefinição não fornecido.");
 }
 
-
 $stmt = $pdo->prepare("SELECT id FROM funcionarios WHERE reset_token = ? AND reset_expira > NOW() AND ativo = 1");
 $stmt->execute([$token]);
 $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -35,10 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($nova_senha) && !empty($confirmar_senha)) {
         if ($nova_senha === $confirmar_senha) {
-            
             $senha_hash = password_hash($nova_senha, PASSWORD_DEFAULT);
 
-          
             $update = $pdo->prepare("UPDATE funcionarios SET senha_hash = ?, reset_token = NULL, reset_expira = NULL WHERE id = ?");
             $update->execute([$senha_hash, $funcionario['id']]);
 
@@ -59,15 +56,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Redefinir Senha</title>
 </head>
 <body>
-    <div class="login-box">
+    <div>
         <h1>Redefinir Senha</h1>
 
         <?php if (!empty($erro)): ?>
-            <div class="erro"><?= htmlspecialchars($erro) ?></div>
+            <div><?= htmlspecialchars($erro) ?></div>
         <?php endif; ?>
 
         <?php if (!empty($sucesso)): ?>
-            <div class="sucesso">
+            <div>
                 <?= htmlspecialchars($sucesso) ?><br><br>
                 <a href="login.php">Clique aqui para fazer login</a>
             </div>
@@ -76,12 +73,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>">
 
-                <div class="campo">
+                <div>
                     <label for="nova_senha">Nova Senha</label>
                     <input type="password" id="nova_senha" name="nova_senha" required placeholder="Digite a nova senha">
                 </div>
 
-                <div class="campo">
+                <div>
                     <label for="confirmar_senha">Confirmar Nova Senha</label>
                     <input type="password" id="confirmar_senha" name="confirmar_senha" required placeholder="Confirme a nova senha">
                 </div>
