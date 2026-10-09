@@ -32,11 +32,30 @@ if (isset($_GET['obter_pedido'])) {
     $stmtItens->execute([$id_ed]);
     $itens = $stmtItens->fetchAll(PDO::FETCH_ASSOC);
 
+    $stmtCustomizacoes = $pdo->prepare("
+    SELECT
+        cip.item_pedido_id,
+        cip.produto_id,
+        cip.tipo_acao,
+        cip.quantidade,
+        p.nome,
+        p.preco_venda
+    FROM customizacoes_item_pedido cip
+    INNER JOIN produtos p ON p.id = cip.produto_id
+    WHERE cip.item_pedido_id = ?
+    ");
+
+    foreach ($itens as &$item) {
+        $stmtCustomizacoes->execute([$item['id']]);
+        $item['customizacoes'] = $stmtCustomizacoes->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    unset($item);
+
     echo json_encode([
         'pedido' => $pedido_data,
         'itens' => $itens
     ]);
-
     exit;
 }
 
@@ -133,10 +152,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             $id_pedido
             ]);
 
+            
             $stmt = $pdo->prepare("
-            DELETE FROM itens_pedidos
-            WHERE pedido_id = ?
+               DELETE cip
+               FROM customizacoes_item_pedido cip
+               INNER JOIN itens_pedidos ip
+               ON ip.id = cip.item_pedido_id
+               WHERE ip.pedido_id = ?
             ");
+
+            $stmt->execute([$id_pedido]);
+
+            $stmt = $pdo->prepare("
+                DELETE FROM itens_pedidos WHERE pedido_id = ? 
+            ");
+
+            $stmt->execute([$id_pedido]);
 
             $stmt->execute([$id_pedido]);
 
@@ -151,6 +182,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             VALUES (?, ?, ?, 'pendente')
             ");
 
+            
+            $stmtCustomizacao = $pdo->prepare("
+                INSERT INTO customizacoes_item_pedido
+                (
+                item_pedido_id,
+                produto_id,
+                tipo_acao,
+                quantidade
+                )
+                VALUES (?, ?, ?, ?)
+            ");
+
             foreach ($itens_pedido as $item) {
 
                 $stmtItem->execute([
@@ -158,6 +201,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 (int)$item['id'],
                 (int)$item['quantidade']
                 ]);
+
+                $item_pedido_id = $pdo->lastInsertId();
+
+                foreach (($item['customizacoes'] ?? []) as $extra) {
+
+                    $stmtCustomizacao->execute([
+                    $item_pedido_id,
+                    (int)$extra['produto_id'],
+                    $extra['tipo_acao'] ?? 'adicionar',
+                    (int)$extra['quantidade']
+                    ]);
+                }
             }
 
             $pdo->commit();
@@ -267,22 +322,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
                 quantidade,
                 status_item
             )
-            VALUES
-            (
-                ?,
-                ?,
-                ?,
-                'pendente'
-            )
+            VALUES (?, ?, ?, 'pendente')
             ");
 
             $stmtCustomizacao = $pdo->prepare("
             INSERT INTO customizacoes_item_pedido
             (
-            item_pedido_id,
-            produto_id,
-            tipo_acao,
-            quantidade
+                item_pedido_id,
+                produto_id,
+                tipo_acao,
+                quantidade
             )
             VALUES (?, ?, ?, ?)
             ");
@@ -646,6 +695,7 @@ function abrirAcoesPedido() {
                 <div>
                     <strong>${item.quantidade}x</strong>
                     ${item.nome}
+                    <strong>${item.customizacao}x</strong>
                 </div>
             `;
         });
