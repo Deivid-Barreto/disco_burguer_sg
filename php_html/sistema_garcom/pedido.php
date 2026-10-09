@@ -276,25 +276,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             )
             ");
 
-            $stmtItem = $pdo->prepare("
-            INSERT INTO itens_pedidos
+            $stmtCustomizacao = $pdo->prepare("
+            INSERT INTO customizacoes_item_pedido
             (
-             pedido_id,
-             produto_id,
-             quantidade,
-             status_item
-             )
-            VALUES
-             (
-             ?,
-             ?,
-             ?,
-             'pendente'
-             )
+            item_pedido_id,
+            produto_id,
+            tipo_acao,
+            quantidade
+            )
+            VALUES (?, ?, ?, ?)
             ");
 
             foreach ($itens_pedido as $item) {
-
                 $stmtItem->execute([
                 $pedido_id,
                 (int)$item['id'],
@@ -303,6 +296,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 $item_pedido_id = $pdo->lastInsertId();
 
+                foreach (($item['customizacoes'] ?? []) as $extra) {
+
+                    $stmtCustomizacao->execute([
+                    $item_pedido_id,
+                    (int)$extra['produto_id'],
+                    $extra['tipo_acao'] ?? 'adicionar',
+                    (int)$extra['quantidade']
+                    ]);
+                }
             }
 
             $pdo->commit();
@@ -353,6 +355,29 @@ $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);
     $pedidos = $stmtPedidos->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {}
+
+$extras = [];
+
+try {
+    $stmtExtras = $pdo->prepare("
+        SELECT
+            id,
+            nome,
+            descricao,
+            preco_venda,
+            imagem_caminho
+        FROM produtos
+        WHERE ativo = 1
+          AND LOWER(categorias) = 'extras'
+        ORDER BY nome ASC
+    ");
+
+    $stmtExtras->execute();
+    $extras = $stmtExtras->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    $extras = [];
+}
 
 ?>
 
@@ -506,15 +531,48 @@ $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);
     </form>
 </dialog>
 
-<dialog id="modalObservacao">
-    <h3>Personalizar produto</h3>
-    <p><strong id="nomeProdutoObservacao"></strong></p>
-    <label for="observacaoProduto">Observação</label>
+<dialog id="modalCustomizacao">
+    <h2 id="nomeProdutoCustomizacao">Personalizar produto</h2>
+    <p>Escolha os ingredientes que deseja adicionar.</p>
+    <hr>
+    <h3>Adicionar</h3>
+    <div id="adicionaisProduto">
+        <?php if (empty($extras)): ?>
+            <p>Nenhum extra cadastrado.</p>
+        <?php else: ?>
+        <?php foreach ($extras as $extra): ?>
+            <div class="extra-item">
+                <span>
+                    <?= htmlspecialchars($extra['nome']) ?>
+                    — R$ <?= number_format(
+                        $extra['preco_venda'],
+                        2,
+                        ',',
+                        '.'
+                    ) ?>
+                </span>
+
+                <button
+                    type="button"
+                    onclick="alterarExtra(
+                        <?= (int)$extra['id'] ?>,
+                        '<?= htmlspecialchars($extra['nome'], ENT_QUOTES) ?>',
+                        <?= (float)$extra['preco_venda'] ?>
+                    )">
+                    Adicionar
+                </button>
+            </div>
+        <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+    <hr>
+    <h3>Personalizações escolhidas</h3>
+    <div id="customizacoesEscolhidas">
+        <p>Nenhuma personalização.</p>
+    </div>
     <br>
-    <textarea id="observacaoProduto" rows="4" placeholder="Ex.: sem cebola, sem tomate, molho separado..."></textarea>
-    <br><br>
-    <button type="button" onclick="salvarObservacao()">Adicionar ao pedido</button>
-    <button type="button" onclick="document.getElementById('modalObservacao').close()">Cancelar</button>
+    <button type="button" onclick="confirmarCustomizacao()">Adicionar ao pedido</button>
+    <button type="button" onclick="fecharCustomizacao()">Cancelar</button>
 </dialog>
 
 <dialog id="modalPedido">
@@ -669,7 +727,6 @@ function resetarFormulario() {
     form.reset();
     produtosPedido = [];
     produtoCustomizando = null;
-    document.getElementById('observacaoProduto').value = '';
     document.getElementById('listaProdutosPedido').innerHTML = `
         <div class="pedido-vazio">
             Nenhum produto adicionado.
@@ -677,7 +734,9 @@ function resetarFormulario() {
     `;
     document.getElementById('valorTotalTexto').innerText = 'R$ 0,00';
     document.getElementById('valor_total').value = '0.00';
+    document.getElementById('itens_pedido').value = '';
     document.getElementById('secao-mesas').style.display = 'none';
+    document.getElementById('modalCustomizacao').close();
 }
 
 function abrirModalCadastro() {
@@ -709,26 +768,92 @@ function abrirPedido(pedido, itens) {
 }
 
 function adicionarProduto(id, nome, preco) {
-     produtoCustomizando = {
+    produtoCustomizando = {
         id: id,
         nome: nome,
         preco: preco,
         quantidade: 1,
-        observacao: ''
+        customizacoes: []
     };
-    document.getElementById('nomeProdutoObservacao').innerText = nome;
-    document.getElementById('observacaoProduto').value = '';
-    document.getElementById('modalObservacao').showModal();
+
+    document.getElementById('nomeProdutoCustomizacao').innerText = nome;
+    document.getElementById('customizacoesEscolhidas').innerHTML =
+        '<p>Nenhuma personalização.</p>';
+
+    document.getElementById('modalCustomizacao').showModal();
 }
 
-function salvarObservacao() {
-    if (!produtoCustomizando) {
+function alterarExtra(id, nome, preco) {
+    if (!produtoCustomizando) return;
+
+    const existente = produtoCustomizando.customizacoes.find(
+        item => item.produto_id === id && item.tipo_acao === 'adicionar'
+    );
+
+    if (existente) {
+        existente.quantidade++;
+    } else {
+        produtoCustomizando.customizacoes.push({
+            produto_id: id,
+            nome: nome,
+            preco: preco,
+            tipo_acao: 'adicionar',
+            quantidade: 1
+        });
+    }
+
+    atualizarCustomizacoesEscolhidas();
+}
+
+function atualizarCustomizacoesEscolhidas() {
+    const area = document.getElementById('customizacoesEscolhidas');
+    const extras = produtoCustomizando.customizacoes;
+
+    if (extras.length === 0) {
+        area.innerHTML = '<p>Nenhuma personalização.</p>';
         return;
     }
-    produtoCustomizando.observacao = document.getElementById('observacaoProduto').value.trim();
+
+    area.innerHTML = '';
+
+    extras.forEach((extra, index) => {
+        const linha = document.createElement('div');
+
+        linha.textContent =
+            `${extra.nome} (${extra.quantidade}x) — ` +
+            `R$ ${(extra.preco * extra.quantidade).toFixed(2).replace('.', ',')} `;
+
+        const remover = document.createElement('button');
+        remover.type = 'button';
+        remover.textContent = '−';
+        remover.onclick = function() {
+            extra.quantidade--;
+
+            if (extra.quantidade <= 0) {
+                extras.splice(index, 1);
+            }
+
+            atualizarCustomizacoesEscolhidas();
+        };
+
+        linha.appendChild(remover);
+        area.appendChild(linha);
+    });
+}
+
+function confirmarCustomizacao() {
+    if (!produtoCustomizando) return;
+
     produtosPedido.push(produtoCustomizando);
+
     atualizarListaProdutos();
-    document.getElementById('modalObservacao').close();
+
+    document.getElementById('modalCustomizacao').close();
+    produtoCustomizando = null;
+}
+
+function fecharCustomizacao() {
+    document.getElementById('modalCustomizacao').close();
     produtoCustomizando = null;
 }
 
@@ -748,7 +873,11 @@ function atualizarListaProdutos() {
         return;
     }
     produtosPedido.forEach(function(produto, index) {
-        const subtotal = produto.preco * produto.quantidade;
+        const totalExtras = (produto.customizacoes || [])
+        .reduce((total, extra) => {
+        return total + (extra.preco * extra.quantidade);
+        }, 0);
+        const subtotal = (produto.preco + totalExtras) * produto.quantidade;
         total += subtotal;
         const item = document.createElement('div');
         item.className = 'item-pedido';
@@ -780,11 +909,8 @@ function atualizarListaProdutos() {
         `;
         lista.appendChild(item);
     });
-    document.getElementById('valorTotalTexto').innerText =
-        'R$ ' +
-        total.toFixed(2).replace('.', ',');
-    document.getElementById('valor_total').value =
-        total.toFixed(2);
+    document.getElementById('valorTotalTexto').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+    document.getElementById('valor_total').value = total.toFixed(2);
 }
 
 function escapeHtml(text) {
