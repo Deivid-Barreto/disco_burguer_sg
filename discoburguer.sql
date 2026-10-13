@@ -1,4 +1,4 @@
--- Active: 1790855630358@@127.0.0.1@3306@discoburguer
+-- Active: 1791849063561@@127.0.0.1@3306@discoburguer
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `discoburguer`;
@@ -347,7 +347,7 @@ INSERT INTO produtos (nome, descricao, preco_venda, imagem_caminho, categorias, 
 ('Disco Bacon', 'Pão australiano, artesanal 180g, dobro de bacon crocante e queijo prato.', 34.00, '../../img/burguer.png', 'hamburguer', 1, 1),
 ('Disco Sem Foto', 'Hambúrguer de teste para verificar a imagem padrão.', 25.00, NULL, 'hamburguer', 1, 1),
 ('Combo Smash Single', '1 Smash Burger, 1 Batata P, 1 Refrigerante Lata 350ml.', 38.00, '../../img/combos.png', 'combos', 1, 1),
-('Combo Disco Duplo', '1 Disco Bacon, 1 Batata M com Cheddar, 1 Shake 300ml.', 52.90, '../../img/combos.png', 'combos', 1, 1),
+('Combo Disco Duplo', '1 Disco   Bacon, 1 Batata M com Cheddar, 1 Shake 300ml.', 52.90, '../../img/combos.png', 'combos', 1, 1),
 ('Milkshake de Nutella', 'Creme de baunilha, Nutella pura e chantilly 400ml.', 18.50, '../../img/shakes.png', 'bebidas', 1, 1),
 ('Milkshake de Morango', 'Sorvete artesanal de morango com pedaços da fruta 400ml.', 16.50, '../../img/shakes.png', 'bebidas', 1, 1),
 ('Batata Frita Especial', 'Batata palito crocante coberta com molho cheddar e bacon em cubos.', 26.00, '../../img/porcoes.png', 'porcoes', 1, 1),
