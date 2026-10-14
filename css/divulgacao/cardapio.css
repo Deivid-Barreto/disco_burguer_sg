@@ -58,21 +58,14 @@ main {
   max-width: 800px; 
   margin: 5vh auto;
   box-shadow: 0 0 15px rgba(168, 50, 168, 0.4);
-  transition: all 0.4s ease;
 }
 
 .menu-categorias.fixo {
   position: fixed;
-  top: 80%;
+  top: 70%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
-  width: 90%; 
-  max-width: 600px; 
-  padding: 5px 5px; 
-  background-color: rgba(18, 3, 43, 0.95);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(123, 44, 191, 0.5);
 }
 
 .img-categorias {
@@ -82,18 +75,13 @@ main {
 }
 
 .menu-categorias img {
-  width: clamp(25px, 6vw, 100px); 
+  width: clamp(25px, 6.5vw, 120px); 
   height: auto;
-  transition: all 0.3s ease;
-}
-
-.menu-categorias.fixo img {
-  width: clamp(20px, 4.5vw, 65px); 
 }
 
 .btn-categoria {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 900; 
+  font-weight: 700;
   color: #ffffff;
   text-decoration: none;
   background-color: transparent;
@@ -111,11 +99,6 @@ main {
 .btn-categoria span {
   font-size: clamp(0.5rem, 1.8vw, 1rem); 
   margin-top: 3px;
-  transition: all 0.3s ease;
-}
-
-.menu-categorias.fixo .btn-categoria span {
-  font-size: clamp(0.45rem, 1.4vw, 0.8rem);
 }
 
 .btn-categoria:hover {
@@ -129,7 +112,7 @@ main {
   font-weight: 900;
   box-shadow: 0 0 20px #ff007f, inset 0 0 8px #ffe600;
   border: 1px solid #ffe600;
-  transform: scale(0.9); 
+  transform: scale(1.05);
 }
 
 #itens-cardapio-secao {
@@ -170,14 +153,15 @@ main {
   border-radius: 2px;
 }
 
+/* --- Layout Flexbox Responsivo e sem quebra para os itens --- */
 .itens-cardapio {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap; 
   align-items: center;
   justify-content: space-between;
-  gap: clamp(8px, 2.5vw, 22px); 
-  padding: clamp(12px, 2vw, 18px); 
+  gap: clamp(6px, 2.5vw, 20px); 
+  padding: clamp(10px, 2vw, 16px);
   margin: 3vh 0vh;
   background-color: #0d001a; 
   border: 1px solid #7b2cbf;
@@ -190,12 +174,12 @@ main {
   transform: translateY(-5px); 
   box-shadow: 0 0 25px rgba(123, 44, 191, 0.5); 
   border-color: #a832a8;
+  
 }
 
 .itens-cardapio img {
-  width: clamp(70px, 14vw, 140px); 
-  aspect-ratio: 1 / 1; /* Força a ser um quadrado perfeito (ex: 140x140) */
-  object-fit: cover; /* Preenche o quadrado recortando os excessos sem amassar a foto */
+  width: clamp(60px, 13vw, 130px); 
+  height: auto;
   border-radius: 10px;
   transition: transform 0.4s ease; 
   flex-shrink: 0; 
@@ -215,19 +199,31 @@ main {
 
 .itens-cardapio h2 {
   color: white;
-  font-size: clamp(1rem, 3.8vw, 32px); 
+  font-size: clamp(0.9rem, 3.5vw, 30px); 
   font-weight: 900;
   font-style: italic;
   letter-spacing: 1px;
-  margin: 0; 
+  margin: 0 0 3px 0;
   white-space: nowrap; 
   overflow: hidden;
   text-overflow: ellipsis; 
 }
 
+.itens-cardapio h3 {
+  color: #b3b3b3;
+  font-size: clamp(0.65rem, 2vw, 17px);
+  font-weight: normal;
+  line-height: 1.25;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .preco-itens-cardapio h3 {
   color: white;
-  font-size: clamp(1.1rem, 4.2vw, 36px); 
+  font-size: clamp(1rem, 4vw, 34px);
   font-weight: 900;
   font-style: italic; 
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
@@ -249,8 +245,8 @@ main {
   font-weight: bold;
   border: none;
   border-radius: 8px; 
-  padding: clamp(7px, 2vw, 15px) clamp(14px, 3.5vw, 60px); 
-  font-size: clamp(0.8rem, 2.2vw, 1.15rem); 
+  padding: clamp(6px, 1.8vw, 14px) clamp(12px, 3vw, 55px);
+  font-size: clamp(0.75rem, 2vw, 1.1rem); 
   transition: all 0.3s ease;
   cursor: pointer;
   text-transform: uppercase;
@@ -262,6 +258,7 @@ main {
   transform: scale(1.1); 
   box-shadow: 0 0 20px #ff007f, 0 0 30px #ff007f; 
   background-color: #ff1a8c; 
+  color: #ffffff;
 }
 
 /* =========================================
@@ -316,38 +313,37 @@ main {
   html {
     scroll-behavior: auto;
   }
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* =========================================
-   ESTILOS DO MODAL DO PRODUTO (GIGANTE)
-   ========================================= */
 .modal-neon {
   background-color: rgba(13, 0, 26, 0.95);
   border: 1px solid #7b2cbf;
-  border-radius: 20px;
+  border-radius: 6px;
   box-shadow: 0 0 40px rgba(123, 44, 191, 0.6), inset 0 0 20px rgba(255, 0, 127, 0.15);
 }
 
-/* Força o modal a usar até 90% da tela em monitores grandes */
-@media (min-width: 992px) {
-  .modal-gigante {
-    max-width: 90vw !important;
-  }
+/* Controla a largura máxima fixa do modal */
+.modal-tamanho-personalizado {
+  max-width: 900px;
 }
 
-/* Caixa fixa para a imagem: Resolve o problema do alinhamento! */
+/* Caixa fixa e quadrada para a imagem do produto */
 .imagem-modal-container {
-  width: 100%;
-  aspect-ratio: 4 / 3; /* Trava a caixa num formato retangular elegante */
+  width: 80%;
+ height: 400px; 
+  aspect-ratio: 4 / 3;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 2px solid rgba(123, 44, 191, 0.5);
-  border-radius: 15px;
+  border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 0 25px rgba(123, 44, 191, 0.4);
   background-color: rgba(0, 0, 0, 0.4);
@@ -356,9 +352,10 @@ main {
 #modalImagem {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* A imagem preenche a proporção 4/3 com perfeição */
+  object-fit: cover;
 }
 
+/* Botão de fechar (o 'X' do canto superior) */
 .btn-fechar-neon {
   position: absolute;
   top: 15px;
@@ -380,27 +377,30 @@ main {
   text-shadow: 0 0 25px #ff007f, 0 0 35px #ff007f;
 }
 
-#modalNome {
+/* Tipografia e espaçamentos internos do modal */
+.modal-titulo {
+  font-family: 'Oswald', sans-serif;
+  font-style: italic;
+  font-size: 2rem;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.986);
 }
 
-#modalPreco {
+.modal-descricao {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.modal-preco {
+  color: #ff007f;
+  font-family: 'Oswald', sans-serif;
+  font-style: italic;
+  font-size: 1.8rem;
   text-shadow: 0 0 20px rgba(255, 0, 127, 0.7);
 }
 
+/* Fundo escurecido e desfocado atrás do modal */
 .modal-backdrop {
   --bs-backdrop-bg: #05000a;
   --bs-backdrop-opacity: 0.85;
   backdrop-filter: blur(6px);
-}
-
-#btnComprar:hover {
-  transform: translateY(-3px); /* Levanta levemente em vez de alargar */
-  box-shadow: 0 0 20px #ff007f, 0 0 35px #ff007f; 
-  background-color: #ff1a8c; 
-}
-
-/* Opcional: Quando clica no botão, ele afunda um pouquinho */
-#btnComprar:active {
-  transform: translateY(1px);
 }

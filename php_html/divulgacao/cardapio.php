@@ -73,16 +73,16 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
 
             <div class="menu-categorias">
               <a href="#hamburguers" class="btn-categoria active img-categorias">
-                <img src="../../img/burguer.png" alt="">
+                <img src="../../img/hamburguer.png" alt="">
                 <span class="text-center">BURGERS</span>
               </a>
               <a href="#combos" class="btn-categoria img-categorias">
-                <img src="../../img/combos.png" alt="">
+                <img src="../../img/combo.png" alt="">
                 <span class="text-center">COMBOS</span>
               </a>
               <a href="#shakes" class="btn-categoria img-categorias">
-                <img src="../../img/shakes.png" alt="">
-                <span class="text-center">SHAKES</span>
+                <img src="../../img/bebida.png" alt="">
+                <span class="text-center">BEBIDAS</span>
               </a>
               <a href="#porcoes" class="btn-categoria img-categorias">
                 <img src="../../img/porcoes.png" alt="">
@@ -114,17 +114,18 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
               <img src="<?php echo $lanche['imagem']; ?>" alt="<?php echo htmlspecialchars($lanche['nome']); ?>">
               <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($lanche['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($lanche['descricao']); ?></h3>
               </div>
               <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($lanche['preco']); ?></h3>
               </div>
               <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio btn-abrir-modal" 
-                        data-nome="<?php echo htmlspecialchars($lanche['nome']); ?>"
-                        data-descricao="<?php echo htmlspecialchars($lanche['descricao']); ?>"
-                        data-preco="<?php echo htmlspecialchars($lanche['preco']); ?>"
-                        data-imagem="<?php echo htmlspecialchars($lanche['imagem']); ?>">
-                  +
+                        data-nome="<?php echo htmlspecialchars($lanche['nome'], ENT_QUOTES); ?>"
+                        data-descricao="<?php echo htmlspecialchars($lanche['descricao'], ENT_QUOTES); ?>"
+                        data-preco="<?php echo htmlspecialchars($lanche['preco'], ENT_QUOTES); ?>"
+                        data-imagem="<?php echo htmlspecialchars($lanche['imagem'], ENT_QUOTES); ?>">
+                  ver
                 </button>
               </div>
             </div>
@@ -142,17 +143,18 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
               <img src="<?php echo $combo['imagem']; ?>" alt="<?php echo htmlspecialchars($combo['nome']); ?>">
               <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($combo['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($combo['descricao']); ?></h3>
               </div>
               <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($combo['preco']); ?></h3>
               </div>
               <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio btn-abrir-modal" 
-                        data-nome="<?php echo htmlspecialchars($combo['nome']); ?>"
-                        data-descricao="<?php echo htmlspecialchars($combo['descricao']); ?>"
-                        data-preco="<?php echo htmlspecialchars($combo['preco']); ?>"
-                        data-imagem="<?php echo htmlspecialchars($combo['imagem']); ?>">
-                  +
+                        data-nome="<?php echo htmlspecialchars($combo['nome'], ENT_QUOTES); ?>"
+                        data-descricao="<?php echo htmlspecialchars($combo['descricao'], ENT_QUOTES); ?>"
+                        data-preco="<?php echo htmlspecialchars($combo['preco'], ENT_QUOTES); ?>"
+                        data-imagem="<?php echo htmlspecialchars($combo['imagem'], ENT_QUOTES); ?>">
+                  ver
                 </button>
               </div>
             </div>
@@ -170,17 +172,18 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
               <img src="<?php echo $shake['imagem']; ?>" alt="<?php echo htmlspecialchars($shake['nome']); ?>">
               <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($shake['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($shake['descricao']); ?></h3>
               </div>
               <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($shake['preco']); ?></h3>
               </div>
               <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio btn-abrir-modal" 
-                        data-nome="<?php echo htmlspecialchars($shake['nome']); ?>"
-                        data-descricao="<?php echo htmlspecialchars($shake['descricao']); ?>"
-                        data-preco="<?php echo htmlspecialchars($shake['preco']); ?>"
-                        data-imagem="<?php echo htmlspecialchars($shake['imagem']); ?>">
-                  +
+                        data-nome="<?php echo htmlspecialchars($shake['nome'], ENT_QUOTES); ?>"
+                        data-descricao="<?php echo htmlspecialchars($shake['descricao'], ENT_QUOTES); ?>"
+                        data-preco="<?php echo htmlspecialchars($shake['preco'], ENT_QUOTES); ?>"
+                        data-imagem="<?php echo htmlspecialchars($shake['imagem'], ENT_QUOTES); ?>">
+                  ver
                 </button>
               </div>
             </div>
@@ -198,17 +201,18 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
               <img src="<?php echo $porção['imagem']; ?>" alt="<?php echo htmlspecialchars($porção['nome']); ?>">
               <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($porção['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($porção['descricao']); ?></h3>
               </div>
               <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($porção['preco']); ?></h3>
               </div>
               <div class="div-button-itens-cardapio">
-                 <button class="button-itens-cardapio btn-abrir-modal" 
-                        data-nome="<?php echo htmlspecialchars($porção['nome']); ?>"
-                        data-descricao="<?php echo htmlspecialchars($porção['descricao']); ?>"
-                        data-preco="<?php echo htmlspecialchars($porção['preco']); ?>"
-                        data-imagem="<?php echo htmlspecialchars($porção['imagem']); ?>">
-                  +
+                <button class="button-itens-cardapio btn-abrir-modal" 
+                        data-nome="<?php echo htmlspecialchars($porção['nome'], ENT_QUOTES); ?>"
+                        data-descricao="<?php echo htmlspecialchars($porção['descricao'], ENT_QUOTES); ?>"
+                        data-preco="<?php echo htmlspecialchars($porção['preco'], ENT_QUOTES); ?>"
+                        data-imagem="<?php echo htmlspecialchars($porção['imagem'], ENT_QUOTES); ?>">
+                  ver
                 </button>
               </div>
             </div>
@@ -226,17 +230,18 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
               <img src="<?php echo $sobremesa['imagem']; ?>" alt="<?php echo htmlspecialchars($sobremesa['nome']); ?>">
               <div class="text-itens-cardapio">
                 <h2><?php echo htmlspecialchars($sobremesa['nome']); ?></h2>
+                <h3><?php echo htmlspecialchars($sobremesa['descricao']); ?></h3>
               </div>
               <div class="preco-itens-cardapio">
                 <h3><?php echo htmlspecialchars($sobremesa['preco']); ?></h3>
               </div>
               <div class="div-button-itens-cardapio">
                 <button class="button-itens-cardapio btn-abrir-modal" 
-                        data-nome="<?php echo htmlspecialchars($sobremesa['nome']); ?>"
-                        data-descricao="<?php echo htmlspecialchars($sobremesa['descricao']); ?>"
-                        data-preco="<?php echo htmlspecialchars($sobremesa['preco']); ?>"
-                        data-imagem="<?php echo htmlspecialchars($sobremesa['imagem']); ?>">
-                  +
+                        data-nome="<?php echo htmlspecialchars($sobremesa['nome'], ENT_QUOTES); ?>"
+                        data-descricao="<?php echo htmlspecialchars($sobremesa['descricao'], ENT_QUOTES); ?>"
+                        data-preco="<?php echo htmlspecialchars($sobremesa['preco'], ENT_QUOTES); ?>"
+                        data-imagem="<?php echo htmlspecialchars($sobremesa['imagem'], ENT_QUOTES); ?>">
+                  ver
                 </button>
               </div>
             </div>
@@ -245,45 +250,12 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
 
       </div>
     </section>
-  </main>
 
-  <!-- ESTRUTURA DO MODAL DO PRODUTO (GIGANTE E ALINHADO) -->
-  <div class="modal fade" id="modalProduto" tabindex="-1" aria-labelledby="modalProdutoLabel" aria-hidden="true">
-    <!-- modal-xl deixa ele o mais largo possível nativamente -->
-    <div class="modal-dialog modal-dialog-centered modal-xl modal-gigante">
-      <div class="modal-content modal-neon position-relative">
-        
-        <button type="button" class="btn-fechar-neon" data-bs-dismiss="modal" aria-label="Close">&times;</button>
-        
-        <div class="modal-body p-4 p-md-5">
-          <!-- stretch garante que a coluna da esquerda e direita tenham a mesma altura -->
-          <div class="row align-items-stretch">
-            
-            <!-- Lado Esquerdo: Imagem travada dentro de um container -->
-            <div class="col-lg-6 mb-4 mb-lg-0">
-              <div class="imagem-modal-container">
-                <img id="modalImagem" src="" alt="Imagem do Produto">
-              </div>
-            </div>
-            
-            <!-- Lado Direito: Flex column com justify-content-between para cravar o botão no fundo -->
-            <div class="col-lg-6 text-start d-flex flex-column justify-content-between py-2">
-              <div>
-                <h2 id="modalNome" class="fw-bold text-white mb-3" style="font-family: 'Oswald', sans-serif; font-style: italic; font-size: clamp(2rem, 4vw, 3rem);"></h2>
-                <p id="modalDescricao" class="text-light opacity-75 mb-4" style="font-size: 1.15rem; line-height: 1.6;"></p>
-              </div>
-              
-              <div>
-                <h3 id="modalPreco" class="fw-bold mb-4" style="color: #ff007f; font-family: 'Oswald', sans-serif; font-style: italic; font-size: clamp(1.8rem, 4vw, 2.8rem);"></h3>
-                <button id="btnComprar" class="btn button-itens-cardapio w-100 py-3" style="font-size: 1.3rem;">COMPRAR</button>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  
+    <?php include __DIR__ . "/../../includes/modal_cardapio.php";
+     ?>
+
+  </main>
 
   <footer id="contato">
     <?php include __DIR__ . "/../../includes/footer.php"; ?>
