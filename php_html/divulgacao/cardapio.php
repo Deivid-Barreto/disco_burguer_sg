@@ -11,10 +11,10 @@ if ($conn->connect_error) {
     die("Erro de conexão com o banco de dados: " . $conn->connect_error);
 }
 
-$conn->set_charset("utf8mb4");
+$conn->set_charset("utf8");
 
 // Função auxiliar para consultar e formatar os produtos do banco por categoria usando MySQLi
-function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
+function buscarProdutosPorCategoria($conn, $categoria) {
     $sql = "SELECT 
                 nome, 
                 descricao, 
@@ -56,6 +56,10 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
   <link rel="stylesheet" href="../../css/divulgacao/cardapio.css?v=<?php echo filemtime('../../css/divulgacao/cardapio.css'); ?>">
   <link rel="stylesheet" href="/../css/header.css">
   <link rel="stylesheet" href="/../css/footer.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Black+Ops+One&family=Monoton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Righteous&display=swap" rel="stylesheet">
+ 
 </head>
 
 <body>

@@ -14,6 +14,10 @@
     <link rel="stylesheet" href="../../css/header.css">
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/footer.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Black+Ops+One&family=Monoton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Righteous&display=swap" rel="stylesheet">
+ 
 </head>
 
 <body>
@@ -108,8 +112,9 @@
     </div>
 </section>
 
-      <section class="comentarios d-flex align-items-center justify-content-center">
-    <div class="container position-relative"> 
+    <section class="comentarios d-flex align-items-center justify-content-center">
+    <!-- Container ajustado para ocupar toda a largura da tela -->
+    <div class="container-fluid position-relative px-4 px-md-5"> 
         
         <div class="row">
             <div class="col-12">
@@ -166,7 +171,6 @@
         </div>
     </div>
 </section>
-
 <!-- SCRIPT PARA AS SETAS FUNCIONAREM -->
 
   <script src="../../js/scroll-comentarios.js"></script>

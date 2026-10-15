@@ -7,10 +7,12 @@ header {
 }
 
 .nav-item a {
-
-    font-family: 'Arial', sans-serif;
-    position: relative;
     color: white;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+    position: relative;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -48,12 +50,16 @@ header {
    BOTÃO DO HEADER (Com efeitos Hover)
    ========================================= */
 .button_header button {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
     font-weight: 600;
     color: white;
-    width: clamp(80px, 22vw, 100px);
+    width: clamp(80px, 22vw, 110px);
     height: 40px;
     display: block;
-    font-size: clamp(0.7rem, 3.2vw, 0.95rem);
+    font-size: clamp(0.7rem, 3vw, 0.85rem);
     border-radius: 12px;
     background: linear-gradient(90deg, #E5A823 0%, #E68A00 50%, #D96B00 100%);
     

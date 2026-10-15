@@ -1,5 +1,5 @@
 -- Active: 1791849063561@@127.0.0.1@3306@discoburguer
-CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 USE `discoburguer`;
 

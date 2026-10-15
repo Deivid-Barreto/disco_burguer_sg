@@ -21,23 +21,23 @@
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
 
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="../../index.php">Inicio</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="cardapio.php">Cardápio</a>
             </li>
            
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
              <a class="nav-link" href="feedback.php">Feedback</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="quem_somos.php">Quem Somos</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="local.php">Local</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link"href="#contato">Contato</a>
             </li>
           </ul>

@@ -12,6 +12,9 @@
   <link rel="stylesheet" href="css/header.css">
   <link rel="stylesheet" href="css/footer.css">
   <link rel="shortcut icon" href="../../img/logo2.jpeg" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Black+Ops+One&family=Monoton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Righteous&display=swap" rel="stylesheet">
   
 </head>
 
@@ -38,23 +41,23 @@
 
         <div class="collapse navbar-collapse order-4 order-lg-2" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto align-items-end align-items-md-center">
-            <li class="nav-item me-4 ">
+            <li class="nav-item me-2 me-xxl-4 ">
               <a class="nav-link" href="index.php">Inicio</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="php_html/divulgacao/cardapio.php">Cardápio</a>
             </li>
            
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
              <a class="nav-link" href="php_html/divulgacao/feedback.php">Feedback</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="php_html/divulgacao/quem_somos.php">Quem Somos</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link" href="php_html/divulgacao/local.php">Local</a>
             </li>
-            <li class="nav-item me-4">
+            <li class="nav-item me-2 me-xxl-4">
               <a class="nav-link"href="#contato">Contato</a>
             </li>
           </ul>

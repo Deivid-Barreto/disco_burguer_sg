@@ -1,115 +1,191 @@
 footer {
 
+
+
 background-color: black;
+
     color: #ffffff;;
+
 }
+
+
 
 .row-footer {
+
     padding: 8vh 5vh;
+
 }
+
+
 
 .img-icone-footer {
+
     width: clamp(100px, 12vw, 200px);
+
     height: auto;
+
 }
+
+
 
 .text-local {
+
     font-family: 'Arial', sans-serif;
+
     text-align: center;
+
     font-size: clamp(16px, 2vw, 22px);
+
     color: white;
+
     margin: 0;
+
 }
+
+
 
 .img-local {
+
     width: clamp(25px, 3vw, 40px);
+
     height: auto;
+
 }
 
+
+
 .link-disco {
+
     padding-top: 12px;
+
     font-size: 15px;
+
     color: gold;
+
 }
 
 .contato-img-insta {
+
     /* Deixei o tamanho dos ícones flexíveis para não estourarem no tablet */
+
     width: clamp(40px, 6vw, 70px);
+
     height: auto;
+
     transition: transform 0.3s ease;
+
 }
 
 .contato-img-email{
+
 width: clamp(40px, 6vw, 70px);
+
 height: auto;
+
 transition: transform 0.3s ease;
+
+
 
 }
 
 
 .contato-img-whats{
+
 width: clamp(40px, 6vw, 70px);
+
 height: auto;
+
 transition: transform 0.3s ease;
 
 }
 
-
-
-
-
 .contato-img:hover {
+
     transform: scale(1.1); /* Efeitinho de hover de brinde pros ícones */
+
 }
 
 .centralizar {
+
     padding: 15px 0;
+
 }
 
 .bloco-institucional {
-    display: inline-block; 
+
+    display: inline-block;
+
     text-align: left;      
+
 }
 
+
 .titulos-footer {
+
     padding-bottom: 2px;
-    color: white; 
+
+    color: white;
+
     letter-spacing: clamp(1px, 0.3vw, 2px);
+
     text-transform: uppercase;
+
     font-size: clamp(1.2rem, 2.5vw, 1.5rem);
-    text-shadow: 
+
+    text-shadow:
+
         0 0 5px #ffaa00,
+
         0 0 10px #ffaa00,
+
         0 0 20px #ff8800;
+
 }
 
 .menu-footer a {
+
     font-size: clamp(14px, 1.5vw, 16px);
+
     color: white;
+
     text-decoration: none;
+
     width: fit-content;
+
     padding-bottom: 10px;
+
     transition: color 0.3s;
+
 }
 
 .menu-footer a:hover {
+
     color: #ffaa00; /* Mais um hover elegante */
+
 }
 
 .checker {
-    height: 1px;
-    width: 100%;
-    background-color: white;
-    background-size: 34px 34px;
-    background-position: 0 0, 17px 17px;
-}
 
+    height: 1px;
+
+    width: 100%;
+
+    background-color: white;
+
+    background-size: 34px 34px;
+
+    background-position: 0 0, 17px 17px;
+
+}
 
 .text-oficial{
 
     font-family: 'Arial', sans-serif;
+
     text-align: center;
+
     font-size: clamp(16px, 2vw, 15px);
+
     color:  #e0e0e0;
-   
-}
+
+} 
