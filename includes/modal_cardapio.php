@@ -7,18 +7,18 @@
       <div class="modal-body p-4">
         <div class="row align-items-stretch">
           
-          <!-- Lado Esquerdo: Imagem -->
-          <div class="col-lg-6 mb-3 mb-lg-0">
+          <!-- Lado Esquerdo: Imagem (ajustado para responsividade fluida) -->
+          <div class="col-12 col-md-6 mb-3 mb-md-0">
             <div class="imagem-modal-container">
               <img id="modalImagem" src="" alt="Imagem do Produto">
             </div>
           </div>
           
           <!-- Lado Direito: Informações e Ações -->
-          <div class="col-lg-6 text-start d-flex flex-column justify-content-between py-1">
+          <div class="col-12 col-md-6 text-start d-flex flex-column justify-content-between py-1">
             <div>
               <h2 id="modalNome" class="fw-bold text-white mb-2 modal-titulo"></h2>
-              <p id="modalDescricao" class="text-light opacity-75 mb-3 modal-descricao"></p>
+              <p id="modalDescricao" class="text-light opacity-75 mb-3 mt-3 modal-descricao"></p>
             </div>
             
             <div>

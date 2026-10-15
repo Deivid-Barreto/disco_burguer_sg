@@ -329,16 +329,15 @@ main {
   box-shadow: 0 0 40px rgba(123, 44, 191, 0.6), inset 0 0 20px rgba(255, 0, 127, 0.15);
 }
 
-/* Controla a largura máxima fixa do modal */
+/* Controla a largura máxima de forma fluida com clamp */
 .modal-tamanho-personalizado {
-  max-width: 900px;
+  max-width: clamp(320px, 90vw, 900px);
 }
 
-/* Caixa fixa e quadrada para a imagem do produto */
+/* Caixa da imagem do produto responsiva com clamp para evitar que fique gigante no mobile */
 .imagem-modal-container {
-  width: 80%;
- height: 400px; 
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  height: clamp(180px, 35vw, 380px); 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -358,12 +357,12 @@ main {
 /* Botão de fechar (o 'X' do canto superior) */
 .btn-fechar-neon {
   position: absolute;
-  top: 15px;
-  right: 25px;
+  top: 10px;
+  right: 15px;
   background: transparent;
   border: none;
   color: #ff007f;
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1;
   font-weight: 300;
   z-index: 10;
@@ -377,25 +376,25 @@ main {
   text-shadow: 0 0 25px #ff007f, 0 0 35px #ff007f;
 }
 
-/* Tipografia e espaçamentos internos do modal */
+/* Tipografia responsiva usando clamp */
 .modal-titulo {
   font-family: 'Oswald', sans-serif;
   font-style: italic;
-  font-size: 2rem;
+  font-size: clamp(1.3rem, 4vw, 2rem);
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.986);
 }
 
 .modal-descricao {
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  line-height: 1.4;
 }
 
 .modal-preco {
-  color: #ff007f;
+  color: white;
   font-family: 'Oswald', sans-serif;
   font-style: italic;
-  font-size: 1.8rem;
-  text-shadow: 0 0 20px rgba(255, 0, 127, 0.7);
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
+  text-shadow: 0 0 20px rgba(248, 245, 247, 0.7);
 }
 
 /* Fundo escurecido e desfocado atrás do modal */
@@ -404,3 +403,4 @@ main {
   --bs-backdrop-opacity: 0.85;
   backdrop-filter: blur(6px);
 }
+

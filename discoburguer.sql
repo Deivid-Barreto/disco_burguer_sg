@@ -343,7 +343,7 @@ CREATE TABLE IF NOT EXISTS `caixas_diarios` (
 
 use discoburguer;
 INSERT INTO produtos (nome, descricao, preco_venda, imagem_caminho, categorias, ativo, visivel) VALUES
-('Disco Classic', 'Pão brioche, artesanal 180g, queijo cheddar fatiado e molho da casa.', 28.90, '../../img/burguer.png', 'hamburguer', 1, 1),
+('Disco Classic', 'Pão brioche, artesanal 180g, queijo cheddar fatiado e molho da casa.', 28.90, '../../img/hamburguer_teste.png', 'hamburguer', 1, 1),
 ('Disco Bacon', 'Pão australiano, artesanal 180g, dobro de bacon crocante e queijo prato.', 34.00, '../../img/burguer.png', 'hamburguer', 1, 1),
 ('Disco Sem Foto', 'Hambúrguer de teste para verificar a imagem padrão.', 25.00, NULL, 'hamburguer', 1, 1),
 ('Combo Smash Single', '1 Smash Burger, 1 Batata P, 1 Refrigerante Lata 350ml.', 38.00, '../../img/combos.png', 'combos', 1, 1),
