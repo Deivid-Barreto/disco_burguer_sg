@@ -11,10 +11,10 @@ if ($conn->connect_error) {
     die("Erro de conexão com o banco de dados: " . $conn->connect_error);
 }
 
-$conn->set_charset("utf8");
+$conn->set_charset("utf8mb4");
 
 // Função auxiliar para consultar e formatar os produtos do banco por categoria usando MySQLi
-function buscarProdutosPorCategoria($conn, $categoria) {
+function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
     $sql = "SELECT 
                 nome, 
                 descricao, 

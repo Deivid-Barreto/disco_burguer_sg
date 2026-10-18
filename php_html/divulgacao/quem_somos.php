@@ -41,7 +41,7 @@
                     
                         <div class="col-12 col-md-6 bola mt-4 mt-md-0 order-1 order-md-2">
                        
-                            <img class="img-bola_cristal img-fluid" src="../../img/globo.png" alt="Globo de Cristal">
+                            <img class="img-bola_cristal img-fluid" src="c" alt="Globo de Cristal">
                         </div>
 
                     </div>
