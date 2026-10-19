@@ -30,8 +30,9 @@
 
     <main>
        <section class="feedback" id="feedback">
-    <div class="container h-100 d-flex flex-column justify-content-center">
         
+    <div class="container h-100 d-flex flex-column justify-content-center">
+    <div class="efeito">
         <!-- Bloco do Título -->
         <div class="row justify-content-center">
             <div class="col-12 d-flex justify-content-center">
@@ -169,6 +170,7 @@
             <button class="seta-scroll seta-direita" id="btn-direita">❯</button>
 
         </div>
+    </div>
     </div>
 </section>
 <!-- SCRIPT PARA AS SETAS FUNCIONAREM -->
