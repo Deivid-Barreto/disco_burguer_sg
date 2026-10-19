@@ -105,7 +105,7 @@
 
       <div class="col-12 pt-5 pb-5 text-center" >
 
-        <h3 class="text-oficial">#DISCOBURGUER@OFICIAL</h3>
+        <h3 class="text-oficial">©DISCOBURGUER@OFICIAL</h3>
 
       </div>
 

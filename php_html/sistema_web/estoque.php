@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../../php/conexao.php'; 
-require_once __DIR__ . '/verificar_login.php'; 
+
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -185,12 +185,31 @@ $hoje = date('Y-m-d');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- painel.css ANTES do css da página -->
+    <link rel="stylesheet" href="../../css/painel.css">
+    <link rel="stylesheet" href="../../css/financeiro.css">
+
     <meta charset="UTF-8">
     <title>Estoque e Lotes</title>
 </head>
 <body>
 
+    <?php include __DIR__ . "/../../includes/painel.php"; ?>
+
+    <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
+
+    <main class="conteudo">
     <div id="container-estoque">
         <?php foreach($estoques as $item): ?>
             <?php $eh_rev = isset($item['eh_revenda']) ? $item['eh_revenda'] : 0; ?>
@@ -246,7 +265,7 @@ $hoje = date('Y-m-d');
     <button onclick="document.getElementById('modalEstoque').showModal()">
         ADICIONAR NOVO INSUMO
     </button>
-
+        </main>
     <dialog id="modalEstoque">
         <h3>Cadastrar Insumo ou Item de Revenda</h3>
         <form id="formEstoque" onsubmit="salvarEstoque(event)">
@@ -634,5 +653,10 @@ $hoje = date('Y-m-d');
             document.getElementById('modalDelLote').close();
         }
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="../../js/painel.js"></script>
 </body>
 </html>

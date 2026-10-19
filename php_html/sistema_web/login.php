@@ -119,6 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="../../css/sistema_web/login.css">
+
+
     <script>
         function mostrarRecuperacao() {
             document.getElementById('form-login').style.display = 'none';
@@ -130,9 +136,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 </head>
-<body>
-    <div>
-        <h1>Acesso ao Sistema</h1>
+<body >
+   
+       
+
+        <main>
+        <img class="icone-login" src="../../img/Icone-disco-burguer.png" alt="">
+        <div class="card-login container-fluid d-flex  flex-column col-6">
+        <h1 class="titulo-login text-center mb-4">BEM-VINDO!</h1>
 
         <?php if (!empty($erro)): ?>
             <div><?= htmlspecialchars($erro) ?></div>
@@ -142,29 +153,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div><?= htmlspecialchars($mensagem_recuperacao) ?></div>
         <?php endif; ?>
 
-        <div id="form-login" style="<?= (isset($_POST['acao']) && $_POST['acao'] === 'recuperar') ? 'display: none;' : 'display: block;' ?>">
+        <div  id="form-login" style="<?= (isset($_POST['acao']) && $_POST['acao'] === 'recuperar') ? 'display: none;' : 'display: block;'?>">
             <form method="POST">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                 <input type="hidden" name="acao" value="login"> 
 
-                <div>
+                <div class="d-flex flex-column mb-3">
                     <label for="email">E-mail</label>
+                   
                     <input type="email" id="email" name="email" required autofocus placeholder="Digite seu e-mail">
                 </div>
 
-                <div>
+                <div class="d-flex flex-column mb-3">
                     <label for="senha">Senha</label>
                     <input type="password" id="senha" name="senha" required placeholder="Digite sua senha">
                 </div>
 
-                <button type="submit">Entrar</button>
-            </form>
-            
-            <div>
+            <div class="text-end">
                 <a href="#" onclick="mostrarRecuperacao(); return false;">Esqueceu a senha?</a>
             </div>
-        </div>
 
+            <button class="btn-entrar d-block mx-auto mt-4" type="submit">Entrar</button>
+            </form>
+            </div>
+           
+            
+            
+        
+        </div>
+            
         <div id="form-recuperar" style="<?= (isset($_POST['acao']) && $_POST['acao'] === 'recuperar') ? 'display: block;' : 'display: none;' ?>">
             <p>Informe seu e-mail para receber o link de redefinição.</p>
             <form method="POST">
@@ -183,6 +200,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <a href="#" onclick="mostrarLogin(); return false;">Voltar para o Login</a>
             </div>
         </div>
-    </div>
+
+        </main>
+    
+  
+
+<footer class="rodape-login">
+    <a href="../../index.php" class="link-voltar">← Voltar ao site</a>
+    <p>© 2026 Disco Burguer - Sistema de Gestão</p>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
 </body>
 </html>

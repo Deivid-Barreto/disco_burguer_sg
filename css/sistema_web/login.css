@@ -1,4 +1,133 @@
-body{
 
-    background-color: burlywood;
+
+
+body{
+background-image: url('../../img/fundo_login.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+
+}
+
+main{
+
+ min-height: 100vh;          /* ocupa a primeira tela inteira */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;    /* centraliza logo + card nessa tela */
+    padding: 24px;
+}
+.icone-login{
+
+     width: 450px;
+    height: 250px;
+    position: relative;   /* necessário para o z-index funcionar */
+    z-index: 2;           /* fica na frente do card */
+    margin-bottom: -30px; /* puxa o card para cima, sobrepondo */
+}
+
+.titulo-login{
+    font-family: 'Oswald', 'Anton', sans-serif;
+    font-size: clamp(2rem, 7vw, 5rem); 
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 0.90;
+    letter-spacing: 2px;
+    margin: 0;
+
+    color: #ffbdf2; 
+    text-shadow:
+        0 0 5px #ff66d4,
+        0 0 10px #ff66d4,
+        0 0 20px #ff00ab,
+        0 0 40px #ff00ab,
+        0 0 80px #d80093;
+
+}
+
+
+.card-login{
+    padding: 40px;
+    width: 100%;
+    max-width: 600px;
+    background-color: #080038;
+    border: 3px solid #d80093; 
+    border-radius: 15px;
+
+}
+
+.card-login label {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+.card-login input {
+    background-color: transparent;
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 24px;
+    padding: 14px 20px;
+    font-size: 1.1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.card-login input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.card-login input:focus {
+    border-color: #ff5fb8;
+    box-shadow: 0 0 12px #ff5fb8;
+}
+
+
+.btn-entrar {
+    background: linear-gradient(90deg, #5b6cff, #ff5fb8);
+    color: #fff;
+    border: 2px solid #fff;
+    border-radius: 12px;
+    padding: 16px 70px;      /* maior: era 10px 40px */
+    font-size: 1.3rem;       /* texto maior */
+    font-weight: 700;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-entrar:hover {
+      /* inverte o degradê */
+    transform: scale(1.028);                             /* sobe um pouquinho */
+    box-shadow: 0 0 20px #ff5fb8;                            /* brilho neon */
+}
+
+.card-login a {
+    color: #ff5fb8;
+}
+
+.card-login a:hover {
+    color: #fff;
+}
+
+
+.rodape-login {
+     padding: 80px 24px;         /* espaço que cria a rolagem */
+    text-align: center;
+    color: #ffbdf2;
+    text-shadow: 0 0 8px #ff66d4;
+}
+
+.link-voltar {
+    color: #ff5fb8;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.link-voltar:hover {
+    color: #fff;
 }
