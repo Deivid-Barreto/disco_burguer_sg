@@ -92,8 +92,20 @@ if (isset($_GET['obter_pedido_mesa'])) {
             WHERE ip.pedido_id = ?
         ");
 
-        $stmtItens->execute([$pedido['id']]);
+        $stmtCustomizacoes = $pdo->prepare("
+            SELECT
+                cip.item_pedido_id,
+                cip.produto_id,
+                cip.tipo_acao,
+                cip.quantidade,
+                p.nome,
+                p.preco_venda
+            FROM customizacoes_item_pedido cip
+            INNER JOIN produtos p ON p.id = cip.produto_id
+            WHERE cip.item_pedido_id = ?
+        ");
 
+        $stmtItens->execute([$pedido['id']]);
         $itens = $stmtItens->fetchAll(PDO::FETCH_ASSOC);
 
         echo json_encode([
@@ -644,7 +656,6 @@ try {
     <h4>Itens do Pedido</h4>
     <div id="listaItensPedido" style="margin-bottom: 15px; background: #f4f4f4; padding: 10px; border-radius: 4px;">
     </div>
-    <div>
         <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()">Editar</button>
         <button type="button" style="color: red;" onclick="ModalFecharConta()">Fechar Conta</button>
         <button type="button" onclick="document.getElementById('modalPedido').close()">Cancelar</button>
@@ -685,22 +696,72 @@ function abrirAcoesPedido() {
     document.getElementById('pedidoTipo').innerText = pedido.tipo === 'local' ? 'Local' : 'Delivery';
 
     const lista = document.getElementById('listaItensPedido');
-
     lista.innerHTML = '';
+    let totalCalculado = 0;
+
     if (itens.length === 0) {
         lista.innerHTML = '<p>Nenhum item no pedido.</p>';
     } else {
         itens.forEach(function(item) {
-            lista.innerHTML += `
-                <div>
-                    <strong>${item.quantidade}x</strong>
-                    ${item.nome}
-                    <strong>${item.customizacao}x</strong>
-                </div>
+            const quantidade = Number(item.quantidade) || 0;
+            const preco = Number(item.preco_venda) || 0;
+            const customizacoes = item.customizacoes || [];
+            const totalExtrasUnitario = customizacoes.reduce(
+                function(total, extra) {
+                    const precoExtra = Number(extra.preco_venda) || 0;
+                    const qtdExtra = Number(extra.quantidade) || 0;
+
+                    if (extra.tipo_acao === 'adicionar') {
+                        return total + precoExtra * qtdExtra;
+                    }
+                    return total;
+                },
+                0
+            );
+
+            const precoUnitario = preco + totalExtrasUnitario;
+            const subtotal = precoUnitario * quantidade;
+            totalCalculado += subtotal;
+            const linha = document.createElement('div');
+            linha.style.marginBottom = '12px';
+            linha.style.paddingBottom = '10px';
+            linha.style.borderBottom = '1px solid #ddd';
+
+            let html = `
+                <strong>${quantidade}x ${escapeHtml(item.nome)}</strong>
+                <p>
+                    Valor unitário:
+                    R$ ${preco.toFixed(2).replace('.', ',')}
+                </p>
             `;
+
+            if (customizacoes.length > 0) {
+                html += '<div><strong>Personalizações:</strong><ul>';
+                customizacoes.forEach(function(extra) {
+                    const qtdExtra = Number(extra.quantidade) || 0;
+                    const precoExtra = Number(extra.preco_venda) || 0;
+                    html += `
+                        <li>
+                            ${escapeHtml(extra.nome)}
+                            (${qtdExtra}x) -
+                            R$ ${(precoExtra * qtdExtra)
+                                .toFixed(2).replace('.', ',')}
+                        </li>
+                    `;
+                });
+                html += '</ul></div>';
+            }
+            linha.innerHTML = html;
+            lista.appendChild(linha);
         });
     }
 
+    const total = document.createElement('p');
+    total.innerHTML = `
+        <strong>Total: R$
+        ${totalCalculado.toFixed(2).replace('.', ',')}</strong>
+    `;
+    lista.appendChild(total);
     document.getElementById('modalPedido').showModal();
 }
 
@@ -719,7 +780,7 @@ function carregarDadosEdicao() {
     document.getElementById('tipo').value = pedido.tipo;
     document.getElementById('mesa_id').value = pedido.mesa_id || '';
     document.getElementById('chave_validacao').value = pedido.chave_validacao || '';
-    atualizarFormulario();
+    
     produtosPedido = [];
     itens.forEach(function(item) {
         produtosPedido.push({
