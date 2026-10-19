@@ -9,7 +9,7 @@ if (empty($_SESSION['csrf_token'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die('Ação não autorizada.');
+        die('Ação não autor izada.');
     }
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
