@@ -50,11 +50,15 @@
             color: #fff;
             text-decoration: none;
             transition: background 0.2s;
+         
         }
  
         .menu-link:hover {
             background: rgba(255, 46, 147, 0.15);
             color: #fff;
+            transition: transform 0.50 ease-out;
+            transition: all 0.5s;
+            transform: scale(1.09);
         }
  
         .menu-link.ativo {
@@ -83,6 +87,8 @@
         .btn-menu:hover {
             background: var(--rosa);
             color: #fff;
+            transition: all 0.3s;
+            transform: scale(1.1);
         }
  
         .card-painel {
@@ -116,6 +122,6 @@
         .card-admin-header{
 
             
-            border: 2px solid var(--rosa) ;
+            border: 0.5px solid var(--rosa) ;
             border-radius: 12px;
         }

@@ -46,7 +46,7 @@
     </div>
 
   <div class="container-fluid">
- <header class="conteudo card-admin-header mt-1 ">
+ <header class="conteudo card-admin-header mt-2 ">
 
  <div class="d-flex align-items-center gap-4 p-5 ">
             <button class="btn btn-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuLateral"
