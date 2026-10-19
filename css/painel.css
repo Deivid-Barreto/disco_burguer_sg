@@ -1,0 +1,106 @@
+:root {
+    --fundo: #0a0618;
+    --card: #120b2b;
+    --rosa: #ff2e93;
+    --roxo: #8a2be2;
+    --borda: rgba(255, 46, 147, 0.2);
+    --largura-menu: 250px;
+}
+
+body {
+    background-color: var(--fundo);
+    color: #fff;
+}
+
+.icone-painel {
+    width: 180px;
+    height: 110px;
+}
+
+#menuLateral {
+    width: var(--largura-menu);
+    background-color: var(--card);
+    color: #fff;
+    border-right: 1px solid rgba(255, 46, 147, 0.3);
+}
+
+#menuLateral .offcanvas-body {
+    padding: 0 12px 12px;
+}
+
+#menuLateral .btn-close {
+    filter: invert(1);
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    /* volta: mais lenta */
+    transition: background 0.6s ease, transform 0.6s ease;
+}
+
+.menu-link:hover {
+    background: rgba(255, 46, 147, 0.15);
+    color: #fff;
+    transform: scale(1.02) translateZ(0);
+    /* ida: mais rápida */
+    transition: background 0.25s ease-out, transform 0.25s ease-out;
+}
+
+.menu-link.ativo {
+    background: linear-gradient(90deg, var(--rosa), var(--roxo));
+}
+
+/* ---------- CONTEÚDO ---------- */
+.conteudo {
+    transition: margin-left 0.3s ease;
+}
+
+/* quando o menu abre, o conteúdo é empurrado */
+body.menu-aberto .conteudo {
+    margin-left: var(--largura-menu);
+}
+
+.btn-menu {
+    background: transparent;
+    border: 1px solid var(--rosa);
+    color: var(--rosa);
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: all 0.6s ease;
+}
+
+.btn-menu:hover {
+    background: var(--rosa);
+    color: #fff;
+    transform: scale(1.1);
+    transition: all 0.25s ease-out;
+}
+
+/* No celular o menu abre por cima, sem empurrar */
+@media (max-width: 991.98px) {
+    body.menu-aberto .conteudo {
+        margin-left: 0;
+    }
+}
+
+
+
+.card-admin-header {
+
+    background-image: url(../img/fundo_header_sistema_web.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 0.5px solid var(--rosa);
+    border-radius: 12px;
+   
+}

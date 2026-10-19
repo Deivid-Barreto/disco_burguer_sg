@@ -2,7 +2,8 @@
 
 session_start();
 
-require_once '../../php/conexao.php'; 
+require_once __DIR__ . '/../../php/conexao.php';
+require_once __DIR__ . '../../sistema_web/verificar_login.php';
 
 if (isset($_GET['obter_pedido'])) {
     require_once '../../php/conexao.php'; 
@@ -600,7 +601,6 @@ try {
                         '.'
                     ) ?>
                 </span>
-
                 <button
                     type="button"
                     onclick="alterarExtra(
@@ -660,7 +660,7 @@ try {
         <input type="hidden" name="id_pedido" id="deletar_id_pedido" value="">
         
         <div>
-            <button type="submit" style="color: red;">Sim, Excluir</button>
+            <button type="submit" style="color: red;" onclick="">Sim, Excluir</button>
             <button type="button" onclick="document.getElementById('ModalFecharConta').close()">Cancelar</button>
         </div>
     </form>
