@@ -139,11 +139,10 @@ z-index: 10;
     margin-bottom: 4vh;
 }
 
-/* Carrossel */
 .carrossel-container {
     position: relative;
     width: 100%;
-    max-width: 900px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 30px 0;
     overflow: hidden;
@@ -151,7 +150,7 @@ z-index: 10;
 
 .carrossel-pista {
     position: relative;
-    height: clamp(320px, 62vw, 540px);
+    height: clamp(420px, 75vh, 780px);
 }
 
 
@@ -159,30 +158,28 @@ z-index: 10;
     position: absolute;
     top: 50%;
     left: 50%;
-    width: clamp(220px, 40vw, 340px);
+    width: clamp(260px, 42vw, 560px);
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 8px;
-    padding: clamp(12px, 2vw, 28px);
+    padding: clamp(14px, 2vw, 32px);
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.5);
     transition: all 0.5s ease;
 }
 
-/* Card do centro */
 .item-ativo {
     opacity: 1;
     z-index: 3;
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* Efeito Hover no card central (Flutua e Cresce) */
 .item-ativo:hover {
     transform: translate(-50%, calc(-50% - 8px)) scale(1.02);
 }
 
-/* Cards laterais (ficam atrás do central) */
+
 .item-esquerda {
     opacity: 0.6;
     z-index: 2;
@@ -195,24 +192,22 @@ z-index: 10;
     transform: translate(10%, -50%) scale(0.75);
 }
 
-/* Textos do card */
 .carrossel-item h2 {
-    font-size: clamp(1rem, 3vw, 2rem);
+    font-size: clamp(1.2rem, 3vw, 2.4rem);
     white-space: nowrap;
     margin-bottom: clamp(6px, 1.5vw, 15px);
 }
 
 .carrossel-item h3 {
-    font-size: clamp(0.75rem, 1.6vw, 1.2rem);
+    font-size: clamp(0.85rem, 1.4vw, 1.4rem);
     color: white;
     line-height: 1.2;
     margin-bottom: clamp(8px, 2vw, 20px);
 }
 
-/* Imagem dentro do card */
 .carrossel-item img {
     width: 100%;
-    height: clamp(120px, 22vw, 260px);
+    height: clamp(170px, 32vh, 380px);
     object-fit: cover;
     margin: 0 auto clamp(6px, 1.5vw, 15px) auto;
     transition: transform 0.3s ease;
@@ -222,7 +217,6 @@ z-index: 10;
     transform: scale(1.08);
 }
 
-/* Cores dos cards (fundo escuro opaco + tom da cor, para um card não aparecer através do outro) */
 .item-rosa {
     background-color: rgba(255, 0, 255, 0.12);
     border: 2px solid #ff00ff;
@@ -272,9 +266,9 @@ z-index: 10;
     color: #fff;
     border: 2px solid #ff00ff;
     box-shadow: 0 0 8px #ff00ff;
-    padding: clamp(6px, 1vw, 12px) clamp(12px, 2vw, 26px);
+    padding: clamp(7px, 1vw, 14px) clamp(14px, 2.5vw, 32px);
     font-weight: bold;
-    font-size: clamp(0.6rem, 1.2vw, 1.05rem);
+    font-size: clamp(0.7rem, 1.3vw, 1.2rem);
     cursor: pointer;
     text-transform: uppercase;
     transition: all 0.3s ease;
@@ -297,10 +291,10 @@ z-index: 10;
     color: #fff;
     border: 2px solid #ff00ff;
     box-shadow: 0 0 8px #ff00ff;
-    width: clamp(32px, 5vw, 50px);
-    height: clamp(32px, 5vw, 50px);
+    width: clamp(36px, 4.5vw, 60px);
+    height: clamp(36px, 4.5vw, 60px);
     font-weight: bold;
-    font-size: clamp(1.2rem, 3vw, 2rem);
+    font-size: clamp(1.3rem, 2.5vw, 2.2rem);
     line-height: 1;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -314,6 +308,7 @@ z-index: 10;
 
 .seta-anterior { left: 0; }
 .seta-proximo { right: 0; }
+
 
 
 
@@ -527,5 +522,23 @@ z-index: 10;
   .button-hero {
     transform: scale(0.95);
   }
-  
-  
+  .feedback-label{
+    transform: translateY(20px);
+    opacity: 0;
+    animation: subir-suave 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+.titulo-feedback h1 {
+    transform: translateY(20px);
+    opacity: 0;
+    animation: subir-suave 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+  .Mais-Pedidos .titulo-mp {
+    transform: translateY(20px);
+    opacity: 0;
+    animation: subir-suave 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;  }
+    
+.carrossel-pista {
+    transform: translateY(20px);
+    opacity: 0;
+    animation: subir-suave 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}

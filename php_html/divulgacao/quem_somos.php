@@ -31,7 +31,8 @@
 
                   
                         <div class="col-12 col-md-6 titulo-quem-somos mb-4 mb-md-0 d-flex flex-column align-items-center align-items-md-start text-center text-md-start order-2 order-md-1">
-                            <h1>
+                         
+                                <h1>
                                 <span class="">Quem</span>
                                 <span class="somos">Somos</span>
                             </h1>
@@ -104,7 +105,7 @@
                     </div>
                 </div>
             </section>
-
+        </div>
         </div>
     </main>
 

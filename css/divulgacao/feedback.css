@@ -339,3 +339,17 @@
 .seta-direita { 
     right: clamp(-15px, -3vw, -40px); 
 }
+@keyframes subir-suave {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes aparecer {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+.efeito{
+     transform: translateY(20px);
+    opacity: 0;
+    animation: subir-suave 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
