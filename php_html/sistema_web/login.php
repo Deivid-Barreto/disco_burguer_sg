@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 switch ($_SESSION['funcionario_cargo']) {
                     case 'administrador': header("Location: testeadm.php"); break;
                     case 'operador_caixa': header("Location: testeopc.php"); break;
-                    case 'atendente': header("Location: testeaten.php"); break;
+                    case 'atendente': header("Location: ../sistema_garcom/pedido.php"); break;
                     case 'cozinheiro': header("Location: testecoz.php"); break;
                 }
                 exit;
