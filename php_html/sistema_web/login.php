@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
                 switch ($_SESSION['funcionario_cargo']) {
-                    case 'administrador': header("Location: testeadm.php"); break;
+                    case 'administrador': header("Location: inicio.php"); break;
                     case 'operador_caixa': header("Location: testeopc.php"); break;
                     case 'atendente': header("Location: ../sistema_garcom/pedido.php"); break;
                     case 'cozinheiro': header("Location: testecoz.php"); break;
