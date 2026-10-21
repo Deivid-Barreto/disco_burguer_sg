@@ -18,10 +18,14 @@ body {
 }
 
 #menuLateral {
-    width: var(--largura-menu);
-    background-color: var(--card);
+    background-image: url(../img/fundo_painel.png);
+     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: var(--largura-menu); 
     color: #fff;
     border-right: 1px solid rgba(255, 46, 147, 0.3);
+    padding-top: 3vh;
 }
 
 #menuLateral .offcanvas-body {
@@ -102,5 +106,5 @@ body.menu-aberto .conteudo {
     background-repeat: no-repeat;
     border: 0.5px solid var(--rosa);
     border-radius: 12px;
-   
+    height: 25vh;   
 }
