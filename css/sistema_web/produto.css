@@ -1,0 +1,15 @@
+body{
+
+}
+.card-menu-cardapio{
+    
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid var(--borda);
+}
+
+.menu-cardapio a{
+    
+    color: white;
+    text-decoration: none;
+}

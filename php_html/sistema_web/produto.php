@@ -3,7 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/../../php/conexao.php'; 
-require_once __DIR__ . '/verificar_login.php';
+
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -247,13 +247,18 @@ try {
 
 <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
- 
-    <div class="conteudo">
-    <button type="button" onclick="abrirModalCadastro()">ADD NOVO PRODUTO</button>
-
-    <div>
-        <h2>PRODUTOS CADASTRADOS (COMPLETOS)</h2>
-        <div>
+    
+    <div class="conteudo container-fluid">
+    <div class="menu-cardapio d-flex gap-4 mt-2">
+     <a class="card-menu-cardapio" href="">Todos</a>   
+     <a class="card-menu-cardapio" href="">Hamburguers</a>
+     <a class="card-menu-cardapio" href="">Combos</a>
+     <a class="card-menu-cardapio" href="">Bebidas</a>
+     <a class="card-menu-cardapio" href="">Porções</a>
+     <a class="card-menu-cardapio" href="">Sobremesas</a>
+   
+    <button class=""  type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
+    </div>
             <?php foreach($produtosCompletos as$p): ?>
                 <button type="button" onclick="abrirAcoes(<?= $p['id'] ?>)">
                     <?= htmlspecialchars($p['nome']) ?>
@@ -265,9 +270,7 @@ try {
         </div>
     </div>
     
-    <div>
-        <h2>PRODUTOS INATIVOS (FALTA DE RECEITA / SUBPRODUTOS)</h2>
-        <div>
+   
         </div>
             <?php foreach($produtosInativos as$p): ?>
                 <button type="button" onclick="abrirAcoes(<?= $p['id'] ?>)">
