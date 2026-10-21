@@ -244,8 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         
     } elseif ($acao === 'cadastrar') {
 
-        $atendente_id = 1;
-
+        $atendente_id = $_SESSION['funcionario_id'] ?? null;
         $nome_cliente = trim($_POST['nome_cliente'] ?? '');
         $tipo = $_POST['tipo'] ?? '';
         $mesa_id = !empty($_POST['mesa_id']) ? (int)$_POST['mesa_id'] : null;
@@ -256,7 +255,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         try {
 
             $pdo->beginTransaction();
-
             $pedido_id = null;
 
             if ($tipo === 'local' && $mesa_id) {
