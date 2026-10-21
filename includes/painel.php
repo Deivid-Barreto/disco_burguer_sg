@@ -16,7 +16,7 @@
       <a href="relatorios.php" class="menu-link <?= $paginaAtual == 'relatorios.php' ? 'ativo' : '' ?>"><i class="bi bi-bar-chart"></i> Relatórios</a>
       <a href="financeiro.php" class="menu-link <?= $paginaAtual == 'financeiro.php' ? 'ativo' : '' ?>"><i class="bi bi-currency-dollar"></i> Financeiro</a>
       <a href="estoque.php" class="menu-link <?= $paginaAtual == 'estoque.php' ? 'ativo' : '' ?>"><i class="bi bi-box-seam"></i> Estoque</a>
-      <a href="cardapio.php" class="menu-link <?= $paginaAtual == 'cardapio.php' ? 'ativo' : '' ?>"><i class="bi bi-journal-text"></i> Cardápio</a>
+      <a href="produto.php" class="menu-link <?= $paginaAtual == 'produto.php' ? 'ativo' : '' ?>"><i class="bi bi-journal-text"></i> Cardápio</a>
       <a href="funcionarios.php" class="menu-link <?= $paginaAtual == 'funcionarios.php' ? 'ativo' : '' ?>"><i class="bi bi-person-badge"></i> Funcionários</a>
       <a href="usuarios.php" class="menu-link <?= $paginaAtual == 'usuarios.php' ? 'ativo' : '' ?>"><i class="bi bi-people"></i> Usuários</a>
       <a href="configuracoes.php" class="menu-link <?= $paginaAtual == 'configuracoes.php' ? 'ativo' : '' ?>"><i class="bi bi-gear"></i> Configurações</a>
