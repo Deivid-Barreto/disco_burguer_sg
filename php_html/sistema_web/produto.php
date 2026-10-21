@@ -248,14 +248,14 @@ try {
 <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
     
-    <div class="conteudo container-fluid">
-    <div class="menu-cardapio d-flex gap-4 mt-2">
-     <a class="card-menu-cardapio" href="">Todos</a>   
-     <a class="card-menu-cardapio" href="">Hamburguers</a>
-     <a class="card-menu-cardapio" href="">Combos</a>
-     <a class="card-menu-cardapio" href="">Bebidas</a>
-     <a class="card-menu-cardapio" href="">Porções</a>
-     <a class="card-menu-cardapio" href="">Sobremesas</a>
+    <div class="conteudo container-fluid button-dd">
+    <div class="menu-cardapio d-flex  gap-2 mt-2">
+     <a href="">Todos</a>   
+     <a href="">Hamburguers</a>
+     <a href="">Combos</a>
+     <a href="">Bebidas</a>
+     <a href="">Porções</a>
+     <a href="">Sobremesas</a>
    
     <button class=""  type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
     </div>
@@ -267,7 +267,7 @@ try {
             <?php if(empty($produtosCompletos)): ?>
                 <p>Nenhum produto completo no momento.</p>
             <?php endif; ?>
-        </div>
+        
     </div>
     
    
@@ -283,7 +283,7 @@ try {
         </div>
     </div>
     </div>
-
+    </div>
 <dialog id="modalCadastro">
     <h1 id="modalTituloCadastro">Cadastrar Novo Produto</h1>
 

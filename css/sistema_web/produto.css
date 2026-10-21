@@ -1,15 +1,24 @@
 body{
 
 }
-.card-menu-cardapio{
-    
-    padding: 10px;
-    border-radius: 5px;
-    border: 2px solid var(--borda);
-}
+
 
 .menu-cardapio a{
-    
+    font-size: 16px;
+    width: 20vh;
+    padding: 10px 2px;
+    border-radius: 5px;
+    text-align: center;
+    border: 2px solid var(--borda);
     color: white;
     text-decoration: none;
+}
+
+
+.menu-cardapio a:hover{
+    transform: scale(1.03) translateZ(0);
+    background: rgb(253, 4, 124);
+    transition: background 0.6s ease, transform 0.6s ease;
+ 
+
 }
