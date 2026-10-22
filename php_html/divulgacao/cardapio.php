@@ -129,7 +129,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
                         data-descricao="<?php echo htmlspecialchars($lanche['descricao'], ENT_QUOTES); ?>"
                         data-preco="<?php echo htmlspecialchars($lanche['preco'], ENT_QUOTES); ?>"
                         data-imagem="<?php echo htmlspecialchars($lanche['imagem'], ENT_QUOTES); ?>">
-                  ver
+        
                 </button>
               </div>
             </div>
@@ -158,7 +158,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
                         data-descricao="<?php echo htmlspecialchars($combo['descricao'], ENT_QUOTES); ?>"
                         data-preco="<?php echo htmlspecialchars($combo['preco'], ENT_QUOTES); ?>"
                         data-imagem="<?php echo htmlspecialchars($combo['imagem'], ENT_QUOTES); ?>">
-                  ver
+                
                 </button>
               </div>
             </div>
@@ -187,7 +187,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
                         data-descricao="<?php echo htmlspecialchars($shake['descricao'], ENT_QUOTES); ?>"
                         data-preco="<?php echo htmlspecialchars($shake['preco'], ENT_QUOTES); ?>"
                         data-imagem="<?php echo htmlspecialchars($shake['imagem'], ENT_QUOTES); ?>">
-                  ver
+              
                 </button>
               </div>
             </div>
@@ -216,7 +216,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
                         data-descricao="<?php echo htmlspecialchars($porção['descricao'], ENT_QUOTES); ?>"
                         data-preco="<?php echo htmlspecialchars($porção['preco'], ENT_QUOTES); ?>"
                         data-imagem="<?php echo htmlspecialchars($porção['imagem'], ENT_QUOTES); ?>">
-                  ver
+                  
                 </button>
               </div>
             </div>
@@ -245,7 +245,7 @@ $sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
                         data-descricao="<?php echo htmlspecialchars($sobremesa['descricao'], ENT_QUOTES); ?>"
                         data-preco="<?php echo htmlspecialchars($sobremesa['preco'], ENT_QUOTES); ?>"
                         data-imagem="<?php echo htmlspecialchars($sobremesa['imagem'], ENT_QUOTES); ?>">
-                  ver
+                
                 </button>
               </div>
             </div>

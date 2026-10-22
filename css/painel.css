@@ -7,6 +7,10 @@
     --largura-menu: 250px;
 }
 
+.conteudo.container-fluid {
+    width: auto;
+}
+
 body {
     background-color: var(--fundo);
     color: #fff;
@@ -65,7 +69,7 @@ body {
 
 /* ---------- CONTEÚDO ---------- */
 .conteudo {
-    transition: margin-left 0.3s ease;
+     transition: margin-left 0.3s ease;
 }
 
 /* quando o menu abre, o conteúdo é empurrado */

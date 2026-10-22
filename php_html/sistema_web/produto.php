@@ -217,86 +217,116 @@ try {
     foreach($lista_produtos as $p) {$produtos_por_categoria[$p['categorias']][] =$p;
     }
 
-    $produtosCompletos =$pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
-    $produtosInativos =$pdo->query("SELECT id, nome, categorias FROM produtos WHERE ativo = 0 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+  $produtosCompletos = $pdo->query("SELECT id, nome, categorias, descricao, preco_venda, imagem_caminho FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+  $produtosInativos = $pdo->query("SELECT id, nome, categorias, descricao, preco_venda, imagem_caminho FROM produtos WHERE ativo = 0 ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-
+ 
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <!-- Bootstrap CSS -->
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
+ 
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+ 
     <!-- painel.css ANTES do css da página -->
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/sistema_web/produto.css">
-    
+ 
     <title>Gestão de Produtos</title>
-
+ 
 </head>
 <body>
-
+ 
 <?php include __DIR__ . "/../../includes/painel.php"; ?>
-
+ 
 <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
+ 
+ 
+    <!-- UMA div conteudo só, envolvendo tudo (inclusive os produtos inativos) -->
+    <div class="conteudo container-fluid ">
+ 
+        <div class="menu-cardapio d-flex gap-3 mt-4">
+            <a href="">Todos</a>
+            <a href="">Hamburguers</a>
+            <a href="">Combos</a>
+            <a href="">Bebidas</a>
+            <a href="">Porções</a>
+            <a href="">Sobremesas</a>
+ 
+            <!-- ms-auto empurra o botão para o final da linha -->
+            <button class="ms-auto btn-cardapio" type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
+        </div>
 
+       
+        <?php foreach($produtosCompletos as $p): ?>
+
+               <button type="button" class="card-produto" onclick="abrirAcoes(<?= $p['id'] ?>)">
+
+                   <span class="produto-nome"><?= htmlspecialchars($p['nome']) ?></span>
+        <?php if (!empty($p['imagem_caminho'])): ?>
+            <img src="<?= htmlspecialchars($p['imagem_caminho']) ?>" alt="Foto do produto" class="img-produto">
+        <?php endif; ?>
     
-    <div class="conteudo container-fluid button-dd">
-    <div class="menu-cardapio d-flex  gap-2 mt-2">
-     <a href="">Todos</a>   
-     <a href="">Hamburguers</a>
-     <a href="">Combos</a>
-     <a href="">Bebidas</a>
-     <a href="">Porções</a>
-     <a href="">Sobremesas</a>
-   
-    <button class=""  type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
-    </div>
-            <?php foreach($produtosCompletos as$p): ?>
-                <button type="button" onclick="abrirAcoes(<?= $p['id'] ?>)">
-                    <?= htmlspecialchars($p['nome']) ?>
-                </button>
-            <?php endforeach; ?>
-            <?php if(empty($produtosCompletos)): ?>
-                <p>Nenhum produto completo no momento.</p>
-            <?php endif; ?>
+        <span class="produto-descricao"><?= htmlspecialchars($p['descricao']) ?></span>
+        <span class="produto-preco">R$ <?= number_format($p['preco_venda'], 2, ',', '.') ?></span>
+    </button>
+
+
+        <?php endforeach; ?>
+        <?php if(empty($produtosCompletos)): ?>
+            <p></p>
+        <?php endif; ?>
+
+ 
+        <div class="row  flex-wrap g-2 mt-2 pb-5">
+        <?php foreach($produtosInativos as $p): ?>
+            <div class="col-3 mb-2">
+            <button   type="button" class="card-produto mb-2" onclick="abrirAcoes(<?= $p['id'] ?>)">
+
+                <span class="produto-nome"><?= htmlspecialchars($p['nome']) ?></span>
+        <?php if (!empty($p['imagem_caminho'])): ?>
+            <img src="<?= htmlspecialchars($p['imagem_caminho']) ?>" alt="Foto do produto" class="img-produto">
+        <?php endif; ?>
+       
+        <span class="produto-descricao"><?= htmlspecialchars($p['descricao']) ?></span>
+        <div class="d-flex align-items-center mt-2 gap-5">
+           <span class="produto-categoria"><?= htmlspecialchars($p['categorias']) ?></span>
+        <span class="produto-preco">R$ <?= number_format($p['preco_venda'], 2, ',', '.') ?></span>
+        </div>
+    </button>
+          </div>
+        <?php endforeach; ?>
         
-    </div>
-    
-   
-        </div>
-            <?php foreach($produtosInativos as$p): ?>
-                <button type="button" onclick="abrirAcoes(<?= $p['id'] ?>)">
-                    <?= htmlspecialchars($p['nome']) ?>
-                </button>
-            <?php endforeach; ?>
-            <?php if(empty($produtosInativos)): ?>
-                <p>Nenhum produto inativo no momento.</p>
-            <?php endif; ?>
-        </div>
+        
+        <?php if(empty($produtosInativos)): ?>
+            <p>Nenhum produto inativo no momento.</p>
+        <?php endif; ?>
+ 
     </div>
     </div>
-    </div>
+    <!-- fim do conteudo (os </div> soltos das linhas 51 e 60-63 foram removidos) -->
+ 
+ 
 <dialog id="modalCadastro">
     <h1 id="modalTituloCadastro">Cadastrar Novo Produto</h1>
-
+ 
     <form id="formProduto" method="POST" action="" enctype="multipart/form-data" onsubmit="confirmarSalvarProduto(event)">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
         <input type="hidden" id="form_acao" name="acao" value="cadastrar">
         <input type="hidden" id="form_id_produto" name="id_produto" value="">
-
+ 
         <div>
             <label for="nome">Nome do Produto</label>
             <input type="text" id="nome" name="nome" required>
         </div>
-
+ 
         <div>
             <label for="categorias">Categoria</label>
             <select id="categorias" name="categorias" onchange="atualizarFormulario()" required>
@@ -309,17 +339,17 @@ try {
                 <option value="extras">Extras</option>
             </select>
         </div>
-
+ 
         <div>
             <label for="descricao">Descrição</label>
             <textarea id="descricao" name="descricao" rows="3" required></textarea>
         </div>
-
+ 
         <div>
             <label for="preco_venda">Preço de Venda (R$)</label>
             <input type="number" id="preco_venda" name="preco_venda" step="0.01" min="0" required>
         </div>
-
+ 
         <div>
             <label for="make_or_buy">Tipo de Produção</label>
             <select id="make_or_buy" name="make_or_buy" onchange="atualizarFormulario()" required>
@@ -329,18 +359,18 @@ try {
             </select>
             <input type="hidden" id="make_or_buy_hidden" name="make_or_buy" value="produto_acabado">
         </div>
-
+ 
         <div id="secao-revenda" hidden>
             <h3>Vínculo de Estoque</h3>
             <label for="estoque_revenda_id">Item para baixa automática:</label>
             <select id="estoque_revenda_id" name="estoque_revenda_id">
                 <option value="">-- Selecione --</option>
-                <?php foreach($lista_estoque_revenda as$item): ?>
+                <?php foreach($lista_estoque_revenda as $item): ?>
                     <option value="<?= $item['id'] ?>"><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</option>
                 <?php endforeach; ?>
             </select>
         </div>
-
+ 
         <div id="secao-receita" hidden>
             <h3>Composição da Receita</h3>
             <?php if(!empty($lista_estoque_ingredientes)): ?>
@@ -349,7 +379,7 @@ try {
                     <tr><th>Incluir</th><th>Ingrediente</th><th>Quantidade</th></tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($lista_estoque_ingredientes as$item): ?>
+                    <?php foreach ($lista_estoque_ingredientes as $item): ?>
                         <tr>
                             <td><input type="checkbox" id="chk_ing_<?= $item['id'] ?>" name="ingredientes[<?= $item['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_ing_<?= $item['id'] ?>')"></td>
                             <td><?= htmlspecialchars($item['nome']) ?> (<?= htmlspecialchars($item['unidade_medida']) ?>)</td>
@@ -360,29 +390,29 @@ try {
             </table>
             <?php endif; ?>
         </div>
-
+ 
         <div id="secao-combo" hidden>
             <h3>Itens do Combo</h3>
             <?php if(!empty($produtos_por_categoria)): ?>
-                
+ 
                 <div>
-                    <?php 
+                    <?php
                     $primeira_cat = array_key_first($produtos_por_categoria);
-                    foreach(array_keys($produtos_por_categoria) as$cat): ?>
+                    foreach(array_keys($produtos_por_categoria) as $cat): ?>
                         <button type="button" onclick="mostrarCategoriaCombo('<?= $cat ?>')">
                             <?= ucfirst(str_replace('_', ' ', $cat)) ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
-
-                <?php foreach ($produtos_por_categoria as $cat =>$produtos): ?>
-                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" <?= $cat ===$primeira_cat ? '' : 'hidden' ?>>
+ 
+                <?php foreach ($produtos_por_categoria as $cat => $produtos): ?>
+                    <div id="combo-cat-<?= $cat ?>" class="tabela-combo-categoria" <?= $cat === $primeira_cat ? '' : 'hidden' ?>>
                         <table>
                             <thead>
                                 <tr><th>Incluir</th><th>Produto</th><th>Quantidade</th></tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($produtos as$prod): ?>
+                                <?php foreach ($produtos as $prod): ?>
                                     <tr>
                                         <td><input type="checkbox" id="chk_combo_<?= $prod['id'] ?>" name="combo_itens[<?= $prod['id'] ?>]" value="1" onchange="toggleQtd(this, 'qtd_combo_<?= $prod['id'] ?>')"></td>
                                         <td><?= htmlspecialchars($prod['nome']) ?></td>
@@ -393,48 +423,48 @@ try {
                         </table>
                     </div>
                 <?php endforeach; ?>
-
+ 
             <?php else: ?>
                 <p>Nenhum produto cadastrado para montar combo.</p>
             <?php endif; ?>
         </div>
-
+ 
         <div>
             <label for="imagem_arquivo">Imagem do Produto</label>
             <input type="file" id="imagem_arquivo" name="imagem_arquivo" accept="image/*">
             <div id="status_imagem_cadastrada"></div>
         </div>
-
+ 
         <div>
             <input type="checkbox" id="visivel" name="visivel" value="1" checked>
             <label for="visivel">Visível no Cardápio</label>
         </div>
-
+ 
         <button type="submit" id="btnSubmitModal">Cadastrar</button>
         <button type="button" onclick="document.getElementById('modalCadastro').close()">Fechar</button>
     </form>
 </dialog>
-
+ 
 <dialog id="modalAcoes">
     <h3 id="tituloAcoes">Ações do Produto</h3>
-    
+ 
     <div id="detalhes_produto_info"></div>
-
+ 
     <input type="hidden" id="acao_id_produto" value="">
-    
+ 
     <div>
         <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()" disabled>Editar</button>
         <button type="button" onclick="confirmarExclusao()">Excluir</button>
         <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
     </div>
 </dialog>
-
+ 
 <form id="formDeletar" method="POST" action="">
     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
     <input type="hidden" name="acao" value="deletar">
     <input type="hidden" name="id_produto" id="deletar_id_produto" value="">
 </form>
-
+ 
 <dialog id="modalConfirmacaoCustom">
     <h3 id="tituloConfirmacao">Confirmação</h3>
     <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
