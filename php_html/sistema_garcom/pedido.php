@@ -108,6 +108,11 @@ if (isset($_GET['obter_pedido_mesa'])) {
         $stmtItens->execute([$pedido['id']]);
         $itens = $stmtItens->fetchAll(PDO::FETCH_ASSOC);
 
+        foreach ($itens as &$item) {
+            $stmtCustomizacoes->execute([$item['id']]);
+            $item['customizacoes'] = $stmtCustomizacoes->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         echo json_encode([
             'encontrado' => true,
             'pedido' => $pedido,
@@ -561,25 +566,24 @@ try {
 
                     <?php endforeach; ?>
                 </div>
-            </section>
+        </section>
         <section class="resumo-pedido">
-
-                <h2>Itens do Pedido</h2>
-                <div id="listaProdutosPedido" >
-                    <div class="pedido-vazio">
-                        Nenhum produto adicionado.
-                    </div>
+            <h2>Itens do Pedido</h2>
+            <div id="listaProdutosPedido" >
+                <div class="pedido-vazio">
+                    Nenhum produto adicionado.
                 </div>
-                <div class="total-pedido">
-                    <span>Total</span>
-                    <strong id="valorTotalTexto">
-                        R$ 0,00
-                    </strong>
-                </div>
-                <input type="hidden" name="valor_total" id="valor_total" value="0.00">
-                <input type="hidden" name="itens_pedido" id="itens_pedido">
-            </section>
-
+            </div>
+            <div class="total-pedido">
+                <span>Total</span>
+                <strong id="valorTotalTexto">
+                    R$ 0,00
+                </strong>
+            </div>
+            <input type="hidden" name="valor_total" id="valor_total" value="0.00">
+            <input type="hidden" name="itens_pedido" id="itens_pedido">
+        </section>
+        
         <div>
             <label for="chave_validacao">Chave de Validação</label>
             <input type="text" id="chave_validacao" name="chave_validacao" readonly>
@@ -651,11 +655,61 @@ try {
         </p>
     
     </div>
+    <section class="area-cardapio">
+        <div class="categorias-cardapio">
+            <button type="button" class="categoria-btn ativo" onclick="filtrarProdutos('todos', this)">
+                Todos
+            </button>
+
+            <?php
+
+                $categorias = [];
+
+                foreach ($produtosAtivos as $produto) {
+                    if (
+                        !empty($produto['categorias']) &&
+                        !in_array($produto['categorias'], $categorias)
+                    ) {
+                        $categorias[] = $produto['categorias'];
+                    }
+                }
+                foreach ($categorias as $categoria):
+                ?>
+                    <button type="button" class="categoria-btn" onclick="filtrarProdutos('<?= htmlspecialchars($categoria, ENT_QUOTES) ?>', this)">
+                        <?= htmlspecialchars($categoria) ?>
+                    </button>
+                <?php endforeach; 
+                ?>
+            </div>
+
+            <div class="grade-produtos">
+                <?php foreach ($produtosAtivos as $produto): ?>
+                    <button type="button" class="card-produto" 
+                        data-categoria="<?= htmlspecialchars($produto['categorias'] ?? '') ?>"
+                        onclick="adicionarProduto(<?= $produto['id'] ?>,
+                            '<?= htmlspecialchars($produto['nome'], ENT_QUOTES) ?>',
+                            <?= (float)$produto['preco_venda'] ?>)">
+                        <div class="produto-imagem">
+                            <?php if (!empty($produto['imagem_caminho'])): ?>
+                                <img
+                                    src="<?= htmlspecialchars($produto['imagem_caminho']) ?>"
+                                    alt="<?= htmlspecialchars($produto['nome']) ?>"
+                                >
+                            <?php endif; ?>
+                        </div>
+                        <p><?= htmlspecialchars($produto['nome']) ?></p>
+                        <p>R$ <?= number_format($produto['preco_venda'], 2, ',', '.') ?></p>
+                        <p><?= htmlspecialchars($produto['descricao']) ?></p> 
+                    </button>
+
+                <?php endforeach; ?>
+            </div>
+    </section>
     <h4>Itens do Pedido</h4>
-    <div id="listaItensPedido" style="margin-bottom: 15px; background: #f4f4f4; padding: 10px; border-radius: 4px;">
-    </div>
-        <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()">Editar</button>
-        <button type="button" style="color: red;" onclick="ModalFecharConta()">Fechar Conta</button>
+    <div id="listaItensPedido" style="margin-bottom: 15px; background: #f4f4f4; padding: 10px; border-radius: 4px;"></div>
+    <div>
+        <a href="../sistema_web/pagamentos_pedido.php"><button type="button" style="color: red;">Fechar Conta</button></a>
+        <a href="../sistema_web/ocorrencias_pedido.php"><button type="button" id="ocorrencias_pedido">Ocorrência</button></a>
         <button type="button" onclick="document.getElementById('modalPedido').close()">Cancelar</button>
     </div>
 </dialog>
