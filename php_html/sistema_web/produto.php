@@ -284,9 +284,10 @@ try {
             <p></p>
         <?php endif; ?>
 
- 
+        
         <div class="row  flex-wrap g-2 mt-2 pb-5">
-        <?php foreach($produtosInativos as $p): ?>
+            <h2>PRODUTOS SEM RECEITA</h2>
+        <?php foreach($produtosInativos as $p): ?> 
             <div class="col-3 mb-2">
             <button   type="button" class="card-produto mb-2" onclick="abrirAcoes(<?= $p['id'] ?>)">
 
