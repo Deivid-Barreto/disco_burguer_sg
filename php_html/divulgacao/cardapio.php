@@ -1,21 +1,8 @@
 <?php
-// Configuração da conexão com o banco de dados via MySQLi
-$host    = '127.0.0.1';
-$user    = 'root';
-$pass    = '';
-$db      = 'discoburguer';
+require_once __DIR__ . '/../../php/conexao.php'; 
 
-$conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    die("Erro de conexão com o banco de dados: " . $conn->connect_error);
-}
-
-$conn->set_charset("utf8mb4");
-
-// Função auxiliar para consultar e formatar os produtos do banco por categoria usando MySQLi
-function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
-    $sql = "SELECT 
+function buscarProdutosPorCategoria( PDO $pdo, string $categoria): array {
+$sql = "SELECT 
                 nome, 
                 descricao, 
                 preco_venda, 
@@ -23,13 +10,9 @@ function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
             FROM produtos 
             WHERE categorias = ? AND ativo = 1 AND visivel = 1";
     
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $categoria);
-    $stmt->execute();
-    
-    $result = $stmt->get_result();
-    $produtos = $result->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$categoria]);
+    $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($produtos as &$item) {
         $item['preco'] = 'R$ ' . number_format($item['preco_venda'], 2, ',', '.');
@@ -39,11 +22,11 @@ function buscarProdutosPorCategoria(mysqli $conn, string $categoria): array {
 }
 
 // Carregamento dinâmico do banco de dados
-$hamburgueres = buscarProdutosPorCategoria($conn, 'hamburguer');
-$combos       = buscarProdutosPorCategoria($conn, 'combos');
-$shakes       = buscarProdutosPorCategoria($conn, 'bebidas');
-$porções      = buscarProdutosPorCategoria($conn, 'porcoes');
-$sobremesas   = buscarProdutosPorCategoria($conn, 'sobremesa_gelada');
+$hamburgueres = buscarProdutosPorCategoria($pdo, 'hamburguer');
+$combos       = buscarProdutosPorCategoria($pdo, 'combos');
+$shakes       = buscarProdutosPorCategoria($pdo, 'bebidas');
+$porções      = buscarProdutosPorCategoria($pdo, 'porcoes');
+$sobremesas   = buscarProdutosPorCategoria($pdo, 'sobremesa_gelada');
 ?> 
 
 <!DOCTYPE html>

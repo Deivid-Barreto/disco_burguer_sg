@@ -1,4 +1,4 @@
--- Active: 1792766985836@@127.0.0.1@3306@mysql
+-- Active: 1792950822068@@127.0.0.1@3306
 
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -276,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
 
 CREATE TABLE IF NOT EXISTS `feedbacks` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `nome` VARCHAR(100) NOT NULL,
     `pedido_id` INT NOT NULL,
     `nota` TINYINT UNSIGNED NOT NULL CHECK (`nota` BETWEEN 1 AND 5),
     `comentario` TEXT NULL,
