@@ -44,12 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 exit;
             } else {
+               // estilizar a mensagem de erro para que fique visível no front-end
                 $erro = "E-mail ou senha inválidos, ou usuário inativo.";
             }
         } else {
             $erro = "Por favor, preencha todos os campos.";
         }
-    } 
+    }
+    //estilizar a parte de recuperação de senha para que fique visível no front-end 
     elseif ($acao === 'recuperar') {
         $email_recuperacao = trim($_POST['email_recuperacao'] ?? '');
 
@@ -58,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$email_recuperacao]);
             $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $mensagem_recuperacao = "Se o e-mail estiver cadastrado, um link de redefinição foi enviado para sua caixa de entrada.";
+            // estilizar a mensagem de recuperação para que fique visível no front-end
+            $mensagem_recuperacao = "Caso o e-mail informado esteja cadastrado, você receberá as instruções de redefinição em instantes.";
 
             if ($funcionario) {
                 $token_reset = bin2hex(random_bytes(32));
