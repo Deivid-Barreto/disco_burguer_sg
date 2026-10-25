@@ -156,7 +156,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $obsFormulario = $_POST['observacao'] ?? '';
             $novaObservacao = trim("Lote excluído: " . $numLote . ". " . $obsFormulario);
 
-            // Tenta desvincular ou registrar movimentação desvinculada caso haja FK estrita
             $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (NULL, ?, ?, 0, ?)");
             $stmtMov->execute([$funcionario_id, $_POST['tipo_movimentacao'], $novaObservacao]);
 
@@ -177,6 +176,9 @@ $estoques = $pdo->query("SELECT * FROM estoque ORDER BY nome ASC")->fetchAll(PDO
 $lotes_raw = $pdo->query("SELECT * FROM lotes_estoque ORDER BY data_validade ASC")->fetchAll(PDO::FETCH_ASSOC);
 $fornecedores = $pdo->query("SELECT id, nome_razao_social, cnpj_cpf FROM fornecedores WHERE ativo = 1 ORDER BY nome_razao_social ASC")->fetchAll(PDO::FETCH_ASSOC);
 
+// Consulta para o histórico de movimentações de estoque
+$movimentacoes_estoque = $pdo->query("SELECT m.*, l.numero_lote, e.nome as nome_insumo FROM movimentacoes_estoque m LEFT JOIN lotes_estoque l ON m.lote_estoque_id = l.id LEFT JOIN estoque e ON l.estoque_id = e.id ORDER BY m.id DESC")->fetchAll(PDO::FETCH_ASSOC);
+
 $lotes_agrupados = [];
 foreach($lotes_raw as $l) {
     $lotes_agrupados[$l['estoque_id']][] = $l;
@@ -185,9 +187,9 @@ $hoje = date('Y-m-d');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
- <meta charset="UTF-8">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -200,72 +202,138 @@ $hoje = date('Y-m-d');
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/financeiro.css">
 
-    <meta charset="UTF-8">
-    <title>Estoque e Lotes</title>
+    <title>Controle de Estoque e Movimentações</title>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .tab-content.ativo {
+            display: block;
+        }
+        .nav-botoes {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .nav-botoes button {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+        .nav-botoes button.ativo {
+            font-weight: bold;
+            background-color: #e0e0e0;
+        }
+        .topo-secao {
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
 
     <?php include __DIR__ . "/../../includes/painel.php"; ?>
-
     <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
     <main class="conteudo">
-    <div id="container-estoque">
-        <?php foreach($estoques as $item): ?>
-            <?php $eh_rev = isset($item['eh_revenda']) ? $item['eh_revenda'] : 0; ?>
-            <div id="estoque-<?= $item['id'] ?>">
-                
-                <div>
-                    <span id="cabecalho-estoque-<?= $item['id'] ?>">
-                        <b><?= htmlspecialchars($item['nome']) ?></b> (Cód: <?= htmlspecialchars($item['codigo']) ?> | Min: <?= $item['estoque_minimo'] ?><?= htmlspecialchars($item['unidade_medida']) ?>)
-                    </span>
-                    <button onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['nome'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['codigo'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR INSUMO</button>
-                    <button onclick="deletarEstoque(<?= $item['id'] ?>)">EXCLUIR INSUMO</button>
-                </div>
-                
-                <div id="lista-lotes-<?= $item['id'] ?>">
-                    
-                    <?php if(isset($lotes_agrupados[$item['id']])): ?>
-                        <?php foreach($lotes_agrupados[$item['id']] as $lote): ?>
-                            
-                            <?php 
-                                $avisoValidade = '';
-                                if ($lote['data_validade'] < $hoje) {
-                                    $avisoValidade = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
-                                } elseif ($lote['data_validade'] === $hoje) {
-                                    $avisoValidade = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
-                                }
-                            ?>
-                            <div id="lote-<?= $lote['id'] ?>">
-                                <div id="info-lote-<?= $lote['id'] ?>">
-                                    Lote: <b><?= htmlspecialchars($lote['numero_lote']) ?></b> | 
-                                    Val: <?= date('d/m/Y', strtotime($lote['data_validade'])) ?><?= $avisoValidade ?> | 
-                                    Qtd: <?= $lote['quantidade_estoque'] ?><?= htmlspecialchars($item['unidade_medida']) ?>
-                                </div>
-                                <div>
-                                    <button onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= addslashes(htmlspecialchars($lote['numero_lote'], ENT_QUOTES)) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">EDITAR LOTE</button>
-                                    <button onclick="deletarLote(<?= $lote['id'] ?>)">EXCLUIR LOTE</button>
-                                </div>
-                            </div>
-                            
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p id="sem-lotes-<?= $item['id'] ?>">Nenhum lote cadastrado.</p>
-                    <?php endif; ?>
+        <h1>Controle de Estoque e Lotes</h1>
 
-                    <div id="container-btn-<?= $item['id'] ?>">
-                        <button onclick="abrirModalLote(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">ADICIONAR NOVO LOTE</button>
-                    </div>
+        <!-- Botões de navegação no começo -->
+        <div class="nav-botoes">
+            <button type="button" id="btnTabEstoque" class="ativo" onclick="mudarAba('estoque')">Gestão de Estoque</button>
+            <button type="button" id="btnTabMovimentacoes" onclick="mudarAba('movimentacoes')">Histórico de Movimentações</button>
+        </div>
 
-                </div>
+        <!-- Seção de Gerenciar Estoque -->
+        <div id="secaoEstoque" class="tab-content ativo">
+            <div class="topo-secao">
+                <button onclick="document.getElementById('modalEstoque').showModal()">
+                    CADASTRAR NOVO ITEM
+                </button>
             </div>
-        <?php endforeach; ?>
-    </div>
 
-    <button onclick="document.getElementById('modalEstoque').showModal()">
-        ADICIONAR NOVO INSUMO
-    </button>
-        </main>
+            <div id="container-estoque">
+                <?php foreach($estoques as $item): ?>
+                    <?php $eh_rev = isset($item['eh_revenda']) ? $item['eh_revenda'] : 0; ?>
+                    <div id="estoque-<?= $item['id'] ?>">
+                        
+                        <div>
+                            <span id="cabecalho-estoque-<?= $item['id'] ?>">
+                                <b><?= htmlspecialchars($item['nome']) ?></b> (Cód: <?= htmlspecialchars($item['codigo']) ?> | Min: <?= $item['estoque_minimo'] ?><?= htmlspecialchars($item['unidade_medida']) ?>)
+                            </span>
+                            <button onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['nome'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['codigo'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR</button>
+                            <button onclick="deletarEstoque(<?= $item['id'] ?>)">EXCLUIR</button>
+                        </div>
+                        
+                        <div id="lista-lotes-<?= $item['id'] ?>">
+                            
+                            <?php if(isset($lotes_agrupados[$item['id']])): ?>
+                                <?php foreach($lotes_agrupados[$item['id']] as $lote): ?>
+                                    
+                                    <?php 
+                                        $avisoValidade = '';
+                                        if ($lote['data_validade'] < $hoje) {
+                                            $avisoValidade = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
+                                        } elseif ($lote['data_validade'] === $hoje) {
+                                            $avisoValidade = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
+                                        }
+                                    ?>
+                                    <div id="lote-<?= $lote['id'] ?>">
+                                        <div id="info-lote-<?= $lote['id'] ?>">
+                                            Lote: <b><?= htmlspecialchars($lote['numero_lote']) ?></b> | 
+                                            Validade: <?= date('d/m/Y', strtotime($lote['data_validade'])) ?><?= $avisoValidade ?> | 
+                                            Quantidade: <?= $lote['quantidade_estoque'] ?><?= htmlspecialchars($item['unidade_medida']) ?>
+                                        </div>
+                                        <div>
+                                            <button onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= addslashes(htmlspecialchars($lote['numero_lote'], ENT_QUOTES)) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">EDITAR</button>
+                                            <button onclick="deletarLote(<?= $lote['id'] ?>)">EXCLUIR</button>
+                                        </div>
+                                    </div>
+                                    
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p id="sem-lotes-<?= $item['id'] ?>">Nenhum lote cadastrado.</p>
+                            <?php endif; ?>
+
+                            <div id="container-btn-<?= $item['id'] ?>">
+                                <button onclick="abrirModalLote(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">ADICIONAR LOTE</button>
+                            </div>
+
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <!-- Seção de Histórico de Movimentações -->
+        <div id="secaoMovimentacoes" class="tab-content">
+            <h2>Histórico Geral de Movimentações</h2>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Item / Produto</th>
+                        <th>Número do Lote</th>
+                        <th>Tipo de Movimentação</th>
+                        <th>Quantidade</th>
+                        <th>Observações</th>
+                        <th>Data e Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($movimentacoes_estoque as $mov): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($mov['nome_insumo'] ?? 'Item Desvinculado') ?></td>
+                        <td><?= htmlspecialchars($mov['numero_lote'] ?? '-') ?></td>
+                        <td><?= htmlspecialchars(ucfirst($mov['tipo_movimentacao'])) ?></td>
+                        <td><?= htmlspecialchars($mov['quantidade']) ?></td>
+                        <td><?= htmlspecialchars($mov['observacao'] ?? '-') ?></td>
+                        <td><?= isset($mov['data_movimentacao']) ? date('d/m/Y H:i', strtotime($mov['data_movimentacao'])) : '-' ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
     <dialog id="modalEstoque">
         <h3>Cadastrar Insumo ou Item de Revenda</h3>
         <form id="formEstoque" onsubmit="salvarEstoque(event)">
@@ -294,12 +362,12 @@ $hoje = date('Y-m-d');
             </div>
             <div>
                 <label>
-                    <input type="checkbox" name="eh_revenda" value="1">Revenda
+                    <input type="checkbox" name="eh_revenda" value="1">Item para Revenda
                 </label>
             </div>
             <div>
                 <button type="button" onclick="document.getElementById('modalEstoque').close()">Cancelar</button>
-                <button type="submit">Salvar</button>
+                <button type="submit">Salvar Registro</button>
             </div>
         </form>
     </dialog>
@@ -332,12 +400,12 @@ $hoje = date('Y-m-d');
             </div>
             <div>
                 <label>
-                    <input type="checkbox" name="eh_revenda" id="edit_revenda" value="1">Revenda
+                    <input type="checkbox" name="eh_revenda" id="edit_revenda" value="1">Item para Revenda
                 </label>
             </div>
             <div>
                 <button type="button" onclick="document.getElementById('modalEditEstoque').close()">Cancelar</button>
-                <button type="button" onclick="pedirConfirmacaoEditarEstoque()">Atualizar Insumo</button>
+                <button type="button" onclick="pedirConfirmacaoEditarEstoque()">Salvar Alterações</button>
             </div>
         </form>
     </dialog>
@@ -351,7 +419,7 @@ $hoje = date('Y-m-d');
             <input type="hidden" name="unidade_medida" id="input_lote_unidade">
             
             <div>
-                <label>Nº do Lote:</label>
+                <label>Número do Lote:</label>
                 <input type="text" name="numero_lote" required>
             </div>
             <div>
@@ -372,7 +440,7 @@ $hoje = date('Y-m-d');
                 <input type="number" step="0.01" name="quantidade" required>
             </div>
             <div>
-                <label>Preço de Custo:</label>
+                <label>Preço de Custo Unitário:</label>
                 <input type="number" step="0.01" name="preco_custo" required>
             </div>
 
@@ -380,12 +448,12 @@ $hoje = date('Y-m-d');
             <h4>Informações da Movimentação</h4>
             <div>
                 <label>Observação (Opcional):</label>
-                <input type="text" name="observacao" placeholder="Ex: Recebido NF 1234">
+                <input type="text" name="observacao" placeholder="Ex: Recebido conforme NF 1234">
             </div>
 
             <div>
                 <button type="button" onclick="document.getElementById('modalLote').close()">Cancelar</button>
-                <button type="submit">Adicionar Lote</button>
+                <button type="submit">Cadastrar Lote</button>
             </div>
         </form>
     </dialog>
@@ -399,7 +467,7 @@ $hoje = date('Y-m-d');
             <input type="hidden" name="unidade_medida" id="edit_lote_unidade">
             
             <div>
-                <label>Nº do Lote:</label>
+                <label>Número do Lote:</label>
                 <input type="text" name="numero_lote" id="edit_num_lote" required>
             </div>
             <div>
@@ -427,21 +495,21 @@ $hoje = date('Y-m-d');
             <hr>
             <h4>Informações da Movimentação</h4>
             <div>
-                <label>Motivo da Edição:</label>
+                <label>Motivo da Alteração:</label>
                 <select name="tipo_movimentacao" required>
-                    <option value="ajuste">Ajuste (Correção manual)</option>
+                    <option value="ajuste">Ajuste de Estoque (Correção)</option>
                     <option value="perda_validade">Perda por Validade</option>
-                    <option value="descarte">Descarte</option>
+                    <option value="descarte">Descarte Operacional</option>
                 </select>
             </div>
             <div>
                 <label>Observação (Opcional):</label>
-                <input type="text" name="observacao" placeholder="Ex: Contagem de fim de mês">
+                <input type="text" name="observacao" placeholder="Ex: Recalculo de inventário">
             </div>
 
             <div>
                 <button type="button" onclick="document.getElementById('modalEditLote').close()">Cancelar</button>
-                <button type="button" onclick="pedirConfirmacaoEditarLote()">Atualizar Lote</button>
+                <button type="button" onclick="pedirConfirmacaoEditarLote()">Salvar Alterações</button>
             </div>
         </form>
     </dialog>
@@ -459,12 +527,12 @@ $hoje = date('Y-m-d');
                 <select name="tipo_movimentacao" required>
                     <option value="descarte">Descarte</option>
                     <option value="perda_validade">Perda por Validade</option>
-                    <option value="ajuste">Ajuste (Erro de Cadastro)</option>
+                    <option value="ajuste">Ajuste por Erro de Cadastro</option>
                 </select>
             </div>
             <div>
                 <label>Observação (Opcional):</label>
-                <input type="text" name="observacao" placeholder="Ex: Cadastro duplicado">
+                <input type="text" name="observacao" placeholder="Ex: Lote cadastrado duplicado">
             </div>
             
             <div>
@@ -477,7 +545,7 @@ $hoje = date('Y-m-d');
     <dialog id="modalDelEstoque">
         <h3>Confirmar Exclusão de Insumo</h3>
         <p>
-            <strong>Atenção:</strong> Excluir este insumo apagará <b>todos</b> os lotes cadastrados nele! Deseja continuar?
+            <strong>Atenção:</strong> Excluir este item removerá permanentemente <b>todos</b> os lotes associados a ele. Deseja prosseguir?
         </p>
         <form id="formDelEstoque" onsubmit="confirmarDeletarEstoque(event)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
@@ -486,7 +554,7 @@ $hoje = date('Y-m-d');
             
             <div>
                 <button type="button" onclick="document.getElementById('modalDelEstoque').close()">Cancelar</button>
-                <button type="submit">Sim, Excluir Tudo</button>
+                <button type="submit">Sim, Excluir</button>
             </div>
         </form>
     </dialog>
@@ -500,6 +568,27 @@ $hoje = date('Y-m-d');
 
     <script>
         let callbackConfirmacao = null;
+
+        function mudarAba(aba) {
+            const secaoEstoque = document.getElementById('secaoEstoque');
+            const secaoMov = document.getElementById('secaoMovimentacoes');
+            
+            const btnEstoque = document.getElementById('btnTabEstoque');
+            const btnMov = document.getElementById('btnTabMovimentacoes');
+
+            secaoEstoque.classList.remove('ativo');
+            secaoMov.classList.remove('ativo');
+            btnEstoque.classList.remove('ativo');
+            btnMov.classList.remove('ativo');
+
+            if (aba === 'estoque') {
+                secaoEstoque.classList.add('ativo');
+                btnEstoque.classList.add('ativo');
+            } else if (aba === 'movimentacoes') {
+                secaoMov.classList.add('ativo');
+                btnMov.classList.add('ativo');
+            }
+        }
 
         function dispararConfirmacao(mensagem, callback) {
             document.getElementById('mensagemConfirmacao').innerText = mensagem;
@@ -621,7 +710,7 @@ $hoje = date('Y-m-d');
             if (resp.trim() === 'ok') {
                 document.getElementById('estoque-' + id).remove();
             } else {
-                alert('Erro ao excluir. O item pode estar atrelado a outros registros além de lotes.');
+                alert('Erro ao excluir. O item pode estar atrelado a outros registros.');
             }
             document.getElementById('modalDelEstoque').close();
         }
