@@ -237,7 +237,9 @@ try {
  
     <!-- painel.css ANTES do css da página -->
     <link rel="stylesheet" href="../../css/painel.css">
+     <link rel="stylesheet" href="../../css/modal.css">
     <link rel="stylesheet" href="../../css/sistema_web/produto.css">
+
  
     <title>Gestão de Produtos</title>
  
@@ -276,7 +278,7 @@ try {
     
         <span class="produto-descricao"><?= htmlspecialchars($p['descricao']) ?></span>
         <span class="produto-preco">R$ <?= number_format($p['preco_venda'], 2, ',', '.') ?></span>
-    </button>
+        </button>
 
 
         <?php endforeach; ?>
@@ -298,7 +300,7 @@ try {
        
         <span class="produto-descricao"><?= htmlspecialchars($p['descricao']) ?></span>
         <div class="d-flex align-items-center mt-2 gap-5">
-           <span class="produto-categoria"><?= htmlspecialchars($p['categorias']) ?></span>
+        <span class="produto-categoria"><?= htmlspecialchars($p['categorias']) ?></span>
         <span class="produto-preco">R$ <?= number_format($p['preco_venda'], 2, ',', '.') ?></span>
         </div>
     </button>
@@ -311,11 +313,11 @@ try {
         <?php endif; ?>
  
     </div>
-    </div>
+    
     <!-- fim do conteudo (os </div> soltos das linhas 51 e 60-63 foram removidos) -->
  
  
-<dialog id="modalCadastro">
+<dialog id="modalCadastro" class="ModalProdutoCadastrar d-flex flex-column align-items-center justify-content-center">
     <h1 id="modalTituloCadastro">Cadastrar Novo Produto</h1>
  
     <form id="formProduto" method="POST" action="" enctype="multipart/form-data" onsubmit="confirmarSalvarProduto(event)">
@@ -440,9 +442,11 @@ try {
             <input type="checkbox" id="visivel" name="visivel" value="1" checked>
             <label for="visivel">Visível no Cardápio</label>
         </div>
- 
+        
+        <div class="btn-dialog-cadastrar">
         <button type="submit" id="btnSubmitModal">Cadastrar</button>
         <button type="button" onclick="document.getElementById('modalCadastro').close()">Fechar</button>
+        </div>
     </form>
 </dialog>
  
@@ -472,7 +476,7 @@ try {
     <button type="button" id="btnSimConfirmacao">Sim</button>
     <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
 </dialog>
-
+</div>
 <script>
 let produtoAtualData = null;
 let callbackConfirmacao = null;

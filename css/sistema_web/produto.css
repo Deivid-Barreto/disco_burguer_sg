@@ -1,9 +1,7 @@
-body{
-
-}
 
 
-.menu-cardapio a{
+.btn-filtro-cat{
+  background-color: var(--fundo);
     font-size: 16px;
     width: 20vh;
     padding: 10px 2px;
@@ -15,7 +13,7 @@ body{
 }
 
 
-.menu-cardapio a:hover{
+.btn-filtro-cat:hover{
     transform: scale(1.03) translateZ(0);
     background: rgb(253, 4, 124);
     transition: background 0.6s ease, transform 0.6s ease;
@@ -27,24 +25,18 @@ body{
 .btn-cardapio{
 
 background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
-  
-  /* Tipografia e cor do texto */
-  color: #ffffff;
-  text-align: center;
-    font-size: 16px;
-    width: 18vh;
-    padding: 10px 2px;
-    border-radius: 5px;
-  border: none;
-  border-radius: 5px; /* Cantos arredondados */
-  
-  
-  /* Alinhamento de itens */
-  
-  
+color: #ffffff;
+text-align: center;
+font-size: 16px;
+width: 18vh;
+padding: 10px 2px;
+border-radius: 5px;
+border: none;
+border-radius: 5px; /* Cantos arredondados */
+  /* Alinhamento de itens 
   /* Suavização para o efeito de hover */
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 46, 99, 0.3);
+transition: all 0.3s ease;
+ 
 }
 
 .btn-cardapio:hover {
@@ -104,7 +96,7 @@ background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
 
 
 .card-produto .produto-categoria{
-    font-size: 14px;
+  font-size: 14px;
   font-weight: 600;
   color: #b060ff; /* Cor do texto em roxo/magenta brilhante */
   background-color: rgba(138, 43, 226, 0.08); /* Fundo escuro com um tom translúcido roxo */
