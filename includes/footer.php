@@ -30,7 +30,7 @@
 
         <div class="menu-footer d-flex flex-column align-items-start">
 
-          <a href="../../index.html">Início</a>
+          <a href="../../index.php">Início</a>
 
           <a href="cardapio.php">Cardápio</a>
 
