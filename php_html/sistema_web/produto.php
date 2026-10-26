@@ -282,7 +282,7 @@ try {
 
         <?php endforeach; ?>
         <?php if(empty($produtosCompletos)): ?>
-            <p></p>
+            <p>Nenhum Produto Completo</p>
         <?php endif; ?>
 
         

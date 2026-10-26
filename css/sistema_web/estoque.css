@@ -1,4 +1,52 @@
-body{
+.tab-content {
+            display: none;
+        }
+        .tab-content.ativo {
+            display: block;
+        }
+       
+       .nav-botoes .btn-filtro-cat {
 
-    background-color: white;
+    background-color: var(--fundo);
+    font-size: 16px;
+    width: 22vh;
+    padding: 10px 2px;
+    border-radius: 5px;
+    text-align: center;
+    border: 2px solid var(--borda);
+    color: white;
+    text-decoration: none;
+       }
+        
+.nav-botoes .btn-filtro-cat:hover{
+
+    transform: scale(1.03) translateZ(0);
+    background: rgb(253, 4, 124);
+    transition: background 0.6s ease, transform 0.6s ease;
+}
+
+
+
+.btn-cadastrar-estoque{
+
+    background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
+color: #ffffff;
+text-align: center;
+font-size: 16px;
+width: 20vh;
+padding: 10px 2px;
+border-radius: 5px;
+border: none;
+border-radius: 5px; /* Cantos arredondados */
+  /* Alinhamento de itens 
+  /* Suavização para o efeito de hover */
+transition: all 0.3s ease;
+}
+
+
+.btn-cadastrar-estoque:hover{
+
+    transform: scale(1.03) translateZ(0);
+    box-shadow:linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
+     transition: background 0.6s ease, transform 0.6s ease;
 }

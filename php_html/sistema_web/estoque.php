@@ -200,56 +200,34 @@ $hoje = date('Y-m-d');
 
     <!-- painel.css ANTES do css da página -->
     <link rel="stylesheet" href="../../css/painel.css">
-    <link rel="stylesheet" href="../../css/financeiro.css">
+    <link rel="stylesheet" href="../../css/sistema_web/estoque.css">
 
     <title>Controle de Estoque e Movimentações</title>
-    <style>
-        .tab-content {
-            display: none;
-        }
-        .tab-content.ativo {
-            display: block;
-        }
-        .nav-botoes {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .nav-botoes button {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: normal;
-        }
-        .nav-botoes button.ativo {
-            font-weight: bold;
-            background-color: #e0e0e0;
-        }
-        .topo-secao {
-            margin-bottom: 15px;
-        }
-    </style>
+    
 </head>
 <body>
 
     <?php include __DIR__ . "/../../includes/painel.php"; ?>
     <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
-    <main class="conteudo">
-        <h1>Controle de Estoque e Lotes</h1>
+    <main class="conteudo container-fluid">
+
 
         <!-- Botões de navegação no começo -->
-        <div class="nav-botoes">
-            <button type="button" id="btnTabEstoque" class="ativo" onclick="mudarAba('estoque')">Gestão de Estoque</button>
-            <button type="button" id="btnTabMovimentacoes" onclick="mudarAba('movimentacoes')">Histórico de Movimentações</button>
+        <div class="nav-botoes d-flex mt-4 gap-3">
+            <button type="button" id="btnTabEstoque" class="ativo btn-filtro-cat" onclick="mudarAba('estoque')">Gestão de Estoque</button>
+            <button type="button" id="btnTabMovimentacoes" class="btn-filtro-cat" onclick="mudarAba('movimentacoes')">Histórico de Movimentações</button>
+        
+            <button class="ms-auto btn-cadastrar-estoque" onclick="document.getElementById('modalEstoque').showModal()">
+                    +CADASTRAR NOVO ITEM
+                </button>
         </div>
-
         <!-- Seção de Gerenciar Estoque -->
         <div id="secaoEstoque" class="tab-content ativo">
-            <div class="topo-secao">
-                <button onclick="document.getElementById('modalEstoque').showModal()">
-                    CADASTRAR NOVO ITEM
-                </button>
-            </div>
+       
+                
+  
+       
 
             <div id="container-estoque">
                 <?php foreach($estoques as $item): ?>
