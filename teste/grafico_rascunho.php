@@ -1,246 +1,364 @@
 <?php
-// Configurações de Conexão com o Banco de Dados
-$host = 'localhost';
-$dbname = 'discoburguer';$username = 'root'; // Ajuste se necessário
-$password = '';     // Ajuste se necessário
+$host = '127.0.0.1';
+$dbname = 'discoburguer';
+$username = 'root';
+$password = '';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username,$password, [
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
 
-    // Consulta unindo fluxo_caixa com categorias_financeiras, funcionarios e pedidos
-    $sql = "SELECT 
-                fc.id,
-                fc.pedido_id,
-                fc.descricao,
-                fc.valor,
-                fc.data_movimentacao,
-                COALESCE(cf.nome, 'Sem Categoria') AS categoria_nome,
-                COALESCE(cf.tipo, 'entrada') AS categoria_tipo,
-                COALESCE(f.nome, 'Não informado') AS funcionario_nome
-            FROM fluxo_caixa fc
-            LEFT JOIN categorias_financeiras cf ON fc.categoria_id = cf.id
-            LEFT JOIN funcionarios f ON fc.funcionario_id = f.id
-            ORDER BY fc.data_movimentacao ASC";
+    $sqlFaturamento = "SELECT 
+                        DATE(data_pedido) AS data_dia,
+                        SUM(valor_total) AS total_faturamento
+                       FROM pedidos
+                       WHERE status != 'cancelado'
+                       GROUP BY DATE(data_pedido)
+                       ORDER BY data_dia ASC";
+    $faturamentoData = $pdo->query($sqlFaturamento)->fetchAll();
 
-    $stmt = $pdo->query($sql);
-    $movimentacoes =$stmt->fetchAll();
+    $sqlFinanceiro = "SELECT 
+                        fc.id,
+                        fc.valor,
+                        fc.data_movimentacao,
+                        COALESCE(cf.tipo, 'saida') AS categoria_tipo,
+                        COALESCE(cf.nome, 'Geral') AS categoria_nome
+                      FROM fluxo_caixa fc
+                      LEFT JOIN categorias_financeiras cf ON fc.categoria_id = cf.id
+                      ORDER BY fc.data_movimentacao ASC";
+    $fluxoData = $pdo->query($sqlFinanceiro)->fetchAll();
 
-    // Processa os dados para calcular o Saldo Acumulado
-    $dadosGrafico = [];$saldoAcumulado = 0;
+    $listaInsumos = $pdo->query("SELECT id, nome FROM estoque ORDER BY nome ASC")->fetchAll();
+    $sqlEstoque = "SELECT 
+                    e.id AS insumo_id,
+                    e.nome AS insumo_nome,
+                    me.tipo_movimentacao,
+                    SUM(me.quantidade) AS quantidade_total,
+                    DATE(me.data_movimentacao) AS data_mov
+                   FROM movimentacoes_estoque me
+                   LEFT JOIN lotes_estoque le ON me.lote_estoque_id = le.id
+                   LEFT JOIN estoque e ON le.estoque_id = e.id
+                   GROUP BY e.id, me.tipo_movimentacao, DATE(me.data_movimentacao)
+                   ORDER BY data_mov ASC";
+    $estoqueData = $pdo->query($sqlEstoque)->fetchAll();
 
-    foreach ($movimentacoes as$mov) {
-        $valor = (float)$mov['valor'];
-        $tipo = strtolower($mov['categoria_tipo']);
-
-        // Soma entradas e subtrai saídas
-        if ($tipo === 'entrada') {
-            $saldoAcumulado +=$valor;
-        } else {
-            $saldoAcumulado -=$valor;
-        }
-
-        $dadosGrafico[] = [
-            'id' => (int) $mov['id'],
-            'pedido_id' => $mov['pedido_id'] ? (int)$mov['pedido_id'] : 'N/A',
-            'categoria' => $mov['categoria_nome'],
-            'tipo' => strtoupper($tipo),
-            'funcionario' => $mov['funcionario_nome'],
-            'descricao' => $mov['descricao'] ?: 'Sem descrição',
-            'valor' => $valor,
-            'saldo_acumulado' => $saldoAcumulado,
-            'data_movimentacao' => $mov['data_movimentacao']
-        ];
-    }
+    $listaProdutos = $pdo->query("SELECT id, nome FROM produtos WHERE ativo = 1 ORDER BY nome ASC")->fetchAll();
+    $sqlProdutos = "SELECT 
+                        p.id AS produto_id,
+                        p.nome AS produto_nome,
+                        SUM(ip.quantidade) AS qtd_vendida,
+                        DATE(ped.data_pedido) AS data_venda
+                    FROM itens_pedidos ip
+                    INNER JOIN produtos p ON ip.produto_id = p.id
+                    INNER JOIN pedidos ped ON ip.pedido_id = ped.id
+                    WHERE ped.status != 'cancelado'
+                    GROUP BY p.id, DATE(ped.data_pedido)
+                    ORDER BY data_venda ASC";
+    $vendasProdutos = $pdo->query($sqlProdutos)->fetchAll();
 
 } catch (PDOException $e) {
-    die("Erro ao conectar com o banco de dados: " . $e->getMessage());
+    die("Erro ao conectar no banco de dados: " . $e->getMessage());
 }
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR" class="h-full bg-[#090314] text-purple-100">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fluxo de Caixa - Disco Burguer</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- D3.js & Observable Plot CDN -->
+  <title>Dashboard Integrado — Disco Burguer</title>
   <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
-
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap');
     
-    body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at 50% 10%, #1e0938 0%, #090314 100%);
-    }
-
-    .plot-container svg {
-      background: transparent !important;
-      overflow: visible;
-      width: 100% !important;
-      height: auto !important;
-    }
-
-    .plot-container svg [aria-label="y-axis tick"] text,
-    .plot-container svg [aria-label="x-axis tick"] text,
-    .plot-container svg [aria-label="y-axis label"] text {
-      fill: #c084fc !important;
-      font-family: 'JetBrains Mono', monospace !important;
-      font-size: 11px !important;
-    }
-
-    .plot-container svg [aria-label="y-grid"] line,
-    .plot-container svg [aria-label="x-grid"] line {
-      stroke: #3b0764 !important;
-      stroke-opacity: 0.5 !important;
-      stroke-dasharray: 2 4 !important;
-    }
-
-    .plot-container svg [aria-label="y-axis tick"] line,
-    .plot-container svg [aria-label="x-axis tick"] line {
-      stroke: #7e22ce !important;
-    }
-
-    .plot-container svg [aria-label="tip"] rect {
-      fill: #180828 !important;
-      stroke: #a855f7 !important;
-      stroke-width: 1px !important;
-      rx: 6px !important;
-    }
-
-    .plot-container svg [aria-label="tip"] text {
-      fill: #f3e8ff !important;
-      font-family: 'Inter', sans-serif !important;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #090314; color: #f3e8ff; padding: 24px; min-height: 100vh; }
+    
+    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+    
+    header { background: rgba(20,6,40,0.9); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 20px; }
+    header h1 { font-size: 20px; color: #f3e8ff; }
+    
+    .card { background: rgba(20,6,40,0.9); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 20px; }
+    .card h2 { font-size: 16px; color: #e9d5ff; margin-bottom: 12px; }
+    
+    .filter-bar { margin-bottom: 15px; display: flex; gap: 12px; align-items: center; font-size: 13px; color: #c084fc; flex-wrap: wrap; }
+    input[type="date"], select { background: #180828; border: 1px solid #a855f7; color: #fff; padding: 6px 10px; border-radius: 6px; font-family: 'Inter', sans-serif; }
+    
+    .axis path, .axis line { stroke: rgba(168, 85, 247, 0.3); }
+    .axis text { fill: #c084fc; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .grid line { stroke: rgba(59, 7, 100, 0.6); stroke-dasharray: 3 3; }
+    
+    .tooltip { position: absolute; padding: 8px 12px; background: #180828; border: 1px solid #a855f7; border-radius: 6px; color: #f3e8ff; font-size: 12px; pointer-events: none; opacity: 0; z-index: 10; }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-8">
+<body>
 
-  <!-- Chart Card Container -->
-  <main class="w-full max-w-4xl bg-[#140628]/80 backdrop-blur-xl border border-purple-800/40 rounded-2xl p-6 sm:p-10 shadow-[0_0_60px_-15px_rgba(168,85,247,0.2)]">
-    
-    <!-- Card Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-purple-900/40 pb-5 mb-6">
-      <div>
-        <div class="flex items-center space-x-2.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_12px_#c084fc] animate-pulse"></span>
-          <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-purple-100">Evolução do Fluxo de Caixa</h1>
-        </div>
-        <p class="text-xs sm:text-sm text-purple-300/60 mt-1">Saldo Acumulado por Período • Disco Burguer</p>
+  <div class="container">
+    <header>
+      <h1>Dashboard Operacional e Financeiro — Disco Burguer</h1>
+    </header>
+
+    <div class="card">
+      <h2>1. Módulo Financeiro (Faturamento & Saldo Acumulado)</h2>
+      <div class="filter-bar">
+        <label>Modo de Visão:</label>
+        <select id="fin-modo">
+          <option value="faturamento">Faturamento (Vendas por Período)</option>
+          <option value="financeiro">Financeiro (Saldo Acumulado Fluxo de Caixa)</option>
+        </select>
+
+        <label>De:</label><input type="date" id="fin-inicio">
+        <label>Até:</label><input type="date" id="fin-fim">
+        
+        <label>Agrupamento:</label>
+        <select id="fin-agrupamento">
+          <option value="dia">Diário</option>
+          <option value="semana">Semanal</option>
+          <option value="mes">Mensal</option>
+          <option value="ano">Anual</option>
+        </select>
       </div>
-      <div class="text-xs font-mono text-purple-400/80 bg-purple-950/80 border border-purple-800/40 px-3 py-1.5 rounded-lg w-fit">
-        Banco: MySQL (discoburguer)
-      </div>
+      <div id="chart-financeiro-combo"></div>
     </div>
 
-    <!-- Observable Plot Render Target -->
-    <div id="chart" class="plot-container w-full min-h-[400px] flex items-center justify-center"></div>
+    <div class="card">
+      <h2>2. Módulo Operacional (Estoque vs. Vendas por Produto)</h2>
+      <div class="filter-bar">
+        <label>Visão:</label>
+        <select id="op-modo">
+          <option value="estoque">Movimentação de Estoque (Insumos)</option>
+          <option value="produtos">Vendas de Produtos (Individual / Geral)</option>
+        </select>
 
-  </main>
+        <label for="op-item-select">Item:</label>
+        <select id="op-item-select"></select>
+
+        <label>De:</label><input type="date" id="op-inicio">
+        <label>Até:</label><input type="date" id="op-fim">
+      </div>
+      <div id="chart-operacional-combo"></div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
 
   <script>
-    // Injeção direta dos dados PHP convertidos para JSON
-    const fluxoDados = <?php echo json_encode($dadosGrafico); ?>;
+    const tooltip = d3.select("#tooltip");
 
-    // Converte as strings de data em objetos Date do JS
-    const dataset = fluxoDados.map(item => ({
-      ...item,
-      Date: new Date(item.data_movimentacao)
+    const rawFaturamento = <?php echo json_encode($faturamentoData); ?>;
+    const rawFluxo = <?php echo json_encode($fluxoData); ?>;
+    const rawEstoque = <?php echo json_encode($estoqueData); ?>;
+    const rawProdutos = <?php echo json_encode($vendasProdutos); ?>;
+    const listaInsumos = <?php echo json_encode($listaInsumos); ?>;
+    const listaProdutos = <?php echo json_encode($listaProdutos); ?>;
+
+    const faturamentoData = rawFaturamento.map(d => ({ data: new Date(d.data_dia + "T00:00:00"), total: parseFloat(d.total_faturamento) }));
+
+    let saldoAcumulado = 0;
+    const fluxoData = rawFluxo.map(d => {
+      const v = parseFloat(d.valor);
+      saldoAcumulado += (d.categoria_tipo === 'entrada') ? v : -v;
+      return { data: new Date(d.data_movimentacao), saldo: saldoAcumulado, categoria: d.categoria_nome, valor: v };
+    });
+
+    const estoqueData = rawEstoque.map(d => ({ 
+      insumoId: parseInt(d.insumo_id),
+      nome: d.insumo_nome, 
+      tipo: (d.tipo_movimentacao === 'entrada') ? 'Entrada' : 'Saída/Ajuste', 
+      qtd: parseFloat(d.quantidade_total),
+      data: new Date(d.data_mov + "T00:00:00")
     }));
 
-    function renderPlot() {
-      const chartContainer = document.getElementById("chart");
-      chartContainer.innerHTML = "";
+    const produtosData = rawProdutos.map(d => ({ 
+      produtoId: parseInt(d.produto_id), 
+      nome: d.produto_nome, 
+      qtd: parseFloat(d.qtd_vendida), 
+      data: new Date(d.data_venda + "T00:00:00") 
+    }));
 
-      if (dataset.length === 0) {
-        chartContainer.innerHTML = `<p class="text-purple-400 text-sm">Nenhuma movimentação encontrada no banco de dados.</p>`;
+    const allDates = [...faturamentoData.map(d => d.data), ...fluxoData.map(d => d.data), ...estoqueData.map(d => d.data), ...produtosData.map(d => d.data)];
+    if (allDates.length > 0) {
+      const minDate = d3.min(allDates).toISOString().split('T')[0];
+      const maxDate = d3.max(allDates).toISOString().split('T')[0];
+      
+      document.getElementById("fin-inicio").value = minDate;
+      document.getElementById("fin-fim").value = maxDate;
+      document.getElementById("op-inicio").value = minDate;
+      document.getElementById("op-fim").value = maxDate;
+    }
+
+    function renderFinanceiroCombo() {
+      const container = d3.select("#chart-financeiro-combo");
+      container.html("");
+
+      const modo = document.getElementById("fin-modo").value;
+      const inicio = new Date(document.getElementById("fin-inicio").value + "T00:00:00");
+      const fim = new Date(document.getElementById("fin-fim").value + "T23:59:59");
+      const agrupamento = document.getElementById("fin-agrupamento").value;
+
+      const sourceData = (modo === "faturamento") ? faturamentoData : fluxoData;
+      const filtered = sourceData.filter(d => d.data >= inicio && d.data <= fim);
+
+      if (filtered.length === 0) {
+        container.html("<p style='text-align:center; padding: 30px; color: #a855f7;'>Nenhum registro localizado para os filtros selecionados.</p>");
         return;
       }
 
-      // Renderiza o gráfico utilizando Observable Plot
-      const plot = Plot.plot({
-        width: chartContainer.clientWidth || 800,
-        height: 420,
-        padding: 40,
-        style: {
-          background: "transparent",
-          color: "#c084fc",
-          fontSize: "12px"
-        },
-        x: {
-          type: "time",
-          label: null,
-          grid: true
-        },
-        y: {
-          label: "↑ Saldo Acumulado (R$)",
-          grid: true
-        },
-        marks: [
-          // Linha de base y = 0
-          Plot.ruleY([0], { stroke: "#3b0764", strokeWidth: 1.5 }),
+      let aggregated = [];
+      if (agrupamento === "semana") {
+        const grouped = d3.groups(filtered, d => d3.timeWeek(d.data));
+        aggregated = grouped.map(([key, values]) => ({ data: key, total: d3.sum(values, v => modo === "faturamento" ? v.total : v.saldo) }));
+      } else if (agrupamento === "mes") {
+        const grouped = d3.groups(filtered, d => d3.timeMonth(d.data));
+        aggregated = grouped.map(([key, values]) => ({ data: key, total: d3.sum(values, v => modo === "faturamento" ? v.total : v.saldo) }));
+      } else if (agrupamento === "ano") {
+        const grouped = d3.groups(filtered, d => d3.timeYear(d.data));
+        aggregated = grouped.map(([key, values]) => ({ data: key, total: d3.sum(values, v => modo === "faturamento" ? v.total : v.saldo) }));
+      } else {
+        aggregated = filtered.map(d => ({ data: d.data, total: modo === "faturamento" ? d.total : d.saldo }));
+      }
 
-          // Área preenchida sob a curva do saldo
-          Plot.areaY(dataset, {
-            x: "Date",
-            y: "saldo_acumulado",
-            fill: "#a855f7",
-            fillOpacity: 0.12
-          }),
+      const margin = { top: 20, right: 30, bottom: 30, left: 70 }, width = 920 - margin.left - margin.right, height = 260 - margin.top - margin.bottom;
+      const svg = container.append("svg").attr("viewBox", `0 0 920 260`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-          // Linha principal do Saldo
-          Plot.lineY(dataset, {
-            x: "Date",
-            y: "saldo_acumulado",
-            stroke: "#a855f7",
-            strokeWidth: 2.5,
-            strokeLinejoin: "round",
-            strokeLinecap: "round"
-          }),
+      const x = d3.scaleTime().domain(d3.extent(aggregated, d => d.data)).range([0, width]);
+      const y = d3.scaleLinear().domain([d3.min(aggregated, d => d.total) < 0 ? d3.min(aggregated, d => d.total) * 1.1 : 0, d3.max(aggregated, d => d.total) * 1.15]).range([height, 0]);
 
-          // Pontos de cada movimentação
-          Plot.dot(dataset, {
-            x: "Date",
-            y: "saldo_acumulado",
-            fill: "#c084fc",
-            r: 4
-          }),
+      svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
 
-          // Tooltip interativo com as informações completas da tabela
-          Plot.tip(
-            dataset,
-            Plot.pointerX({
-              x: "Date",
-              y: "saldo_acumulado",
-              title: (d) => 
-                `ID Movimentação: #${d.id}\n` +
-                `Data: ${d3.timeFormat("%d/%m/%Y %H:%M")(d.Date)}\n` +
-                `Descrição: ${d.descricao}\n` +
-                `Tipo: ${d.tipo} (R$ ${d.valor.toFixed(2)})\n` +
-                `Categoria: ${d.categoria}\n` +
-                `Funcionário: ${d.funcionario}\n` +
-                `Pedido Associado: ${d.pedido_id !== 'N/A' ? '#' + d.pedido_id : 'Nenhum'}\n` +
-                `------------------------\n` +
-                `Saldo Acumulado: R$ ${d.saldo_acumulado.toFixed(2)}`,
-              fill: "#180828",
-              stroke: "#c084fc"
-            })
-          )
-        ]
-      });
+      let timeFormat = d3.timeFormat("%d/%m");
+      if (agrupamento === "mes") timeFormat = d3.timeFormat("%b/%Y");
+      if (agrupamento === "ano") timeFormat = d3.timeFormat("%Y");
 
-      chartContainer.appendChild(plot);
+      svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(6).tickFormat(timeFormat));
+      svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5).tickFormat(d => `R$ ${d.toFixed(0)}`));
+
+      const line = d3.line().x(d => x(d.data)).y(d => y(d.total)).curve(d3.curveMonotoneX);
+
+      svg.append("path").datum(aggregated).attr("fill", "none").attr("stroke", "#c084fc").attr("stroke-width", 2.5).attr("d", line);
+
+      svg.selectAll("dot").data(aggregated).enter().append("circle")
+        .attr("cx", d => x(d.data)).attr("cy", d => y(d.total)).attr("r", 4).attr("fill", "#a855f7")
+        .on("mouseover", (e, d) => tooltip.style("opacity", 1).html(`Período: ${timeFormat(d.data)}<br>Valor: R$ ${d.total.toFixed(2)}`))
+        .on("mousemove", e => tooltip.style("left", (e.pageX + 10) + "px").style("top", (e.pageY - 28) + "px"))
+        .on("mouseleave", () => tooltip.style("opacity", 0));
     }
 
-    window.addEventListener("DOMContentLoaded", renderPlot);
-    window.addEventListener("resize", renderPlot);
+    function updateOpSelectOptions() {
+      const modo = document.getElementById("op-modo").value;
+      const selectItem = document.getElementById("op-item-select");
+      selectItem.innerHTML = "";
+
+      if (modo === "estoque") {
+        selectItem.innerHTML = `<option value="todos">-- Todos os Insumos de Estoque --</option>`;
+        listaInsumos.forEach(item => {
+          selectItem.innerHTML += `<option value="${item.id}">${item.nome}</option>`;
+        });
+      } else {
+        selectItem.innerHTML = `<option value="todos">-- Todos os Produtos --</option>`;
+        listaProdutos.forEach(item => {
+          selectItem.innerHTML += `<option value="${item.id}">${item.nome}</option>`;
+        });
+      }
+    }
+
+    function renderOperacionalCombo() {
+      const container = d3.select("#chart-operacional-combo");
+      container.html("");
+
+      const modo = document.getElementById("op-modo").value;
+      const itemId = document.getElementById("op-item-select").value;
+      const inicio = new Date(document.getElementById("op-inicio").value + "T00:00:00");
+      const fim = new Date(document.getElementById("op-fim").value + "T23:59:59");
+
+      let filtered = (modo === "estoque") ? estoqueData : produtosData;
+      filtered = filtered.filter(d => d.data >= inicio && d.data <= fim);
+
+      if (itemId !== "todos") {
+        filtered = filtered.filter(d => (modo === "estoque" ? d.insumoId : d.produtoId) === parseInt(itemId));
+      }
+
+      if (filtered.length === 0) {
+        container.html("<p style='text-align:center; padding: 30px; color: #a855f7;'>Sem movimentações para os filtros aplicados.</p>");
+        return;
+      }
+
+      const margin = { top: 20, right: 30, bottom: 30, left: 60 }, width = 920 - margin.left - margin.right, height = 260 - margin.top - margin.bottom;
+      const svg = container.append("svg").attr("viewBox", `0 0 920 260`).append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+      if (modo === "estoque") {
+        const itens = [...new Set(filtered.map(d => d.nome))];
+        const x0 = d3.scaleBand().domain(itens).range([0, width]).padding(0.25);
+        const x1 = d3.scaleBand().domain(['Entrada', 'Saída/Ajuste']).range([0, x0.bandwidth()]).padding(0.05);
+        const y = d3.scaleLinear().domain([0, d3.max(filtered, d => d.qtd) * 1.15 || 10]).range([height, 0]);
+        const color = d3.scaleOrdinal().domain(['Entrada', 'Saída/Ajuste']).range(['#c084fc', '#581c87']);
+
+        svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x0));
+        svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5));
+
+        svg.append("g").selectAll("g").data(itens).enter().append("g").attr("transform", d => `translate(${x0(d)},0)`)
+          .selectAll("rect").data(p => filtered.filter(d => d.nome === p)).enter().append("rect")
+          .attr("x", d => x1(d.tipo)).attr("y", d => y(d.qtd)).attr("width", x1.bandwidth()).attr("height", d => height - y(d.qtd))
+          .attr("fill", d => color(d.tipo)).attr("rx", 3)
+          .on("mouseover", (e, d) => tooltip.style("opacity", 1).html(`Item: ${d.nome}<br>Tipo: ${d.tipo}<br>Quantidade: ${d.qtd}`))
+          .on("mousemove", e => tooltip.style("left", (e.pageX + 10) + "px").style("top", (e.pageY - 28) + "px"))
+          .on("mouseleave", () => tooltip.style("opacity", 0));
+      } else {
+        const x = d3.scaleTime().domain(d3.extent(filtered, d => d.data)).range([0, width]);
+        const y = d3.scaleLinear().domain([0, d3.max(filtered, d => d.qtd) * 1.2 || 10]).range([height, 0]);
+
+        svg.append("g").attr("class", "grid").call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+        svg.append("g").attr("class", "axis").attr("transform", `translate(0,${height})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%d/%m")));
+        svg.append("g").attr("class", "axis").call(d3.axisLeft(y).ticks(5));
+
+        const line = d3.line().x(d => x(d.data)).y(d => y(d.qtd));
+        const grouped = d3.groups(filtered, d => d.nome);
+        const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+        grouped.forEach(([nomeProduto, pontosData], index) => {
+          const corLinha = colorScale(index);
+
+          svg.append("path")
+            .datum(pontosData)
+            .attr("fill", "none")
+            .attr("stroke", corLinha)
+            .attr("stroke-width", 2)
+            .attr("d", line);
+
+          svg.selectAll(`.dot-${index}`).data(pontosData).enter().append("circle")
+            .attr("cx", d => x(d.data))
+            .attr("cy", d => y(d.qtd))
+            .attr("r", 4)
+            .attr("fill", corLinha)
+            .on("mouseover", (e, d) => tooltip.style("opacity", 1).html(`Produto: ${d.nome}<br>Data: ${d3.timeFormat("%d/%m/%Y")(d.data)}<br>Vendas: ${d.qtd} un`))
+            .on("mousemove", e => tooltip.style("left", (e.pageX + 10) + "px").style("top", (e.pageY - 28) + "px"))
+            .on("mouseleave", () => tooltip.style("opacity", 0));
+        });
+      }
+    }
+
+    document.getElementById("fin-modo").addEventListener("change", renderFinanceiroCombo);
+    document.getElementById("fin-inicio").addEventListener("change", renderFinanceiroCombo);
+    document.getElementById("fin-fim").addEventListener("change", renderFinanceiroCombo);
+    document.getElementById("fin-agrupamento").addEventListener("change", renderFinanceiroCombo);
+
+    document.getElementById("op-modo").addEventListener("change", () => {
+      updateOpSelectOptions();
+      renderOperacionalCombo();
+    });
+    document.getElementById("op-item-select").addEventListener("change", renderOperacionalCombo);
+    document.getElementById("op-inicio").addEventListener("change", renderOperacionalCombo);
+    document.getElementById("op-fim").addEventListener("change", renderOperacionalCombo);
+
+    function init() {
+      updateOpSelectOptions();
+      renderFinanceiroCombo();
+      renderOperacionalCombo();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
   </script>
 </body>
 </html>
