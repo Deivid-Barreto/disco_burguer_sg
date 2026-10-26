@@ -28,8 +28,10 @@
           <img src="img/icone-disco-burguer.png" alt="Logo">
         </a>
 
-        <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4">
-          <button type="button" class="">Pedir agora!</button>
+        <div class="button_header order-2 order-lg-3 ms-auto ms-lg-3 m-4" class="links">
+         <a href="https://wa.me/5511984688318" target="_blank" rel="noopener noreferrer" class="link-botao">
+                  <button id="btn-whats">Pedir agora!</button>
+                </a>
         </div>
 
         <button class="navbar-toggler order-3" type="button" data-bs-toggle="collapse"
