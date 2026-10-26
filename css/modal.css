@@ -10,6 +10,9 @@
     border-radius: 14px;
     box-shadow: 0 0 25px rgba(255, 46, 147, 0.25);
 }
+.ModalProdutoCadastrar:not([open]) {
+    display: none !important;
+}
 
 .ModalProdutoCadastrar::backdrop {
     background: rgba(5, 2, 15, 0.8);
