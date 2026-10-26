@@ -1,14 +1,21 @@
 <?php
 require_once __DIR__ . '/../../php/conexao.php'; 
 
-function buscarProdutosPorCategoria( PDO $pdo, string $categoria): array {
-$sql = "SELECT 
+function buscarProdutosPorCategoria(PDO $pdo, string $categoria): array {
+    $sql = "SELECT 
                 nome, 
                 descricao, 
                 preco_venda, 
                 COALESCE(NULLIF(imagem_caminho, ''), '../../img/whats.jpeg') AS imagem 
-            FROM produtos 
-            WHERE categorias = ? AND ativo = 1 AND visivel = 1";
+            FROM produtos p
+            WHERE p.categorias = ? 
+              AND p.ativo = 1 
+              AND p.visivel = 1
+              AND EXISTS (
+                  SELECT 1 
+                  FROM receitas r 
+                  WHERE r.produto_id = p.id
+              )";
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$categoria]);

@@ -15,8 +15,9 @@ try {
     
     echo "Administrador criado com sucesso! Agora você já pode acessar o login.php. (Lembre-se de deletar este arquivo).";
 
-    // Autoexclui o próprio ficheiro do servidor
+    /* Autoexclui o próprio ficheiro do servidor
     unlink(__FILE__);
+    */
 
 } catch (PDOException $e) {
     echo "Erro ao criar administrador: " . $e->getMessage();

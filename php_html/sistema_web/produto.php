@@ -253,12 +253,12 @@ try {
     <div class="conteudo container-fluid ">
  
         <div class="menu-cardapio d-flex gap-3 mt-4">
-            <a href="">Todos</a>
-            <a href="">Hamburguers</a>
-            <a href="">Combos</a>
-            <a href="">Bebidas</a>
-            <a href="">Porções</a>
-            <a href="">Sobremesas</a>
+            <button type="button" class="btn-filtro-cat active" data-categoria="todos">Todos</button>
+            <button type="button" class="btn-filtro-cat" data-categoria="hamburguer">Hamburguers</button>
+            <button type="button" class="btn-filtro-cat" data-categoria="combos">Combos</button>
+            <button type="button" class="btn-filtro-cat" data-categoria="bebidas">Bebidas</button>
+            <button type="button" class="btn-filtro-cat" data-categoria="porcoes">Porções</button>
+            <button type="button" class="btn-filtro-cat" data-categoria="sobremesa_gelada">Sobremesas</button>
  
             <!-- ms-auto empurra o botão para o final da linha -->
             <button class="ms-auto btn-cardapio" type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
@@ -267,7 +267,7 @@ try {
        
         <?php foreach($produtosCompletos as $p): ?>
 
-               <button type="button" class="card-produto" onclick="abrirAcoes(<?= $p['id'] ?>)">
+               <button type="button" class="card-produto" data-categoria="<?= $p['categorias'] ?>" onclick="abrirAcoes(<?= $p['id'] ?>)">
 
                    <span class="produto-nome"><?= htmlspecialchars($p['nome']) ?></span>
         <?php if (!empty($p['imagem_caminho'])): ?>
@@ -289,7 +289,7 @@ try {
             <h2>PRODUTOS SEM RECEITA</h2>
         <?php foreach($produtosInativos as $p): ?> 
             <div class="col-3 mb-2">
-            <button   type="button" class="card-produto mb-2" onclick="abrirAcoes(<?= $p['id'] ?>)">
+            <button   type="button" class="card-produto mb-2" data-categoria="<?= $p['categorias'] ?>" onclick="abrirAcoes(<?= $p['id'] ?>)">
 
                 <span class="produto-nome"><?= htmlspecialchars($p['nome']) ?></span>
         <?php if (!empty($p['imagem_caminho'])): ?>
@@ -719,6 +719,26 @@ function habilitarCamposAntesDeEnviar() {
         }
     });
 }
+
+document.querySelectorAll('.btn-filtro-cat').forEach(botao => {
+    botao.addEventListener('click', function() {
+        document.querySelectorAll('.btn-filtro-cat').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const categoriaSelecionada = this.getAttribute('data-categoria');
+        const cards = document.querySelectorAll('.card-produto');
+
+        cards.forEach(card => {
+            const catCard = card.getAttribute('data-categoria');
+            
+            if (categoriaSelecionada === 'todos' || catCard === categoriaSelecionada) {
+                card.style.display = ''; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        });
+    });
+});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
