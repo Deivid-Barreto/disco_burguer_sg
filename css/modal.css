@@ -119,3 +119,105 @@
     transform: scale(1.03) translateZ(0);
     box-shadow: 0 0 15px rgba(255, 46, 99, 0.6);
 }
+
+/* ==========================================================
+   Dialogs de ações e de confirmação (mesmo padrão do cadastro)
+   ========================================================== */
+
+/* Flex só quando aberto (sem d-flex no HTML, fechado fica escondido) */
+.ModalProdutoCadastrar[open] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ModalProdutoCadastrar.ModalAcoes {
+    width: 560px;
+}
+
+.ModalProdutoCadastrar.ModalConfirmacao {
+    width: 420px;
+}
+
+.ModalProdutoCadastrar p {
+    margin-bottom: 6px;
+}
+
+.ModalProdutoCadastrar.ModalConfirmacao p {
+    width: 100%;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+/* Detalhes do produto (montado por abrirAcoes) */
+#detalhes_produto_info {
+    width: 100%;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+#detalhes_produto_info strong {
+    color: var(--rosa);
+}
+
+#detalhes_produto_info ul {
+    margin: 0 0 8px;
+    padding-left: 20px;
+}
+
+#detalhes_produto_info li {
+    margin-bottom: 2px;
+}
+
+.status-tag {
+    font-weight: 600;
+}
+
+.status-ok {
+    color: #3ddc84;
+}
+
+.status-pendente {
+    color: #ff7b00;
+}
+
+.status-sem {
+    color: #ff5c5c;
+}
+
+/* Texto "Imagem salva" do formulário de edição (carregarDadosEdicao) */
+#status_imagem_cadastrada {
+    margin: -8px 0 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #3ddc84;
+}
+
+#status_imagem_cadastrada:empty {
+    display: none;
+}
+
+/* Botões extras */
+.btn-dialog-cadastrar {
+    flex-wrap: wrap;
+}
+
+.btn-dialog-cadastrar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-dialog-cadastrar .btn-dialog-excluir {
+    background: transparent;
+    border: 1px solid #ff2e63;
+    color: #ff2e63;
+}
+
+.btn-dialog-cadastrar .btn-dialog-excluir:hover {
+    background: #ff2e63;
+    color: #ffffff;
+}

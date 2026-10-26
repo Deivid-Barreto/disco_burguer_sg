@@ -74,6 +74,7 @@ $hoje = date('Y-m-d');
     <!-- painel.css ANTES do css da página -->
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/financeiro.css">
+    <link rel="stylesheet" href="../../css/sistema_web/relatorio_financeiro.css">
 
     <title>Gestão Financeira</title>
     <style>
@@ -219,23 +220,23 @@ $hoje = date('Y-m-d');
         </div>
     </main>
 
-    <dialog id="modalCategoria">
-        <h3>Cadastrar / Editar Categoria</h3>
+    <dialog id="modalCategoria" class="ModalFinanceiro">
+        <h1>Cadastrar / Editar Categoria</h1>
         <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar as alterações da categoria?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="categoria">
             <input type="hidden" name="acao" value="salvar">
             <input type="hidden" name="id" id="form_cat_id">
-            <div><label>Nome:</label><input type="text" name="nome" id="form_cat_nome" required></div>
+            <div><label for="form_cat_nome">Nome</label><input type="text" name="nome" id="form_cat_nome" required></div>
             <div>
-                <label>Tipo:</label>
+                <label for="form_cat_tipo">Tipo</label>
                 <select name="tipo" id="form_cat_tipo" required>
                     <option value="entrada">Entrada</option>
                     <option value="saida">Saída</option>
                 </select>
             </div>
             <div>
-                <label>Tipo de Saída:</label>
+                <label for="form_cat_tipo_saida">Tipo de Saída</label>
                 <select name="tipo_saida" id="form_cat_tipo_saida" required>
                     <option value="nao_aplicavel">Não Aplicável</option>
                     <option value="fixo">Fixo</option>
@@ -243,7 +244,7 @@ $hoje = date('Y-m-d');
                 </select>
             </div>
             <div>
-                <label>Grupo DRE:</label>
+                <label for="form_cat_grupo_dre">Grupo DRE</label>
                 <select name="grupo_dre" id="form_cat_grupo_dre" required>
                     <option value="nao_aplicavel">Não Aplicável</option>
                     <option value="receita_bruta">Receita Bruta</option>
@@ -254,21 +255,23 @@ $hoje = date('Y-m-d');
                     <option value="receita_financeira">Receita Financeira</option>
                 </select>
             </div>
-            <button type="submit">Salvar Registro</button>
-            <button type="button" onclick="document.getElementById('modalCategoria').close()">Cancelar</button>
+            <div class="btn-dialog-cadastrar">
+                <button type="submit">Salvar Registro</button>
+                <button type="button" onclick="document.getElementById('modalCategoria').close()">Cancelar</button>
+            </div>
         </form>
     </dialog>
 
-    <dialog id="modalConta">
-        <h3>Cadastrar Conta a Pagar</h3>
+    <dialog id="modalConta" class="ModalFinanceiro">
+        <h1>Cadastrar Conta a Pagar</h1>
         <form method="POST" onsubmit="event.preventDefault(); dispararConfirmacao('Deseja salvar esta nova conta?', this)">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <input type="hidden" name="origem" value="conta">
             <input type="hidden" name="acao" value="salvar">
             <input type="hidden" name="id" id="form_conta_id">
-            <div><label>Descrição:</label><input type="text" name="descricao" id="form_conta_descricao" required></div>
+            <div><label for="form_conta_descricao">Descrição</label><input type="text" name="descricao" id="form_conta_descricao" required></div>
             <div>
-                <label>Fornecedor:</label>
+                <label for="form_conta_fornecedor">Fornecedor</label>
                 <select name="fornecedor_id" id="form_conta_fornecedor">
                     <option value="">Nenhum (Avulso)</option>
                     <?php foreach ($fornecedores as $f): ?>
@@ -280,7 +283,7 @@ $hoje = date('Y-m-d');
                 </select>
             </div>
             <div>
-                <label>Categoria:</label>
+                <label for="form_conta_categoria">Categoria</label>
                 <select name="categoria_id" id="form_conta_categoria" required>
                     <?php foreach ($categorias_saida as $cs): ?>
                         <option value="<?= $cs['id'] ?>">
@@ -289,18 +292,22 @@ $hoje = date('Y-m-d');
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div><label>Valor (R$):</label><input type="number" step="0.01" name="valor" id="form_conta_valor" required></div>
-            <div><label>Vencimento:</label><input type="date" name="data_vencimento" id="form_conta_vencimento" required></div>
-            <button type="submit">Salvar Registro</button>
-            <button type="button" onclick="document.getElementById('modalConta').close()">Cancelar</button>
+            <div><label for="form_conta_valor">Valor (R$)</label><input type="number" step="0.01" name="valor" id="form_conta_valor" required></div>
+            <div><label for="form_conta_vencimento">Vencimento</label><input type="date" name="data_vencimento" id="form_conta_vencimento" required></div>
+            <div class="btn-dialog-cadastrar">
+                <button type="submit">Salvar Registro</button>
+                <button type="button" onclick="document.getElementById('modalConta').close()">Cancelar</button>
+            </div>
         </form>
     </dialog>
 
-    <dialog id="modalConfirmacaoCustom">
-        <h3 id="tituloConfirmacao">Confirmação</h3>
+    <dialog id="modalConfirmacaoCustom" class="ModalFinanceiro ModalConfirmacao">
+        <h1 id="tituloConfirmacao">Confirmação</h1>
         <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
-        <button type="button" id="btnSimConfirmacao">Sim</button>
-        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+        <div class="btn-dialog-cadastrar">
+            <button type="button" id="btnSimConfirmacao">Sim</button>
+            <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+        </div>
     </dialog>
 
     <script>

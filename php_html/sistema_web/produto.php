@@ -450,16 +450,16 @@ try {
     </form>
 </dialog>
  
-<dialog id="modalAcoes">
-    <h3 id="tituloAcoes">Ações do Produto</h3>
+<dialog id="modalAcoes" class="ModalProdutoCadastrar ModalAcoes">
+    <h1 id="tituloAcoes">Ações do Produto</h1>
  
     <div id="detalhes_produto_info"></div>
  
     <input type="hidden" id="acao_id_produto" value="">
  
-    <div>
+    <div class="btn-dialog-cadastrar">
         <button type="button" id="btnEditarAcoes" onclick="carregarDadosEdicao()" disabled>Editar</button>
-        <button type="button" onclick="confirmarExclusao()">Excluir</button>
+        <button type="button" class="btn-dialog-excluir" onclick="confirmarExclusao()">Excluir</button>
         <button type="button" onclick="document.getElementById('modalAcoes').close()">Cancelar</button>
     </div>
 </dialog>
@@ -470,11 +470,13 @@ try {
     <input type="hidden" name="id_produto" id="deletar_id_produto" value="">
 </form>
  
-<dialog id="modalConfirmacaoCustom">
-    <h3 id="tituloConfirmacao">Confirmação</h3>
+<dialog id="modalConfirmacaoCustom" class="ModalProdutoCadastrar ModalConfirmacao">
+    <h1 id="tituloConfirmacao">Confirmação</h1>
     <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
-    <button type="button" id="btnSimConfirmacao">Sim</button>
-    <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    <div class="btn-dialog-cadastrar">
+        <button type="button" id="btnSimConfirmacao">Sim</button>
+        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+    </div>
 </dialog>
 </div>
 <script>
@@ -561,8 +563,8 @@ async function abrirAcoes(id) {
         document.getElementById('tituloAcoes').innerText = "Produto: " + p.nome;
 
         let precoFmt = parseFloat(p.preco_venda).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-        let statusText = p.ativo == 1 ? "<span>Ativo</span>" : "<span>Inativo (Pendente)</span>";
-        let statusImagem = (p.imagem_caminho && p.imagem_caminho.trim() !== '') ? "<span>✔ Com imagem</span>" : "<span>❌ Sem imagem</span>";
+        let statusText = p.ativo == 1 ? '<span class="status-tag status-ok">Ativo</span>' : '<span class="status-tag status-pendente">Inativo (Pendente)</span>';
+        let statusImagem = (p.imagem_caminho && p.imagem_caminho.trim() !== '') ? '<span class="status-tag status-ok">✔ Com imagem</span>' : '<span class="status-tag status-sem">❌ Sem imagem</span>';
 
         let detalhesReceita = '<br>';
         if (p.categorias === 'combos' && produtoAtualData.combos.length > 0) {
