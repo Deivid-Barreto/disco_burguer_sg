@@ -187,8 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 
             $stmt->execute([$id_pedido]);
 
-            $stmt->execute([$id_pedido]);
-
             $stmtItem = $pdo->prepare("
             INSERT INTO itens_pedidos
             (
@@ -248,8 +246,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         }    
         
     } elseif ($acao === 'cadastrar') {
+    
+        $atendente_id = $_SESSION['funcionario_id'];
 
-        $atendente_id = $_SESSION['funcionario_id'] ?? null;
+        $stmtMesas = $pdo->prepare("
+            SELECT
+            m.id,
+            m.numero,
+            p.nome_cliente
+            FROM mesas m
+            LEFT JOIN pedidos p
+            ON p.mesa_id = m.id
+            AND p.status NOT IN ('finalizado', 'cancelado')
+            WHERE m.atendente_id = ?
+            ORDER BY m.id ASC
+        ");
+
+        $stmtMesas->execute([$atendente_id]);
+        $mesas = $stmtMesas->fetchAll(PDO::FETCH_ASSOC);    
+
         $nome_cliente = trim($_POST['nome_cliente'] ?? '');
         $tipo = $_POST['tipo'] ?? '';
         $mesa_id = !empty($_POST['mesa_id']) ? (int)$_POST['mesa_id'] : null;
@@ -831,6 +846,9 @@ function carregarDadosEdicao() {
     document.getElementById('nome_cliente').value = pedido.nome_cliente;
     document.getElementById('tipo').value = pedido.tipo;
     document.getElementById('mesa_id').value = pedido.mesa_id || '';
+
+    atualizarFormulario();
+
     document.getElementById('chave_validacao').value = pedido.chave_validacao || '';
     
     produtosPedido = [];
@@ -857,16 +875,22 @@ function ModalFecharConta() {
 }
 
 function abrirMesas(mesaId) {
-    fetch(`?obter_pedido_mesa=${mesaId}`)
+     fetch(`?obter_pedido_mesa=${mesaId}`)
         .then(response => response.json())
         .then(data => {
             if (data.encontrado) {
                 pedidoAtualData = data;
-                abrirAcoesPedido();
+                carregarDadosEdicao();
+            } else {
+                abrirModalCadastro();
+                document.getElementById('tipo').value = 'local';
+                document.getElementById('mesa_id').value = mesaId;
+                atualizarFormulario();
             }
         })
         .catch(error => {
             console.error('Erro ao buscar pedido:', error);
+            alert('Não foi possível abrir o pedido.');
         });
 }
 
