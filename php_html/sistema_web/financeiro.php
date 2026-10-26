@@ -64,14 +64,14 @@ $hoje = date('Y-m-d');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CSS -->
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-    <!-- Bootstrap Icons -->
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <!-- painel.css ANTES do css da página -->
+    
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/financeiro.css">
     <link rel="stylesheet" href="../../css/sistema_web/relatorio_financeiro.css">
@@ -111,13 +111,13 @@ $hoje = date('Y-m-d');
     <main class="conteudo">
         <h1>Gestão Financeira</h1>
 
-        <!-- Botões de navegação no começo -->
+      
         <div class="nav-botoes">
             <button type="button" id="btnTabCategorias" class="ativo" onclick="mudarAba('categorias')">Categorias Financeiras</button>
             <button type="button" id="btnTabContas" onclick="mudarAba('contas')">Contas a Pagar</button>
         </div>
 
-        <!-- Seção de Categorias -->
+        
         <div id="secaoCategorias" class="tab-content ativo">
             <div class="topo-secao">
                 <button onclick="abrirModalCategoria()">CADASTRAR CATEGORIA</button>
@@ -157,7 +157,7 @@ $hoje = date('Y-m-d');
             </table>
         </div>
 
-        <!-- Seção de Contas a Pagar -->
+        
         <div id="secaoContas" class="tab-content">
             <div class="topo-secao">
                 <button onclick="abrirModalConta()">CADASTRAR CONTA</button>

@@ -120,11 +120,6 @@
     box-shadow: 0 0 15px rgba(255, 46, 99, 0.6);
 }
 
-/* ==========================================================
-   Dialogs de ações e de confirmação (mesmo padrão do cadastro)
-   ========================================================== */
-
-/* Flex só quando aberto (sem d-flex no HTML, fechado fica escondido) */
 .ModalProdutoCadastrar[open] {
     display: flex;
     flex-direction: column;
@@ -150,7 +145,6 @@
     text-align: center;
 }
 
-/* Detalhes do produto (montado por abrirAcoes) */
 #detalhes_produto_info {
     width: 100%;
     margin-bottom: 16px;
@@ -187,7 +181,6 @@
     color: #ff5c5c;
 }
 
-/* Texto "Imagem salva" do formulário de edição (carregarDadosEdicao) */
 #status_imagem_cadastrada {
     margin: -8px 0 14px;
     font-size: 0.8rem;

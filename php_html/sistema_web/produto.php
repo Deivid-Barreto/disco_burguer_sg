@@ -228,14 +228,14 @@ try {
  
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- Bootstrap CSS -->
+
    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
  
-    <!-- Bootstrap Icons -->
+   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
  
-    <!-- painel.css ANTES do css da página -->
+ 
     <link rel="stylesheet" href="../../css/painel.css">
      <link rel="stylesheet" href="../../css/modal.css">
     <link rel="stylesheet" href="../../css/sistema_web/produto.css">
@@ -251,7 +251,7 @@ try {
 <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
  
  
-    <!-- UMA div conteudo só, envolvendo tudo (inclusive os produtos inativos) -->
+
     <div class="conteudo container-fluid ">
  
         <div class="menu-cardapio d-flex gap-3 mt-4">
@@ -261,8 +261,7 @@ try {
             <button type="button" class="btn-filtro-cat" data-categoria="bebidas">Bebidas</button>
             <button type="button" class="btn-filtro-cat" data-categoria="porcoes">Porções</button>
             <button type="button" class="btn-filtro-cat" data-categoria="sobremesa_gelada">Sobremesas</button>
- 
-            <!-- ms-auto empurra o botão para o final da linha -->
+
             <button class="ms-auto btn-cardapio" type="button" onclick="abrirModalCadastro()"> + PRODUTO</button>
         </div>
 
@@ -314,7 +313,7 @@ try {
  
     </div>
     
-    <!-- fim do conteudo (os </div> soltos das linhas 51 e 60-63 foram removidos) -->
+  
  
  
 <dialog id="modalCadastro" class="ModalProdutoCadastrar d-flex flex-column align-items-center justify-content-center">

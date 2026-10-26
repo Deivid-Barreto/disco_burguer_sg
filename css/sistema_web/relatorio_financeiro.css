@@ -12,7 +12,6 @@
     box-shadow: 0 0 25px rgba(255, 46, 147, 0.25);
 }
 
-/* Flex só quando aberto: fechado continua escondido pelo padrão do navegador */
 .ModalFinanceiro[open] {
     display: flex;
     flex-direction: column;
@@ -24,7 +23,6 @@
     background: rgba(5, 2, 15, 0.8);
 }
 
-/* Variação menor, usada no dialog de confirmação */
 .ModalFinanceiro.ModalConfirmacao {
     width: 420px;
 }
@@ -76,7 +74,7 @@
     transition: all 0.3s ease;
 }
 
-/* Deixa o ícone do calendário visível no fundo escuro */
+
 .ModalFinanceiro input[type="date"] {
     color-scheme: dark;
 }
