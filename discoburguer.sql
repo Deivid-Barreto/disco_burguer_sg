@@ -1,4 +1,4 @@
--- Active: 1751062519084@@127.0.0.1@3306@discoburguer
+-- Active: 1792950822068@@127.0.0.1@3306@discoburguer
 
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -186,6 +186,7 @@ CREATE TABLE IF NOT EXISTS `pedidos` (
         'aberto',
         'em_preparo',
         'pedido_pronto',
+        'aguardando_pagamento',
         'finalizado',
         'cancelado'
     ) NOT NULL DEFAULT 'aberto',
