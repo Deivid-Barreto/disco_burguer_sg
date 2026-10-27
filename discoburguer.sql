@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 -- Active: 1792950822068@@127.0.0.1@3306@discoburguer
+=======
+-- Active: 1789956522689@@127.0.0.1@3306@discoburguer
+>>>>>>> c4b970da7695144844f8b03b13b67c207e3bc20b
 
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -357,5 +361,4 @@ INSERT INTO produtos (nome, descricao, preco_venda, imagem_caminho, categorias, 
 ('Nuggets de Frango', '10 unidades de nuggets empanados e temperados com molho barbecue.', 22.00, '../../img/porcoes.png', 'porcoes', 1, 1),
 ('Bolo de Pote Chocolate', 'Bolo caseiro recheado com brigadeiro artesanal e raspas de chocolate.', 14.00, '../../img/bolo.png', 'sobremesa_gelada', 1, 1),
 ('Torta Gelada de Limão', 'Massa crocante, creme de limão e cobertura de suspiro queimado.', 15.50, '../../img/bolo.png', 'sobremesa_gelada', 1, 1);
- 
  
