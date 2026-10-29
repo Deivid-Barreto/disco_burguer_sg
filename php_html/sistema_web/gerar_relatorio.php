@@ -4,10 +4,7 @@ require_once 'vendor/autoload.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
-$pdo = new PDO('mysql:host=127.0.0.1;dbname=discoburguer;charset=utf8mb4', 'root', '', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-]);
+require_once __DIR__ . '/../../php/conexao.php'; 
 
 $tipoRelatorio = strtolower($_GET['tipo'] ?? 'estoque');
 

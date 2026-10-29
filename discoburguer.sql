@@ -1,8 +1,4 @@
-<<<<<<< HEAD
--- Active: 1792950822068@@127.0.0.1@3306@discoburguer
-=======
--- Active: 1789956522689@@127.0.0.1@3306@discoburguer
->>>>>>> c4b970da7695144844f8b03b13b67c207e3bc20b
+-- Active: 1793239479043@@127.0.0.1@3306
 
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
