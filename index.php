@@ -98,7 +98,7 @@
         </div>
       </section>
     </div>
-    <div class="checker"></div>
+   
 
 
     <div class="container-fluid p-0">
@@ -146,8 +146,7 @@
         </div>
       </section>
     </div>
-    <div class="checker"></div>
-
+  
     <section class="feedback" id="feedback">
       <div class="container">
 
@@ -210,8 +209,6 @@
 
       </div>
     </section>
-
-
 
   </main>
 
@@ -308,7 +305,7 @@
       atualizarCarrossel();
     });
 
-    document.querySelector(".seta-anterior").addEventListener("click", function() {
+    document.querySelector(".seta-anterior").addEventistener("click", function() {
       indiceAtual = (indiceAtual - 1 + total) % total;
       atualizarCarrossel();
     });

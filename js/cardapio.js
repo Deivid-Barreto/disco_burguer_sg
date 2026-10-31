@@ -52,4 +52,4 @@ window.addEventListener("scroll", () => {
   } else {
     menu.classList.remove("fixo");
   }
-}); 
+});  

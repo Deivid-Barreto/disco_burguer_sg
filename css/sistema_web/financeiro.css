@@ -1,0 +1,250 @@
+/* ===== Abas ===== */
+.tab-content {
+    display: none;
+}
+
+.tab-content.ativo {
+    display: block;
+}
+
+/* ===== Botões de navegação (abas) ===== */
+.nav-botoes .btn-filtro-cat {
+    background-color: var(--fundo);
+    font-size: 16px;
+    min-width: max-content;
+    padding: 10px 24px;
+    border-radius: 5px;
+    text-align: center;
+    border: 2px solid var(--borda);
+    color: white;
+    cursor: pointer;
+    transition: background 0.4s ease, transform 0.4s ease, border-color 0.4s ease;
+}
+
+.nav-botoes .btn-filtro-cat.ativo {
+    background: rgba(253, 4, 124, 0.15);
+    border-color: #ff2e63;
+}
+
+.nav-botoes .btn-filtro-cat:hover {
+    transform: scale(1.03);
+    background: rgb(253, 4, 124);
+}
+
+/* ===== Botões de cadastrar (só o da aba ativa aparece) ===== */
+.btn-cadastrar-fin {
+    display: none;
+    background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
+    color: #ffffff;
+    font-size: 16px;
+    white-space: nowrap;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cadastrar-fin:hover {
+    transform: scale(1.01);
+    box-shadow: 0 6px 18px rgba(255, 46, 99, 0.6);
+}
+
+#btnTabCategorias.ativo ~ #btnNovaCategoria,
+#btnTabContas.ativo ~ #btnNovaConta {
+    display: block;
+}
+
+/* ===== Título da seção ===== */
+.titulo-fin {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+}
+
+/* ===== Tabela ===== */
+.tabela-fin {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(20, 8, 40, 0.6);
+    border: 2px solid var(--borda);
+    border-radius: 15px;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+.tabela-fin thead th {
+    background: rgba(253, 4, 124, 0.15);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--borda);
+}
+
+.tabela-fin thead th.text-end {
+    text-align: right;
+}
+
+.tabela-fin tbody td {
+    background: transparent;
+    color: #ffffff;
+    font-size: 15px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(253, 4, 124, 0.2);
+    vertical-align: middle;
+}
+
+.tabela-fin tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-fin tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tabela-fin tbody tr:hover td {
+    background: rgba(253, 4, 124, 0.1);
+}
+
+.fin-nome {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.fin-sub {
+    color: #b9a9d6;
+}
+
+.fin-valor {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.fin-vazio {
+    text-align: center;
+    font-style: italic;
+    color: #b9a9d6;
+    padding: 30px 20px;
+}
+
+/* ===== Etiquetas (tipo e status) ===== */
+.tag-fin {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #b9a9d6;
+    background: rgba(255, 255, 255, 0.06);
+    color: #b9a9d6;
+}
+
+.tag-fin-entrada,
+.tag-fin-receita,
+.tag-fin-pago {
+    background: rgba(0, 200, 120, 0.15);
+    color: #4ade9c;
+    border-color: #00c878;
+}
+
+.tag-fin-saida,
+.tag-fin-sada,
+.tag-fin-despesa {
+    background: rgba(255, 23, 68, 0.2);
+    color: #ff5252;
+    border-color: #ff1744;
+}
+
+.tag-fin-pendente {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ffb74d;
+    border-color: #ff9800;
+}
+
+/* ===== Avisos de vencimento ===== */
+.tag-vencido,
+.tag-vence-hoje {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.tag-vencido {
+    background: rgba(255, 23, 68, 0.2);
+    color: #ff5252;
+    border: 1px solid #ff1744;
+}
+
+.tag-vence-hoje {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ffb74d;
+    border: 1px solid #ff9800;
+}
+
+/* ===== Botões da tabela ===== */
+.btn-editar-fin,
+.btn-excluir-fin,
+.btn-pagar-fin {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 5px 14px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-editar-fin {
+    background:
+        linear-gradient(var(--fundo), var(--fundo)) padding-box,
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) border-box;
+}
+
+.btn-editar-fin:hover {
+    transform: scale(1.03);
+    background:
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) padding-box,
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) border-box;
+    box-shadow: 0 0 8px rgba(255, 46, 99, 0.5);
+}
+
+.btn-excluir-fin {
+    background:
+        linear-gradient(var(--fundo), var(--fundo)) padding-box,
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) border-box;
+}
+
+.btn-excluir-fin:hover {
+    transform: scale(1.03);
+    background:
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) padding-box,
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) border-box;
+    box-shadow: 0 0 8px rgba(255, 23, 68, 0.5);
+}
+
+.btn-pagar-fin {
+    background:
+        linear-gradient(var(--fundo), var(--fundo)) padding-box,
+        linear-gradient(135deg, #00c878 0%, #00805a 100%) border-box;
+}
+
+.btn-pagar-fin:hover {
+    transform: scale(1.03);
+    background:
+        linear-gradient(135deg, #00c878 0%, #00805a 100%) padding-box,
+        linear-gradient(135deg, #00c878 0%, #00805a 100%) border-box;
+    box-shadow: 0 0 8px rgba(0, 200, 120, 0.5);
+}

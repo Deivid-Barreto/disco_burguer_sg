@@ -1,13 +1,13 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../php/conexao.php'; 
-
+require_once __DIR__ . '/../../php/conexao.php';
 
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 $funcionario_id = $_SESSION['funcionario_id'] ?? null;
+$hoje = date('Y-m-d');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -16,62 +16,77 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $acao = $_POST['acao'] ?? '';
 
+    /* ================= NOVO ITEM ================= */
     if ($acao === 'add_estoque') {
         $eh_revenda = isset($_POST['eh_revenda']) ? 1 : 0;
-        
+        $minimo = (float)($_POST['estoque_minimo'] ?? 0);
+
         $stmt = $pdo->prepare("INSERT INTO estoque (nome, codigo, unidade_medida, estoque_minimo, eh_revenda) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda]);
-        $id = $pdo->lastInsertId();
-        
+        $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $minimo, $eh_revenda]);
+        $id = (int)$pdo->lastInsertId();
+
         $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES, 'UTF-8');
-        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
-        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
-        $nome_js = addslashes($nome_esc);
-        $cod_js = addslashes($cod_esc);
-        $un_js = addslashes($un_esc);
+        $cod_esc  = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
+        $un_esc   = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $nome_js  = addslashes($nome_esc);
+        $cod_js   = addslashes($cod_esc);
+        $un_js    = addslashes($un_esc);
+        $min_txt  = number_format($minimo, 2, '.', '');
 
         echo "
-        <div id='estoque-{$id}'>
-            <div>
-                <span id='cabecalho-estoque-{$id}'>
-                    <b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})
-                </span>
-                <button onclick='abrirModalEditEstoque({$id}, \"{$nome_js}\", \"{$cod_js}\", \"{$un_js}\", {$_POST['estoque_minimo']}, {$eh_revenda})'>EDITAR INSUMO</button>
-                <button onclick='deletarEstoque({$id})'>EXCLUIR INSUMO</button>
+        <div id='estoque-{$id}' class='card-estoque mt-3'>
+            <div class='card-estoque-header'>
+                <div id='cabecalho-estoque-{$id}' class='card-estoque-info'>
+                    <span class='item-nome'>{$nome_esc}</span>
+                    <span class='item-meta'>Cód: <b>{$cod_esc}</b></span>
+                    <span class='item-meta'>Mín: <b>{$min_txt}{$un_esc}</b></span>
+                </div>
+                <div class='card-estoque-acoes'>
+                    <button class='btn-editar-estoque' onclick='abrirModalEditEstoque({$id}, \"{$nome_js}\", \"{$cod_js}\", \"{$un_js}\", {$min_txt}, {$eh_revenda})'>EDITAR</button>
+                    <button class='btn-excluir-estoque' onclick='deletarEstoque({$id})'>EXCLUIR</button>
+                </div>
             </div>
             <div id='lista-lotes-{$id}'>
-                <p id='sem-lotes-{$id}'>Nenhum lote cadastrado.</p>
+                <p id='sem-lotes-{$id}' class='sem-lotes'>Nenhum lote cadastrado.</p>
                 <div id='container-btn-{$id}'>
-                    <button onclick='abrirModalLote({$id}, \"{$un_js}\")'>ADICIONAR NOVO LOTE</button>
+                    <button class='btn-cadastrar-lote' onclick='abrirModalLote({$id}, \"{$un_js}\")'>+ LOTE</button>
                 </div>
             </div>
         </div>";
-        exit; 
-    }
-
-    if ($acao === 'edit_estoque') {
-        $eh_revenda = isset($_POST['eh_revenda']) ? 1 : 0;
-        $stmt = $pdo->prepare("UPDATE estoque SET nome=?, codigo=?, unidade_medida=?, estoque_minimo=?, eh_revenda=? WHERE id=?");
-        $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $_POST['estoque_minimo'], $eh_revenda, $_POST['estoque_id']]);
-        
-        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES, 'UTF-8');
-        $cod_esc = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
-        $un_esc = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
-
-        echo "<b>{$nome_esc}</b> (Cód: {$cod_esc} | Min: {$_POST['estoque_minimo']}{$un_esc})";
         exit;
     }
 
+    /* ================= EDITAR ITEM ================= */
+    if ($acao === 'edit_estoque') {
+        $eh_revenda = isset($_POST['eh_revenda']) ? 1 : 0;
+        $minimo = (float)($_POST['estoque_minimo'] ?? 0);
+
+        $stmt = $pdo->prepare("UPDATE estoque SET nome=?, codigo=?, unidade_medida=?, estoque_minimo=?, eh_revenda=? WHERE id=?");
+        $stmt->execute([$_POST['nome'], $_POST['codigo'], $_POST['unidade_medida'], $minimo, $eh_revenda, (int)$_POST['estoque_id']]);
+
+        $nome_esc = htmlspecialchars($_POST['nome'], ENT_QUOTES, 'UTF-8');
+        $cod_esc  = htmlspecialchars($_POST['codigo'], ENT_QUOTES, 'UTF-8');
+        $un_esc   = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $min_txt  = number_format($minimo, 2, '.', '');
+
+        echo "
+        <span class='item-nome'>{$nome_esc}</span>
+        <span class='item-meta'>Cód: <b>{$cod_esc}</b></span>
+        <span class='item-meta'>Mín: <b>{$min_txt}{$un_esc}</b></span>";
+        exit;
+    }
+
+    /* ================= EXCLUIR ITEM ================= */
     if ($acao === 'del_estoque') {
         try {
             $pdo->beginTransaction();
-            
+
             $stmtDelLotes = $pdo->prepare("DELETE FROM lotes_estoque WHERE estoque_id = ?");
             $stmtDelLotes->execute([$_POST['estoque_id']]);
 
             $stmt = $pdo->prepare("DELETE FROM estoque WHERE id = ?");
             $stmt->execute([$_POST['estoque_id']]);
-            
+
             $pdo->commit();
             echo "ok";
         } catch (PDOException $e) {
@@ -81,74 +96,88 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    /* ================= NOVO LOTE ================= */
     if ($acao === 'add_lote') {
-        $fornecedor_id = !empty($_POST['fornecedor_id']) ? $_POST['fornecedor_id'] : null;
-        
+        $fornecedor_id = !empty($_POST['fornecedor_id']) ? (int)$_POST['fornecedor_id'] : null;
+        $qtd   = (float)($_POST['quantidade'] ?? 0);
+        $preco = (float)($_POST['preco_custo'] ?? 0);
+
         $stmt = $pdo->prepare("INSERT INTO lotes_estoque (estoque_id, fornecedor_id, numero_lote, data_validade, quantidade_estoque, preco_custo) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$_POST['estoque_id'], $fornecedor_id, $_POST['numero_lote'], $_POST['data_validade'], $_POST['quantidade'], $_POST['preco_custo']]);
-        $id_lote = $pdo->lastInsertId();
-        
+        $stmt->execute([$_POST['estoque_id'], $fornecedor_id, $_POST['numero_lote'], $_POST['data_validade'], $qtd, $preco]);
+        $id_lote = (int)$pdo->lastInsertId();
+
         $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, 'entrada', ?, ?)");
-        $stmtMov->execute([$id_lote, $funcionario_id, $_POST['quantidade'], $_POST['observacao'] ?? null]);
+        $stmtMov->execute([$id_lote, $funcionario_id, $qtd, $_POST['observacao'] ?? null]);
 
         $dataVal = $_POST['data_validade'];
-        $hoje = date('Y-m-d');
         $avisoValidade = '';
         if ($dataVal < $hoje) {
-            $avisoValidade = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
+            $avisoValidade = ' <span class="tag-vencido">VENCIDO</span>';
         } elseif ($dataVal === $hoje) {
-            $avisoValidade = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
+            $avisoValidade = ' <span class="tag-vence-hoje">VENCE HOJE</span>';
         }
 
-        $dataBR = date('d/m/Y', strtotime($dataVal));
-        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
-        $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES, 'UTF-8');
-        $num_lote_js = addslashes($num_lote_esc);
-        $un_js = addslashes($un);
-        $fornecedor_js = addslashes((string)$fornecedor_id);
-        
+        $dataBR        = date('d/m/Y', strtotime($dataVal));
+        $dataVal_esc   = htmlspecialchars($dataVal, ENT_QUOTES, 'UTF-8');
+        $un            = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $num_lote_esc  = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES, 'UTF-8');
+        $num_lote_js   = addslashes($num_lote_esc);
+        $un_js         = addslashes($un);
+        $fornecedor_js = (string)$fornecedor_id;
+        $qtd_txt       = number_format($qtd, 2, '.', '');
+
         echo "
-        <div id='lote-{$id_lote}'>
-            <div id='info-lote-{$id_lote}'>
-                Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR}{$avisoValidade} | Qtd: {$_POST['quantidade']}{$un}
+        <div id='lote-{$id_lote}' class='lote-linha'>
+            <div id='info-lote-{$id_lote}' class='lote-info'>
+                <span class='lote-campo'><span class='lote-label'>Lote</span> <span class='lote-valor'>{$num_lote_esc}</span></span>
+                <span class='lote-campo'><span class='lote-label'>Validade</span> <span class='lote-valor'>{$dataBR}</span>{$avisoValidade}</span>
+                <span class='lote-campo'><span class='lote-label'>Quantidade</span> <span class='lote-valor'>{$qtd_txt}{$un}</span></span>
             </div>
-            <div>
-                <button onclick='abrirModalEditLote({$id_lote}, \"{$num_lote_js}\", \"{$fornecedor_js}\", \"{$_POST['data_validade']}\", {$_POST['quantidade']}, {$_POST['preco_custo']}, \"{$un_js}\")'>EDITAR LOTE</button>
-                <button onclick='deletarLote({$id_lote})'>EXCLUIR LOTE</button>
+            <div class='lote-acoes'>
+                <button class='btn-editar-estoque' onclick='abrirModalEditLote({$id_lote}, \"{$num_lote_js}\", \"{$fornecedor_js}\", \"{$dataVal_esc}\", {$qtd}, {$preco}, \"{$un_js}\")'>EDITAR</button>
+                <button class='btn-excluir-estoque' onclick='deletarLote({$id_lote})'>EXCLUIR</button>
             </div>
         </div>";
         exit;
     }
 
+    /* ================= EDITAR LOTE ================= */
     if ($acao === 'edit_lote') {
-        $fornecedor_id = !empty($_POST['fornecedor_id']) ? $_POST['fornecedor_id'] : null;
+        $fornecedor_id = !empty($_POST['fornecedor_id']) ? (int)$_POST['fornecedor_id'] : null;
+        $qtd   = (float)($_POST['quantidade'] ?? 0);
+        $preco = (float)($_POST['preco_custo'] ?? 0);
+
         $stmt = $pdo->prepare("UPDATE lotes_estoque SET numero_lote=?, fornecedor_id=?, data_validade=?, quantidade_estoque=?, preco_custo=? WHERE id=?");
-        $stmt->execute([$_POST['numero_lote'], $fornecedor_id, $_POST['data_validade'], $_POST['quantidade'], $_POST['preco_custo'], $_POST['lote_id']]);
-        
+        $stmt->execute([$_POST['numero_lote'], $fornecedor_id, $_POST['data_validade'], $qtd, $preco, $_POST['lote_id']]);
+
         $stmtMov = $pdo->prepare("INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao) VALUES (?, ?, ?, ?, ?)");
-        $stmtMov->execute([$_POST['lote_id'], $funcionario_id, $_POST['tipo_movimentacao'], $_POST['quantidade'], $_POST['observacao'] ?? null]);
+        $stmtMov->execute([$_POST['lote_id'], $funcionario_id, $_POST['tipo_movimentacao'], $qtd, $_POST['observacao'] ?? null]);
 
         $dataVal = $_POST['data_validade'];
-        $hoje = date('Y-m-d');
         $avisoValidade = '';
         if ($dataVal < $hoje) {
-            $avisoValidade = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
+            $avisoValidade = ' <span class="tag-vencido">VENCIDO</span>';
         } elseif ($dataVal === $hoje) {
-            $avisoValidade = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
+            $avisoValidade = ' <span class="tag-vence-hoje">VENCE HOJE</span>';
         }
 
-        $dataBR = date('d/m/Y', strtotime($dataVal));
-        $un = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
+        $dataBR       = date('d/m/Y', strtotime($dataVal));
+        $un           = htmlspecialchars($_POST['unidade_medida'], ENT_QUOTES, 'UTF-8');
         $num_lote_esc = htmlspecialchars($_POST['numero_lote'], ENT_QUOTES, 'UTF-8');
-        
-        echo "Lote: <b>{$num_lote_esc}</b> | Val: {$dataBR}{$avisoValidade} | Qtd: {$_POST['quantidade']}{$un}";
+        $qtd_txt      = number_format($qtd, 2, '.', '');
+
+        echo "
+        <span class='lote-campo'><span class='lote-label'>Lote</span> <span class='lote-valor'>{$num_lote_esc}</span></span>
+        <span class='lote-campo'><span class='lote-label'>Validade</span> <span class='lote-valor'>{$dataBR}</span>{$avisoValidade}</span>
+        <span class='lote-campo'><span class='lote-label'>Quantidade</span> <span class='lote-valor'>{$qtd_txt}{$un}</span></span>";
         exit;
     }
 
+    /* ================= EXCLUIR LOTE ================= */
     if ($acao === 'del_lote') {
         try {
             $pdo->beginTransaction();
-            
+
             $stmtLote = $pdo->prepare("SELECT numero_lote FROM lotes_estoque WHERE id = ?");
             $stmtLote->execute([$_POST['lote_id']]);
             $numLote = $stmtLote->fetchColumn();
@@ -161,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt = $pdo->prepare("DELETE FROM lotes_estoque WHERE id = ?");
             $stmt->execute([$_POST['lote_id']]);
-            
+
             $pdo->commit();
             echo "ok";
         } catch (PDOException $e) {
@@ -176,14 +205,12 @@ $estoques = $pdo->query("SELECT * FROM estoque ORDER BY nome ASC")->fetchAll(PDO
 $lotes_raw = $pdo->query("SELECT * FROM lotes_estoque ORDER BY data_validade ASC")->fetchAll(PDO::FETCH_ASSOC);
 $fornecedores = $pdo->query("SELECT id, nome_razao_social, cnpj_cpf FROM fornecedores WHERE ativo = 1 ORDER BY nome_razao_social ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Consulta para o histórico de movimentações de estoque
 $movimentacoes_estoque = $pdo->query("SELECT m.*, l.numero_lote, e.nome as nome_insumo FROM movimentacoes_estoque m LEFT JOIN lotes_estoque l ON m.lote_estoque_id = l.id LEFT JOIN estoque e ON l.estoque_id = e.id ORDER BY m.id DESC")->fetchAll(PDO::FETCH_ASSOC);
 
 $lotes_agrupados = [];
-foreach($lotes_raw as $l) {
+foreach ($lotes_raw as $l) {
     $lotes_agrupados[$l['estoque_id']][] = $l;
 }
-$hoje = date('Y-m-d');
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -219,98 +246,126 @@ $hoje = date('Y-m-d');
             <button type="button" id="btnTabMovimentacoes" class="btn-filtro-cat" onclick="mudarAba('movimentacoes')">Histórico de Movimentações</button>
         
             <button class="ms-auto btn-cadastrar-estoque" onclick="document.getElementById('modalEstoque').showModal()">
-                    +CADASTRAR NOVO ITEM
+                    +NOVO ITEM
                 </button>
         </div>
         <!-- Seção de Gerenciar Estoque -->
-        <div id="secaoEstoque" class="tab-content ativo">
-       
-                
-  
-       
+     <div id="secaoEstoque" class="tab-content ativo">
+    <div id="container-estoque">
 
-            <div id="container-estoque">
-                <?php foreach($estoques as $item): ?>
-                    <?php $eh_rev = isset($item['eh_revenda']) ? $item['eh_revenda'] : 0; ?>
-                    <div id="estoque-<?= $item['id'] ?>">
-                        
-                        <div>
-                            <span id="cabecalho-estoque-<?= $item['id'] ?>">
-                                <b><?= htmlspecialchars($item['nome']) ?></b> (Cód: <?= htmlspecialchars($item['codigo']) ?> | Min: <?= $item['estoque_minimo'] ?><?= htmlspecialchars($item['unidade_medida']) ?>)
-                            </span>
-                            <button onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['nome'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['codigo'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR</button>
-                            <button onclick="deletarEstoque(<?= $item['id'] ?>)">EXCLUIR</button>
-                        </div>
-                        
-                        <div id="lista-lotes-<?= $item['id'] ?>">
-                            
-                            <?php if(isset($lotes_agrupados[$item['id']])): ?>
-                                <?php foreach($lotes_agrupados[$item['id']] as $lote): ?>
-                                    
-                                    <?php 
-                                        $avisoValidade = '';
-                                        if ($lote['data_validade'] < $hoje) {
-                                            $avisoValidade = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
-                                        } elseif ($lote['data_validade'] === $hoje) {
-                                            $avisoValidade = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
-                                        }
-                                    ?>
-                                    <div id="lote-<?= $lote['id'] ?>">
-                                        <div id="info-lote-<?= $lote['id'] ?>">
-                                            Lote: <b><?= htmlspecialchars($lote['numero_lote']) ?></b> | 
-                                            Validade: <?= date('d/m/Y', strtotime($lote['data_validade'])) ?><?= $avisoValidade ?> | 
-                                            Quantidade: <?= $lote['quantidade_estoque'] ?><?= htmlspecialchars($item['unidade_medida']) ?>
-                                        </div>
-                                        <div>
-                                            <button onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= addslashes(htmlspecialchars($lote['numero_lote'], ENT_QUOTES)) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">EDITAR</button>
-                                            <button onclick="deletarLote(<?= $lote['id'] ?>)">EXCLUIR</button>
-                                        </div>
-                                    </div>
-                                    
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <p id="sem-lotes-<?= $item['id'] ?>">Nenhum lote cadastrado.</p>
-                            <?php endif; ?>
+        <?php foreach ($estoques as $item): ?>
+            <?php $eh_rev = isset($item['eh_revenda']) ? $item['eh_revenda'] : 0; ?>
 
-                            <div id="container-btn-<?= $item['id'] ?>">
-                                <button onclick="abrirModalLote(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">ADICIONAR LOTE</button>
+            <div id="estoque-<?= $item['id'] ?>" class="card-estoque mt-3">
+
+                <div class="card-estoque-header">
+                    <div id="cabecalho-estoque-<?= $item['id'] ?>" class="card-estoque-info">
+                        <span class="item-nome"><?= htmlspecialchars($item['nome']) ?></span>
+                        <span class="item-meta">Cód: <b><?= htmlspecialchars($item['codigo']) ?></b></span>
+                        <span class="item-meta">Mín: <b><?= $item['estoque_minimo'] ?><?= htmlspecialchars($item['unidade_medida']) ?></b></span>
+                    </div>
+
+                    <div class="card-estoque-acoes">
+                        <button class="btn-editar-estoque" onclick="abrirModalEditEstoque(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['nome'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['codigo'], ENT_QUOTES)) ?>', '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>', <?= $item['estoque_minimo'] ?>, <?= $eh_rev ?>)">EDITAR</button>
+                        <button class="btn-excluir-estoque" onclick="deletarEstoque(<?= $item['id'] ?>)">EXCLUIR</button>
+                    </div>
+                </div>
+
+                <div id="lista-lotes-<?= $item['id'] ?>">
+
+                    <?php if (isset($lotes_agrupados[$item['id']])): ?>
+                        <?php foreach ($lotes_agrupados[$item['id']] as $lote): ?>
+
+                            <?php
+                                $avisoValidade = '';
+                                if ($lote['data_validade'] < $hoje) {
+                                    $avisoValidade = ' <span class="tag-vencido">VENCIDO</span>';
+                                } elseif ($lote['data_validade'] === $hoje) {
+                                    $avisoValidade = ' <span class="tag-vence-hoje">VENCE HOJE</span>';
+                                }
+                            ?>
+
+                            <div id="lote-<?= $lote['id'] ?>" class="lote-linha">
+                                <div id="info-lote-<?= $lote['id'] ?>" class="lote-info">
+                                    <span class="lote-campo">
+                                        <span class="lote-label">Lote</span>
+                                        <span class="lote-valor"><?= htmlspecialchars($lote['numero_lote']) ?></span>
+                                    </span>
+                                    <span class="lote-campo">
+                                        <span class="lote-label">Validade</span>
+                                        <span class="lote-valor"><?= date('d/m/Y', strtotime($lote['data_validade'])) ?></span><?= $avisoValidade ?>
+                                    </span>
+                                    <span class="lote-campo">
+                                        <span class="lote-label">Quantidade</span>
+                                        <span class="lote-valor"><?= $lote['quantidade_estoque'] ?><?= htmlspecialchars($item['unidade_medida']) ?></span>
+                                    </span>
+                                </div>
+
+                                <div class="lote-acoes">
+                                    <button class="btn-editar-estoque" onclick="abrirModalEditLote(<?= $lote['id'] ?>, '<?= addslashes(htmlspecialchars($lote['numero_lote'], ENT_QUOTES)) ?>', '<?= $lote['fornecedor_id'] ?>', '<?= $lote['data_validade'] ?>', <?= $lote['quantidade_estoque'] ?>, <?= $lote['preco_custo'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">EDITAR</button>
+                                    <button class="btn-excluir-estoque" onclick="deletarLote(<?= $lote['id'] ?>)">EXCLUIR</button>
+                                </div>
                             </div>
 
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p id="sem-lotes-<?= $item['id'] ?>" class="sem-lotes">Nenhum lote cadastrado.</p>
+                    <?php endif; ?>
 
-        <!-- Seção de Histórico de Movimentações -->
-        <div id="secaoMovimentacoes" class="tab-content">
-            <h2>Histórico Geral de Movimentações</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Item / Produto</th>
-                        <th>Número do Lote</th>
-                        <th>Tipo de Movimentação</th>
-                        <th>Quantidade</th>
-                        <th>Observações</th>
-                        <th>Data e Hora</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($movimentacoes_estoque as $mov): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($mov['nome_insumo'] ?? 'Item Desvinculado') ?></td>
-                        <td><?= htmlspecialchars($mov['numero_lote'] ?? '-') ?></td>
-                        <td><?= htmlspecialchars(ucfirst($mov['tipo_movimentacao'])) ?></td>
-                        <td><?= htmlspecialchars($mov['quantidade']) ?></td>
-                        <td><?= htmlspecialchars($mov['observacao'] ?? '-') ?></td>
-                        <td><?= isset($mov['data_movimentacao']) ? date('d/m/Y H:i', strtotime($mov['data_movimentacao'])) : '-' ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </main>
+                    <div id="container-btn-<?= $item['id'] ?>">
+                        <button class="btn-cadastrar-lote" onclick="abrirModalLote(<?= $item['id'] ?>, '<?= addslashes(htmlspecialchars($item['unidade_medida'], ENT_QUOTES)) ?>')">+ LOTE</button>
+                    </div>
+
+                </div>
+            </div>
+
+        <?php endforeach; ?>
+
+    </div>
+</div>
+       <div id="secaoMovimentacoes" class="tab-content">
+    <table class="tabela-mov">
+        <thead>
+            <tr>
+                <th>Item / Produto</th>
+                <th>Número do Lote</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Observações</th>
+                <th>Data e Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($movimentacoes_estoque as $mov): ?>
+                <?php
+                    $tipo = $mov['tipo_movimentacao'];
+                    $rotulos = [
+                        'entrada'         => 'Entrada',
+                        'ajuste'          => 'Ajuste',
+                        'perda_validade'  => 'Perda por validade',
+                        'descarte'        => 'Descarte',
+                    ];
+                    $rotulo = $rotulos[$tipo] ?? ucfirst(str_replace('_', ' ', $tipo));
+                    $classeTipo = preg_replace('/[^a-z_]/', '', strtolower($tipo));
+                ?>
+                <tr>
+                    <td class="mov-item"><?= htmlspecialchars($mov['nome_insumo'] ?? 'Item desvinculado') ?></td>
+                    <td><?= htmlspecialchars($mov['numero_lote'] ?? '-') ?></td>
+                    <td><span class="tag-mov tag-mov-<?= $classeTipo ?>"><?= htmlspecialchars($rotulo) ?></span></td>
+                    <td class="mov-qtd"><?= htmlspecialchars($mov['quantidade']) ?></td>
+                    <td class="mov-obs"><?= htmlspecialchars($mov['observacao'] ?? '-') ?></td>
+                    <td class="mov-data"><?= isset($mov['data_movimentacao']) ? date('d/m/Y H:i', strtotime($mov['data_movimentacao'])) : '-' ?></td>
+                </tr>
+            <?php endforeach; ?>
+
+            <?php if (empty($movimentacoes_estoque)): ?>
+                <tr>
+                    <td colspan="6" class="mov-vazio">Nenhuma movimentação registrada.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
     <dialog id="modalEstoque">
         <h3>Cadastrar Insumo ou Item de Revenda</h3>

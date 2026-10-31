@@ -1,52 +1,374 @@
+/* ===== Abas ===== */
 .tab-content {
-            display: none;
-        }
-        .tab-content.ativo {
-            display: block;
-        }
-       
-       .nav-botoes .btn-filtro-cat {
+    display: none;
+}
 
+.tab-content.ativo {
+    display: block;
+}
+
+/* ===== Botões de navegação (Gestão / Histórico) ===== */
+.nav-botoes .btn-filtro-cat {
     background-color: var(--fundo);
     font-size: 16px;
-    width: 22vh;
-    padding: 10px 2px;
+    min-width: max-content;
+    padding: 10px 24px;
     border-radius: 5px;
     text-align: center;
     border: 2px solid var(--borda);
     color: white;
-    text-decoration: none;
-       }
-        
-.nav-botoes .btn-filtro-cat:hover{
+    cursor: pointer;
+    transition: background 0.4s ease, transform 0.4s ease, border-color 0.4s ease;
+}
 
-    transform: scale(1.03) translateZ(0);
+.nav-botoes .btn-filtro-cat.ativo {
+    background: rgba(253, 4, 124, 0.15);
+    border-color: #ff2e63;
+}
+
+.nav-botoes .btn-filtro-cat:hover {
+    transform: scale(1.03);
     background: rgb(253, 4, 124);
-    transition: background 0.6s ease, transform 0.6s ease;
 }
 
-
-
-.btn-cadastrar-estoque{
-
+/* ===== Botão: cadastrar novo item ===== */
+.btn-cadastrar-estoque {
     background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
-color: #ffffff;
-text-align: center;
-font-size: 16px;
-width: 20vh;
-padding: 10px 2px;
-border-radius: 5px;
-border: none;
-border-radius: 5px; /* Cantos arredondados */
-  /* Alinhamento de itens 
-  /* Suavização para o efeito de hover */
-transition: all 0.3s ease;
+    color: #ffffff;
+    text-align: center;
+    font-size: 16px;
+    width: 18vh;
+    padding: 10px 2px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cadastrar-estoque:hover {
+    transform: scale(1.01);
+    box-shadow: 0 6px 18px rgba(255, 46, 99, 0.6);
+}
+
+/* ===== Card do item ===== */
+.card-estoque {
+    border: 2px solid var(--borda);
+    padding: 18px 20px;
+    border-radius: 15px;
+}
+
+/* Espaço entre um card e o próximo */
+.card-estoque + .card-estoque {
+    margin-top: 20px;
+}
+
+/* ===== Cabeçalho do item ===== */
+.card-estoque-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--borda);
+}
+
+.card-estoque-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+}
+
+.card-estoque-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+.item-nome {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    text-transform: capitalize;
+}
+
+.item-meta {
+    font-size: 15px;
+    color: #b9a9d6;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(253, 4, 124, 0.35);
+    border-radius: 20px;
+    padding: 4px 14px;
+}
+
+.item-meta b {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* ===== Botões EDITAR / EXCLUIR (base) ===== */
+.btn-editar-estoque,
+.btn-excluir-estoque {
+    color: #ffffff;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+/* EDITAR: borda em gradiente laranja/rosa */
+.btn-editar-estoque {
+    background:
+        linear-gradient(var(--fundo), var(--fundo)) padding-box,
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) border-box;
+}
+
+.btn-editar-estoque:hover {
+    transform: scale(1.03);
+    background:
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) padding-box,
+        linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%) border-box;
+    box-shadow: 0 0 8px rgba(255, 46, 99, 0.5);
+}
+
+/* EXCLUIR: borda em gradiente vermelho */
+.btn-excluir-estoque {
+    background:
+        linear-gradient(var(--fundo), var(--fundo)) padding-box,
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) border-box;
+}
+
+.btn-excluir-estoque:hover {
+    transform: scale(1.03);
+    background:
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) padding-box,
+        linear-gradient(135deg, #ff2e2e 0%, #b30000 100%) border-box;
+    box-shadow: 0 0 8px rgba(255, 23, 68, 0.5);
+}
+
+/* Tamanho: botões do item */
+.card-estoque-acoes .btn-editar-estoque,
+.card-estoque-acoes .btn-excluir-estoque {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 0;
+    padding: 6px 16px;
+    border-radius: 6px;
+}
+
+/* Tamanho: botões dos lotes */
+.lote-acoes .btn-editar-estoque,
+.lote-acoes .btn-excluir-estoque {
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 0;
+    padding: 5px 14px;
+    border-radius: 6px;
+}
+
+/* ===== Linha de cada lote ===== */
+.lote-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    margin: 0;
+    border-bottom: 1px solid rgba(253, 4, 124, 0.25);
+}
+
+.lote-linha:last-of-type {
+    border-bottom: none;
+}
+
+.lote-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+}
+
+.lote-campo {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.lote-label {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b9a9d6;
+}
+
+.lote-valor {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.lote-acoes {
+    display: flex;
+    gap: 10px;
+}
+
+.sem-lotes {
+    font-size: 16px;
+    font-style: italic;
+    color: #b9a9d6;
+    margin: 16px 0;
+}
+
+/* ===== Avisos de validade ===== */
+.tag-vencido,
+.tag-vence-hoje {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.tag-vencido {
+    background: rgba(255, 23, 68, 0.2);
+    color: #ff5252;
+    border: 1px solid #ff1744;
+}
+
+.tag-vence-hoje {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ffb74d;
+    border: 1px solid #ff9800;
+}
+
+/* ===== Botão: adicionar lote ===== */
+.btn-cadastrar-lote {
+    background: linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    width: auto;
+    padding: 6px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn-cadastrar-lote:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(255, 46, 99, 0.5);
 }
 
 
-.btn-cadastrar-estoque:hover{
+/* ===== Tabela de movimentações ===== */
+#secaoMovimentacoes {
+    margin-top: 20px;
+}
 
-    transform: scale(1.03) translateZ(0);
-    box-shadow:linear-gradient(135deg, #ff2e63 0%, #ff7b00 100%);
-     transition: background 0.6s ease, transform 0.6s ease;
+.tabela-mov {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: rgba(20, 8, 40, 0.6);
+    border: 2px solid var(--borda);
+    border-radius: 15px;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+.tabela-mov thead th {
+    background: rgba(253, 4, 124, 0.15);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: left;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--borda);
+}
+
+.tabela-mov tbody td {
+    background: transparent;
+    color: #ffffff;
+    font-size: 15px;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(253, 4, 124, 0.2);
+    vertical-align: middle;
+}
+
+.tabela-mov tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabela-mov tbody tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.tabela-mov tbody tr:hover td {
+    background: rgba(253, 4, 124, 0.1);
+}
+
+.mov-item {
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.mov-qtd {
+    font-weight: 600;
+}
+
+.mov-obs {
+    color: #b9a9d6;
+}
+
+.mov-data {
+    color: #b9a9d6;
+    white-space: nowrap;
+}
+
+.mov-vazio {
+    text-align: center;
+    font-style: italic;
+    color: #b9a9d6;
+    padding: 30px 20px;
+}
+
+/* ===== Etiquetas do tipo de movimentação ===== */
+.tag-mov {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+}
+
+.tag-mov-entrada {
+    background: rgba(0, 200, 120, 0.15);
+    color: #4ade9c;
+    border-color: #00c878;
+}
+
+.tag-mov-ajuste {
+    background: rgba(80, 160, 255, 0.15);
+    color: #7db9ff;
+    border-color: #50a0ff;
+}
+
+.tag-mov-perda_validade {
+    background: rgba(255, 152, 0, 0.15);
+    color: #ffb74d;
+    border-color: #ff9800;
+}
+
+.tag-mov-descarte {
+    background: rgba(255, 23, 68, 0.2);
+    color: #ff5252;
+    border-color: #ff1744;
 }

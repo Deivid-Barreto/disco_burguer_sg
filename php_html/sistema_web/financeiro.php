@@ -70,155 +70,154 @@ $hoje = date('Y-m-d');
 
    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
+ 
     
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/financeiro.css">
-    <link rel="stylesheet" href="../../css/sistema_web/relatorio_financeiro.css">
+    <link rel="stylesheet" href="../../css/sistema_web/financeiro.css">
 
-    <title>Gestão Financeira</title>
-    <style>
-        .tab-content {
-            display: none;
-        }
-        .tab-content.ativo {
-            display: block;
-        }
-        .nav-botoes {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .nav-botoes button {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: normal;
-        }
-        .nav-botoes button.ativo {
-            font-weight: bold;
-            background-color: #e0e0e0;
-        }
-        .topo-secao {
-            margin-bottom: 15px;
-        }
-    </style>
+    
+    
+         
 </head>
 <body>
 
     <?php include __DIR__ . "/../../includes/painel.php"; ?>
     <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
-    <main class="conteudo">
-        <h1>Gestão Financeira</h1>
+    <main class="conteudo container-fluid">
 
-      
-        <div class="nav-botoes">
-            <button type="button" id="btnTabCategorias" class="ativo" onclick="mudarAba('categorias')">Categorias Financeiras</button>
-            <button type="button" id="btnTabContas" onclick="mudarAba('contas')">Contas a Pagar</button>
-        </div>
+    <div class="nav-botoes d-flex mt-4 gap-3">
+        <button type="button" id="btnTabCategorias" class="btn-filtro-cat ativo" onclick="mudarAba('categorias')">Categorias Financeiras</button>
+        <button type="button" id="btnTabContas" class="btn-filtro-cat" onclick="mudarAba('contas')">Contas a Pagar</button>
 
-        
-        <div id="secaoCategorias" class="tab-content ativo">
-            <div class="topo-secao">
-                <button onclick="abrirModalCategoria()">CADASTRAR CATEGORIA</button>
-            </div>
+        <button type="button" id="btnNovaCategoria" class="ms-auto btn-cadastrar-fin" onclick="abrirModalCategoria()">+NOVA CATEGORIA</button>
+        <button type="button" id="btnNovaConta" class="ms-auto btn-cadastrar-fin" onclick="abrirModalConta()">+NOVA CONTA</button>
+    </div>
 
-            <h2>Categorias Financeiras</h2>
-            <table class="table table-striped">
-                <thead>
+    <!-- ================= CATEGORIAS ================= -->
+    <div id="secaoCategorias" class="tab-content ativo">
+
+        <h2 class="titulo-fin mt-4">Categorias Financeiras</h2>
+
+        <table class="tabela-fin">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Tipo</th>
+                    <th>Tipo de Saída</th>
+                    <th>Grupo DRE</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($categorias as $cat): ?>
+                    <?php $classeTipo = preg_replace('/[^a-z_]/', '', strtolower($cat['tipo'])); ?>
                     <tr>
-                        <th>Nome</th>
-                        <th>Tipo</th>
-                        <th>Tipo de Saída</th>
-                        <th>Grupo DRE</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($categorias as $cat): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($cat['nome']) ?></td>
-                        <td><?= htmlspecialchars(ucfirst($cat['tipo'])) ?></td>
-                        <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $cat['tipo_saida']))) ?></td>
-                        <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $cat['grupo_dre']))) ?></td>
+                        <td class="fin-nome"><?= htmlspecialchars($cat['nome']) ?></td>
+                        <td><span class="tag-fin tag-fin-<?= $classeTipo ?>"><?= htmlspecialchars(ucfirst($cat['tipo'])) ?></span></td>
+                        <td class="fin-sub"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $cat['tipo_saida']))) ?></td>
+                        <td class="fin-sub"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $cat['grupo_dre']))) ?></td>
                         <td>
-                            <button onclick='editarCategoria(<?= json_encode($cat) ?>)'>Editar</button>
-                            <form id="formDelCat_<?= $cat['id'] ?>" method="POST" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <input type="hidden" name="origem" value="categoria">
-                                <input type="hidden" name="acao" value="deletar">
-                                <input type="hidden" name="id" value="<?= $cat['id'] ?>">
-                                <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta categoria?', document.getElementById('formDelCat_<?= $cat['id'] ?>'))">Excluir</button>
-                            </form>
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                <button type="button" class="btn-editar-fin" onclick="editarCategoria(<?= htmlspecialchars(json_encode($cat), ENT_QUOTES, 'UTF-8') ?>)">EDITAR</button>
+
+                                <form id="formDelCat_<?= $cat['id'] ?>" method="POST" class="m-0">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <input type="hidden" name="origem" value="categoria">
+                                    <input type="hidden" name="acao" value="deletar">
+                                    <input type="hidden" name="id" value="<?= $cat['id'] ?>">
+                                    <button type="button" class="btn-excluir-fin" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta categoria?', document.getElementById('formDelCat_<?= $cat['id'] ?>'))">EXCLUIR</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endforeach; ?>
 
-        
-        <div id="secaoContas" class="tab-content">
-            <div class="topo-secao">
-                <button onclick="abrirModalConta()">CADASTRAR CONTA</button>
-            </div>
-
-            <h2>Contas a Pagar</h2>
-            <table class="table table-striped">
-                <thead>
+                <?php if (empty($categorias)): ?>
                     <tr>
-                        <th>Descrição</th>
-                        <th>Fornecedor</th>
-                        <th>Categoria</th>
-                        <th>Valor</th>
-                        <th>Vencimento</th>
-                        <th>Status</th>
-                        <th>Ações</th>
+                        <td colspan="5" class="fin-vazio">Nenhuma categoria cadastrada.</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($contas as $c): ?>
-                    <?php 
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ================= CONTAS A PAGAR ================= -->
+    <div id="secaoContas" class="tab-content">
+
+        <h2 class="titulo-fin mt-4">Contas a Pagar</h2>
+
+        <table class="tabela-fin">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Fornecedor</th>
+                    <th>Categoria</th>
+                    <th class="text-end">Valor</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($contas as $c): ?>
+                    <?php
                         $avisoVencimento = '';
                         if ($c['status_pagamento'] === 'pendente') {
                             if ($c['data_vencimento'] < $hoje) {
-                                $avisoVencimento = ' <span style="color:red; font-weight:bold;">(VENCIDO!)</span>';
+                                $avisoVencimento = '<span class="tag-vencido">VENCIDO</span>';
                             } elseif ($c['data_vencimento'] === $hoje) {
-                                $avisoVencimento = ' <span style="color:orange; font-weight:bold;">(VENCE HOJE!)</span>';
+                                $avisoVencimento = '<span class="tag-vence-hoje">VENCE HOJE</span>';
                             }
                         }
+                        $classeStatus = preg_replace('/[^a-z_]/', '', strtolower($c['status_pagamento']));
                     ?>
                     <tr>
-                        <td><?= htmlspecialchars($c['descricao']) ?></td>
-                        <td><?= htmlspecialchars($c['nome_razao_social'] ?? 'Avulso') ?></td>
-                        <td><?= htmlspecialchars($c['categoria_nome']) ?></td>
-                        <td>R$ <?= number_format($c['valor'], 2, ',', '.') ?></td>
-                        <td><?= date('d/m/Y', strtotime($c['data_vencimento'])) ?><?= $avisoVencimento ?></td>
-                        <td><?= htmlspecialchars(ucfirst($c['status_pagamento'])) ?></td>
+                        <td class="fin-nome"><?= htmlspecialchars($c['descricao']) ?></td>
+                        <td class="fin-sub"><?= htmlspecialchars($c['nome_razao_social'] ?? 'Avulso') ?></td>
+                        <td class="fin-sub"><?= htmlspecialchars($c['categoria_nome']) ?></td>
+                        <td class="fin-valor text-end">R$ <?= number_format($c['valor'], 2, ',', '.') ?></td>
                         <td>
-                            <?php if ($c['status_pagamento'] === 'pendente'): ?>
-                            <form id="formPagar_<?= $c['id'] ?>" method="POST" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <input type="hidden" name="origem" value="conta">
-                                <input type="hidden" name="acao" value="pagar">
-                                <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                <button type="button" onclick="dispararConfirmacao('Confirmar baixa de pagamento desta conta?', document.getElementById('formPagar_<?= $c['id'] ?>'))">Marcar Pago</button>
-                            </form>
-                            <?php endif; ?>
-                            <form id="formDelConta_<?= $c['id'] ?>" method="POST" style="display:inline;">
-                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                <input type="hidden" name="origem" value="conta">
-                                <input type="hidden" name="acao" value="deletar">
-                                <input type="hidden" name="id" value="<?= $c['id'] ?>">
-                                <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta conta?', document.getElementById('formDelConta_<?= $c['id'] ?>'))">Excluir</button>
-                            </form>
+                            <div class="d-flex align-items-center gap-2">
+                                <span><?= date('d/m/Y', strtotime($c['data_vencimento'])) ?></span>
+                                <?= $avisoVencimento ?>
+                            </div>
+                        </td>
+                        <td><span class="tag-fin tag-fin-<?= $classeStatus ?>"><?= htmlspecialchars(ucfirst($c['status_pagamento'])) ?></span></td>
+                        <td>
+                            <div class="d-flex justify-content-end align-items-center gap-2">
+                                <?php if ($c['status_pagamento'] === 'pendente'): ?>
+                                    <form id="formPagar_<?= $c['id'] ?>" method="POST" class="m-0">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <input type="hidden" name="origem" value="conta">
+                                        <input type="hidden" name="acao" value="pagar">
+                                        <input type="hidden" name="id" value="<?= $c['id'] ?>">
+                                        <button type="button" class="btn-pagar-fin" onclick="dispararConfirmacao('Confirmar baixa de pagamento desta conta?', document.getElementById('formPagar_<?= $c['id'] ?>'))">MARCAR PAGO</button>
+                                    </form>
+                                <?php endif; ?>
+
+                                <form id="formDelConta_<?= $c['id'] ?>" method="POST" class="m-0">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                    <input type="hidden" name="origem" value="conta">
+                                    <input type="hidden" name="acao" value="deletar">
+                                    <input type="hidden" name="id" value="<?= $c['id'] ?>">
+                                    <button type="button" class="btn-excluir-fin" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta conta?', document.getElementById('formDelConta_<?= $c['id'] ?>'))">EXCLUIR</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </main>
+                <?php endforeach; ?>
+
+                <?php if (empty($contas)): ?>
+                    <tr>
+                        <td colspan="7" class="fin-vazio">Nenhuma conta cadastrada.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</main>
 
     <dialog id="modalCategoria" class="ModalFinanceiro">
         <h1>Cadastrar / Editar Categoria</h1>
@@ -313,26 +312,26 @@ $hoje = date('Y-m-d');
     <script>
     let formParaSubmeter = null;
 
-    function mudarAba(aba) {
-        const secaoCategorias = document.getElementById('secaoCategorias');
-        const secaoContas = document.getElementById('secaoContas');
-        
-        const btnCategorias = document.getElementById('btnTabCategorias');
-        const btnContas = document.getElementById('btnTabContas');
+   function mudarAba(aba) {
+    const secaoCat = document.getElementById('secaoCategorias');
+    const secaoContas = document.getElementById('secaoContas');
+    const btnCat = document.getElementById('btnTabCategorias');
+    const btnContas = document.getElementById('btnTabContas');
 
-        secaoCategorias.classList.remove('ativo');
-        secaoContas.classList.remove('ativo');
-        btnCategorias.classList.remove('ativo');
-        btnContas.classList.remove('ativo');
+    secaoCat.classList.remove('ativo');
+    secaoContas.classList.remove('ativo');
+    btnCat.classList.remove('ativo');
+    btnContas.classList.remove('ativo');
 
-        if (aba === 'categorias') {
-            secaoCategorias.classList.add('ativo');
-            btnCategorias.classList.add('ativo');
-        } else if (aba === 'contas') {
-            secaoContas.classList.add('ativo');
-            btnContas.classList.add('ativo');
-        }
+    if (aba === 'categorias') {
+        secaoCat.classList.add('ativo');
+        btnCat.classList.add('ativo');
+    } else if (aba === 'contas') {
+        secaoContas.classList.add('ativo');
+        btnContas.classList.add('ativo');
     }
+}
+    
 
     function dispararConfirmacao(mensagem, form) {
         formParaSubmeter = form;

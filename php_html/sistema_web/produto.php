@@ -254,8 +254,8 @@ try {
 
     <div class="conteudo container-fluid ">
  
-        <div class="menu-cardapio d-flex gap-3 mt-4">
-            <button type="button" class="btn-filtro-cat active" data-categoria="todos">Todos</button>
+        <div class="nav-botoes menu-cardapio d-flex gap-3 mt-4">
+            <button type="button" class="btn-filtro-cat ativo" data-categoria="todos">Todos</button>
             <button type="button" class="btn-filtro-cat" data-categoria="hamburguer">Hamburguers</button>
             <button type="button" class="btn-filtro-cat" data-categoria="combos">Combos</button>
             <button type="button" class="btn-filtro-cat" data-categoria="bebidas">Bebidas</button>
