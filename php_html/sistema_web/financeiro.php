@@ -6,6 +6,22 @@ if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
+// Garante automaticamente a criação da categoria fixa do sistema via PHP
+try {
+    $stmtCheckFixa = $pdo->prepare("SELECT id FROM categorias_financeiras WHERE tipo_saida = 'fixo' AND tipo = 'entrada' LIMIT 1");
+    $stmtCheckFixa->execute();
+    
+    if (!$stmtCheckFixa->fetch()) {
+        $stmtInsertFixa = $pdo->prepare("
+            INSERT INTO categorias_financeiras (nome, tipo, tipo_saida, grupo_dre) 
+            VALUES ('Vendas de Pedidos', 'entrada', 'fixo', 'receita_bruta')
+        ");
+        $stmtInsertFixa->execute();
+    }
+} catch (PDOException $e) {
+    // Tratamento silencioso caso ocorra erro na verificação inicial
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die('Ação não autorizada.');
@@ -16,11 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $origem = $_POST['origem'] ?? '';
 
     if ($origem === 'categoria') {
+        $id = $_POST['id'] ?? null;
+        
+        if ($id) {
+            $stmtCheck = $pdo->prepare("SELECT tipo_saida FROM categorias_financeiras WHERE id = ?");
+            $stmtCheck->execute([$id]);
+            $tipoSaida = $stmtCheck->fetchColumn();
+            if ($tipoSaida === 'fixo') {
+                die('Ação negada: Esta é uma categoria fixa do sistema e não pode ser alterada ou excluída.');
+            }
+        }
+
         if ($acao === 'deletar') {
             $stmt = $pdo->prepare("DELETE FROM categorias_financeiras WHERE id = ?");
-            $stmt->execute([$_POST['id']]);
+            $stmt->execute([$id]);
         } elseif ($acao === 'salvar') {
-            $id = $_POST['id'] ?? null;
             if ($id) {
                 $stmt = $pdo->prepare("UPDATE categorias_financeiras SET nome=?, tipo=?, tipo_saida=?, grupo_dre=? WHERE id=?");
                 $stmt->execute([$_POST['nome'], $_POST['tipo'], $_POST['tipo_saida'], $_POST['grupo_dre'], $id]);
@@ -52,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$categorias = $pdo->query("SELECT * FROM categorias_financeiras ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
+$categorias = $pdo->query("SELECT * FROM categorias_financeiras ORDER BY (tipo_saida = 'fixo') DESC, nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 $contas = $pdo->query("SELECT c.*, f.nome_razao_social, f.cnpj_cpf, cat.nome as categoria_nome FROM contas_a_pagar c LEFT JOIN fornecedores f ON c.fornecedor_id = f.id JOIN categorias_financeiras cat ON c.categoria_id = cat.id ORDER BY c.data_vencimento ASC")->fetchAll(PDO::FETCH_ASSOC);
 $fornecedores = $pdo->query("SELECT id, nome_razao_social, cnpj_cpf FROM fornecedores WHERE ativo = 1")->fetchAll(PDO::FETCH_ASSOC);
 $categorias_saida = $pdo->query("SELECT id, nome, tipo FROM categorias_financeiras WHERE tipo = 'saida'")->fetchAll(PDO::FETCH_ASSOC);
@@ -63,22 +89,12 @@ $hoje = date('Y-m-d');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
-   
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
- 
-    
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/financeiro.css">
     <link rel="stylesheet" href="../../css/sistema_web/financeiro.css">
-
-    
-    
-         
 </head>
 <body>
 
@@ -112,7 +128,10 @@ $hoje = date('Y-m-d');
             </thead>
             <tbody>
                 <?php foreach ($categorias as $cat): ?>
-                    <?php $classeTipo = preg_replace('/[^a-z_]/', '', strtolower($cat['tipo'])); ?>
+                    <?php 
+                        $classeTipo = preg_replace('/[^a-z_]/', '', strtolower($cat['tipo'])); 
+                        $isFixa = ($cat['tipo_saida'] === 'fixo');
+                    ?>
                     <tr>
                         <td class="fin-nome"><?= htmlspecialchars($cat['nome']) ?></td>
                         <td><span class="tag-fin tag-fin-<?= $classeTipo ?>"><?= htmlspecialchars(ucfirst($cat['tipo'])) ?></span></td>
@@ -120,15 +139,17 @@ $hoje = date('Y-m-d');
                         <td class="fin-sub"><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $cat['grupo_dre']))) ?></td>
                         <td>
                             <div class="d-flex justify-content-end align-items-center gap-2">
-                                <button type="button" class="btn-editar-fin" onclick="editarCategoria(<?= htmlspecialchars(json_encode($cat), ENT_QUOTES, 'UTF-8') ?>)">EDITAR</button>
+                                <?php if (!$isFixa): ?>
+                                    <button type="button" class="btn-editar-fin" onclick="editarCategoria(<?= htmlspecialchars(json_encode($cat), ENT_QUOTES, 'UTF-8') ?>)">EDITAR</button>
 
-                                <form id="formDelCat_<?= $cat['id'] ?>" method="POST" class="m-0">
-                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                    <input type="hidden" name="origem" value="categoria">
-                                    <input type="hidden" name="acao" value="deletar">
-                                    <input type="hidden" name="id" value="<?= $cat['id'] ?>">
-                                    <button type="button" class="btn-excluir-fin" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta categoria?', document.getElementById('formDelCat_<?= $cat['id'] ?>'))">EXCLUIR</button>
-                                </form>
+                                    <form id="formDelCat_<?= $cat['id'] ?>" method="POST" class="m-0">
+                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                        <input type="hidden" name="origem" value="categoria">
+                                        <input type="hidden" name="acao" value="deletar">
+                                        <input type="hidden" name="id" value="<?= $cat['id'] ?>">
+                                        <button type="button" class="btn-excluir-fin" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR esta categoria?', document.getElementById('formDelCat_<?= $cat['id'] ?>'))">EXCLUIR</button>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         </td>
                     </tr>
@@ -312,26 +333,25 @@ $hoje = date('Y-m-d');
     <script>
     let formParaSubmeter = null;
 
-   function mudarAba(aba) {
-    const secaoCat = document.getElementById('secaoCategorias');
-    const secaoContas = document.getElementById('secaoContas');
-    const btnCat = document.getElementById('btnTabCategorias');
-    const btnContas = document.getElementById('btnTabContas');
+    function mudarAba(aba) {
+        const secaoCat = document.getElementById('secaoCategorias');
+        const secaoContas = document.getElementById('secaoContas');
+        const btnCat = document.getElementById('btnTabCategorias');
+        const btnContas = document.getElementById('btnTabContas');
 
-    secaoCat.classList.remove('ativo');
-    secaoContas.classList.remove('ativo');
-    btnCat.classList.remove('ativo');
-    btnContas.classList.remove('ativo');
+        secaoCat.classList.remove('ativo');
+        secaoContas.classList.remove('ativo');
+        btnCat.classList.remove('ativo');
+        btnContas.classList.remove('ativo');
 
-    if (aba === 'categorias') {
-        secaoCat.classList.add('ativo');
-        btnCat.classList.add('ativo');
-    } else if (aba === 'contas') {
-        secaoContas.classList.add('ativo');
-        btnContas.classList.add('ativo');
+        if (aba === 'categorias') {
+            secaoCat.classList.add('ativo');
+            btnCat.classList.add('ativo');
+        } else if (aba === 'contas') {
+            secaoContas.classList.add('ativo');
+            btnContas.classList.add('ativo');
+        }
     }
-}
-    
 
     function dispararConfirmacao(mensagem, form) {
         formParaSubmeter = form;

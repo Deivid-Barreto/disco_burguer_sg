@@ -18,12 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
     $id_alvo = (int)($_POST['id'] ?? 0);
     
-    if ($acao === 'deletar') {
-        if ($id_alvo !== (int)$funcionario_logado_id) {
-            $stmt = $pdo->prepare("DELETE FROM funcionarios WHERE id = ?");
-            $stmt->execute([$id_alvo]);
-        }
-    } elseif ($acao === 'alternar_status') {
+    if ($acao === 'alternar_status') {
         if ($id_alvo !== (int)$funcionario_logado_id) {
             $novo_status = $_POST['status_atual'] == 1 ? 0 : 1;
             $stmt = $pdo->prepare("UPDATE funcionarios SET ativo = ? WHERE id = ?");
@@ -45,63 +40,61 @@ $funcionarios = $pdo->query("SELECT id, cargo, nome, ativo, email, numero_telefo
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    <meta charset="UTF-8">
+    <title>Funcionários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- painel.css ANTES do css da página -->
     <link rel="stylesheet" href="../../css/painel.css">
     <link rel="stylesheet" href="../../css/sistema_web/funcionarios.css">
-<meta charset="UTF-8"><title>Funcionários</title></head>
+</head>
 <body>
 
     <?php include __DIR__ . "/../../includes/painel.php"; ?>
+    <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
 
-     <?php include __DIR__ . "/../../includes/header_sistema.php"; ?>
-
-
-
-
-
-
-
-    <div class="conteudo">
-    <button onclick="abrirModal()">CADASTRAR FUNCIONÁRIO</button>
-    <table>
-        <thead><tr><th>Nome</th><th>Cargo</th><th>Email</th><th>Ativo</th><th>Ações</th></tr></thead>
-        <tbody>
-            <?php foreach ($funcionarios as $f): ?>
-            <tr>
-                <td><?= htmlspecialchars($f['nome']) ?></td>
-                <td><?= htmlspecialchars($f['cargo']) ?></td>
-                <td><?= htmlspecialchars($f['email']) ?></td>
-                <td><?= $f['ativo'] ? 'Sim' : 'Não' ?></td>
-                <td>
-                    <?php if ((int)$f['id'] !== (int)$funcionario_logado_id): ?>
-                        <form id="formStatus_<?= $f['id'] ?>" method="POST" style="display:inline;">
-                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <input type="hidden" name="acao" value="alternar_status">
-                            <input type="hidden" name="id" value="<?= $f['id'] ?>">
-                            <input type="hidden" name="status_atual" value="<?= $f['ativo'] ?>">
-                            <button type="button" onclick="dispararConfirmacao('Deseja alternar o status deste funcionário?', document.getElementById('formStatus_<?= $f['id'] ?>'))"><?= $f['ativo'] ? 'Desativar' : 'Ativar' ?></button>
-                        </form>
-                        <form id="formDelFunc_<?= $f['id'] ?>" method="POST" style="display:inline;">
-                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                            <input type="hidden" name="acao" value="deletar">
-                            <input type="hidden" name="id" value="<?= $f['id'] ?>">
-                            <button type="button" onclick="dispararConfirmacao('Tem certeza que deseja EXCLUIR este funcionário?', document.getElementById('formDelFunc_<?= $f['id'] ?>'))">Excluir</button>
-                        </form>
-                    <?php else: ?>
-                        <span>(Você)</span>
-                    <?php endif; ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="conteudo container-fluid mt-4">
+        <button type="button" class="btn btn-primary mb-3" onclick="abrirModal()">CADASTRAR FUNCIONÁRIO</button>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Email</th>
+                    <th>Ativo</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($funcionarios as $f): ?>
+                <tr>
+                    <td><?= htmlspecialchars($f['nome']) ?></td>
+                    <td><?= htmlspecialchars(ucfirst(str_replace('_', ' ', $f['cargo']))) ?></td>
+                    <td><?= htmlspecialchars($f['email']) ?></td>
+                    <td><?= $f['ativo'] ? 'Sim' : 'Não' ?></td>
+                    <td class="text-end">
+                        <?php if ((int)$f['id'] !== (int)$funcionario_logado_id): ?>
+                            <form id="formStatus_<?= $f['id'] ?>" method="POST" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                <input type="hidden" name="acao" value="alternar_status">
+                                <input type="hidden" name="id" value="<?= $f['id'] ?>">
+                                <input type="hidden" name="status_atual" value="<?= $f['ativo'] ?>">
+                                <button type="button" class="btn btn-sm <?= $f['ativo'] ? 'btn-warning' : 'btn-success' ?>" onclick="dispararConfirmacao('Deseja alternar o status deste funcionário?', document.getElementById('formStatus_<?= $f['id'] ?>'))">
+                                    <?= $f['ativo'] ? 'Desativar' : 'Ativar' ?>
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <!-- Nenhuma ação ou texto exibido para o usuário logado -->
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
     </div>
+
     <dialog id="modalFuncionario">
         <form method="POST">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
@@ -128,8 +121,8 @@ $funcionarios = $pdo->query("SELECT id, cargo, nome, ativo, email, numero_telefo
     <dialog id="modalConfirmacaoCustom">
         <h3 id="tituloConfirmacao">Confirmação</h3>
         <p id="mensagemConfirmacao">Tem certeza que deseja prosseguir?</p>
-        <button type="button" id="btnSimConfirmacao">Sim</button>
-        <button type="button" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
+        <button type="button" id="btnSimConfirmacao" class="btn btn-success btn-sm">Sim</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('modalConfirmacaoCustom').close()">Cancelar</button>
     </dialog>
 
     <script>
@@ -159,7 +152,7 @@ $funcionarios = $pdo->query("SELECT id, cargo, nome, ativo, email, numero_telefo
     }
     </script>
 
-     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
     <script src="../../js/painel.js"></script>

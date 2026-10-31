@@ -12,12 +12,12 @@ if (isset($_GET['obter_pedido'])) {
     
     $id_ed = $_GET['obter_pedido'];
     
-    $st = $pdo->prepare("SELECT * FROM pedidos WHERE id = ? AND atendente_id = ?");
-    $st->execute([$id_ed, $funcionario_id]);
+    $st = $pdo->prepare("SELECT * FROM pedidos WHERE id = ?");
+    $st->execute([$id_ed]);
     $pedido_data = $st->fetch(PDO::FETCH_ASSOC);
 
     if (!$pedido_data) {
-        echo json_encode(['erro' => 'Pedido não encontrado ou não autorizado.']);
+        echo json_encode(['erro' => 'Pedido não encontrado.']);
         exit;
     }
 
@@ -70,17 +70,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         header('Content-Type: application/json; charset=utf-8');
         $id_pedido = (int)($_POST['id_pedido'] ?? 0);
         try {
-            $stmt = $pdo->prepare("UPDATE pedidos SET status = 'aguardando_pagamento' WHERE id = ? AND atendente_id = ?");
-            $stmt->execute([$id_pedido, $funcionario_id]);
+            $stmt = $pdo->prepare("UPDATE pedidos SET status = 'aguardando_pagamento' WHERE id = ?");
+            $stmt->execute([$id_pedido]);
             echo json_encode(['sucesso' => true]);
         } catch (PDOException $e) {
+            echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+        }
+        exit;
+    } elseif ($acao === 'cancelar_pedido') {
+        while (ob_get_level()) ob_end_clean();
+        header('Content-Type: application/json; charset=utf-8');
+        $id_pedido = (int)($_POST['id_pedido'] ?? 0);
+        $motivo = trim($_POST['motivo'] ?? '');
+        $quantidadesRetorno = $_POST['qtd_retorno'] ?? [];
+
+        if (!$id_pedido || empty($motivo)) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Informe o motivo do cancelamento.']);
+            exit;
+        }
+
+        try {
+            $pdo->beginTransaction();
+
+            $stmtItens = $pdo->prepare("SELECT id, produto_id, quantidade FROM itens_pedidos WHERE pedido_id = ?");
+            $stmtItens->execute([$id_pedido]);
+            $itensPedido = $stmtItens->fetchAll(PDO::FETCH_ASSOC);
+
+            $stmtPedido = $pdo->prepare("UPDATE pedidos SET status = 'cancelado' WHERE id = ?");
+            $stmtPedido->execute([$id_pedido]);
+
+            $stmtItensCancel = $pdo->prepare("UPDATE itens_pedidos SET status_item = 'cancelado' WHERE pedido_id = ?");
+            $stmtItensCancel->execute([$id_pedido]);
+
+            $stmtOcorrencia = $pdo->prepare("
+                INSERT INTO ocorrencias_pedido (pedido_id, item_pedido_id, funcionario_id, tipo, motivo, retornou_estoque, quantidade_retornada)
+                VALUES (?, ?, ?, 'cancelamento', ?, ?, ?)
+            ");
+
+            foreach ($itensPedido as $item) {
+                $itemId = $item['id'];
+                $qtdMaxima = (int)$item['quantidade'];
+                
+                $qtdRetorno = isset($quantidadesRetorno[$itemId]) ? (int)$quantidadesRetorno[$itemId] : 0;
+                if ($qtdRetorno < 0) $qtdRetorno = 0;
+                if ($qtdRetorno > $qtdMaxima) $qtdRetorno = $qtdMaxima;
+
+                $retornouEstoqueFlag = ($qtdRetorno > 0) ? 1 : 0;
+
+                $stmtOcorrencia->execute([$id_pedido, $itemId, $funcionario_id, $motivo, $retornouEstoqueFlag, $qtdRetorno]);
+
+                if ($qtdRetorno > 0) {
+                    $stmtProd = $pdo->prepare("SELECT estoque_id FROM produtos WHERE id = ?");
+                    $stmtProd->execute([$item['produto_id']]);
+                    $prodData = $stmtProd->fetch(PDO::FETCH_ASSOC);
+
+                    if ($prodData && $prodData['estoque_id']) {
+                        $stmtLote = $pdo->prepare("SELECT id FROM lotes_estoque WHERE estoque_id = ? ORDER BY data_validade ASC LIMIT 1");
+                        $stmtLote->execute([$prodData['estoque_id']]);
+                        $loteId = $stmtLote->fetchColumn();
+
+                        if ($loteId) {
+                            $stmtUpLote = $pdo->prepare("UPDATE lotes_estoque SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?");
+                            $stmtUpLote->execute([$qtdRetorno, $loteId]);
+
+                            $stmtMov = $pdo->prepare("
+                                INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao)
+                                VALUES (?, ?, 'entrada', ?, ?)
+                            ");
+                            $stmtMov->execute([$loteId, $funcionario_id, $qtdRetorno, "Retorno parcial/total ao estoque por cancelamento (Item ID #$itemId, Pedido #$id_pedido)"]);
+                        }
+                    } else {
+                        $stmtReceita = $pdo->prepare("SELECT ingrediente_id, quantidade_usada FROM receitas WHERE produto_id = ?");
+                        $stmtReceita->execute([$item['produto_id']]);
+                        $receitas = $stmtReceita->fetchAll(PDO::FETCH_ASSOC);
+
+                        foreach ($receitas as $rec) {
+                            $qtdRetornoIngrediente = $rec['quantidade_usada'] * $qtdRetorno;
+                            $stmtLoteIng = $pdo->prepare("SELECT id FROM lotes_estoque WHERE estoque_id = ? ORDER BY data_validade ASC LIMIT 1");
+                            $stmtLoteIng->execute([$rec['ingrediente_id']]);
+                            $loteIngId = $stmtLoteIng->fetchColumn();
+
+                            if ($loteIngId) {
+                                $stmtUpLoteIng = $pdo->prepare("UPDATE lotes_estoque SET quantidade_estoque = quantidade_estoque + ? WHERE id = ?");
+                                $stmtUpLoteIng->execute([$qtdRetornoIngrediente, $loteIngId]);
+
+                                $stmtMovIng = $pdo->prepare("
+                                    INSERT INTO movimentacoes_estoque (lote_estoque_id, funcionario_id, tipo_movimentacao, quantidade, observacao)
+                                    VALUES (?, ?, 'entrada', ?, ?)
+                                ");
+                                $stmtMovIng->execute([$loteIngId, $funcionario_id, $qtdRetornoIngrediente, "Retorno de ingrediente por cancelamento (Pedido #$id_pedido)"]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            $pdo->commit();
+            echo json_encode(['sucesso' => true]);
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
             echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
         }
         exit;
     } elseif ($acao === 'editar') {
         $id_pedido = (int)($_POST['id_pedido'] ?? 0);
         $nome_cliente = trim($_POST['nome_cliente'] ?? '');
-        $tipo = $_POST['tipo'] ?? '';
+        $tipo = 'local';
         $mesa_id = !empty($_POST['mesa_id']) ? (int)$_POST['mesa_id'] : null;
         $valor_total = (float)($_POST['valor_total'] ?? 0);
         $itens_pedido = json_decode($_POST['itens_pedido'] ?? '[]', true);
@@ -91,9 +186,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             $stmt = $pdo->prepare("
                 UPDATE pedidos
                 SET nome_cliente = ?, tipo = ?, mesa_id = ?, valor_total = ?
-                WHERE id = ? AND atendente_id = ? AND status = 'aberto'
+                WHERE id = ? AND status = 'aberto'
             ");
-            $stmt->execute([$nome_cliente, $tipo, $mesa_id, $valor_total, $id_pedido, $funcionario_id]);
+            $stmt->execute([$nome_cliente, $tipo, $mesa_id, $valor_total, $id_pedido]);
 
             $stmt = $pdo->prepare("
                DELETE cip FROM customizacoes_item_pedido cip
@@ -132,7 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
         }    
     } elseif ($acao === 'cadastrar') {
         $nome_cliente = trim($_POST['nome_cliente'] ?? '');
-        $tipo = $_POST['tipo'] ?? '';
+        $tipo = 'local';
         $mesa_id = !empty($_POST['mesa_id']) ? (int)$_POST['mesa_id'] : null;
         $valor_total = (float)($_POST['valor_total'] ?? 0);
         
@@ -143,13 +238,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
             $pdo->beginTransaction();
             $pedido_id = null;
 
-            if ($tipo === 'local' && $mesa_id) {
+            if ($mesa_id) {
                 $stmtBusca = $pdo->prepare("
                     SELECT id FROM pedidos
-                    WHERE mesa_id = ? AND atendente_id = ? AND status = 'aberto'
+                    WHERE mesa_id = ? AND status = 'aberto'
                     LIMIT 1
                 ");
-                $stmtBusca->execute([$mesa_id, $funcionario_id]);
+                $stmtBusca->execute([$mesa_id]);
                 $pedidoExistente = $stmtBusca->fetch(PDO::FETCH_ASSOC);
 
                 if ($pedidoExistente) {
@@ -197,8 +292,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'){
 }
 
 $mesas = [];
-$locais = [];
-$delivery = [];
+$locaisMeus = [];
+$locaisTodos = [];
 $produtosAtivos = [];
 
 try {
@@ -228,13 +323,12 @@ try {
     ");
     $produtosAtivos = $stmtProdutos->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtLocais = $pdo->prepare("SELECT p.*, m.numero as numero_mesa FROM pedidos p LEFT JOIN mesas m ON m.id = p.mesa_id WHERE p.tipo = 'local' AND p.atendente_id = ? AND p.status = 'aberto' ORDER BY p.id DESC");
-    $stmtLocais->execute([$funcionario_id]);
-    $locais = $stmtLocais->fetchAll(PDO::FETCH_ASSOC);
+    $stmtLocaisMeus = $pdo->prepare("SELECT p.*, m.numero as numero_mesa FROM pedidos p LEFT JOIN mesas m ON m.id = p.mesa_id WHERE p.tipo = 'local' AND p.atendente_id = ? AND p.status = 'aberto' ORDER BY p.id DESC");
+    $stmtLocaisMeus->execute([$funcionario_id]);
+    $locaisMeus = $stmtLocaisMeus->fetchAll(PDO::FETCH_ASSOC);
 
-    $stmtDelivery = $pdo->prepare("SELECT * FROM pedidos WHERE tipo = 'delivery' AND atendente_id = ? AND status = 'aberto' ORDER BY id DESC");
-    $stmtDelivery->execute([$funcionario_id]);
-    $delivery = $stmtDelivery->fetchAll(PDO::FETCH_ASSOC);
+    $stmtLocaisTodos = $pdo->query("SELECT p.*, m.numero as numero_mesa FROM pedidos p LEFT JOIN mesas m ON m.id = p.mesa_id WHERE p.tipo = 'local' AND p.status = 'aberto' ORDER BY p.id DESC");
+    $locaisTodos = $stmtLocaisTodos->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
     die("Erro ao carregar dados: " . $e->getMessage());
 }
@@ -272,12 +366,17 @@ try {
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Pedidos - Atendente</title>
+    <title>Pedidos Locais - Atendente</title>
     <style>
         @media print {
             body * { visibility: hidden; }
             #areaRecibo, #areaRecibo * { visibility: visible; }
             #areaRecibo { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+        }
+        .aba-ativa {
+            background-color: #007bff !important;
+            color: white !important;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -286,46 +385,56 @@ try {
 <div>
     <div>
         <h2>Pedidos Locais</h2>
-        <button type="button" onclick="abrirModalCadastro('local')">+ Novo Pedido Local</button>
-        <?php if (empty($locais)): ?>
-            <p>Nenhum pedido local aberto.</p>
-        <?php else: ?>
-            <?php foreach ($locais as $pedido): ?>
-                <div style="display: flex; gap: 5px; margin-top: 5px; align-items: center;">
-                    <button type="button" onclick="abrirPedidoParaEditar(<?= $pedido['id'] ?>)" style="flex: 1; text-align: left; padding: 8px; cursor: pointer;">
-                        Pedido <?= $pedido['id'] ?> — Mesa <?= $pedido['numero_mesa'] ?? 'N/A' ?> (<?= htmlspecialchars($pedido['nome_cliente']) ?>)
-                    </button>
-                    <button type="button" onclick="abrirModalFecharContaDireto(<?= $pedido['id'] ?>)" style="padding: 8px; background: #e6f2ff; cursor: pointer; font-weight: bold;" title="Fechar Conta / Imprimir Pré-conta">🖨️ Fechar Conta</button>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
-    <br>
-    <div>
-        <h2>Meus Delivery</h2>
-        <button type="button" onclick="abrirModalCadastro('delivery')">+ Novo Pedido Delivery</button>
-        <?php if (empty($delivery)): ?>
-            <p>Nenhum pedido de delivery aberto.</p>
-        <?php else: ?>
-            <?php foreach ($delivery as $pedido): ?>
-                <div style="display: flex; gap: 5px; margin-top: 5px; align-items: center;">
-                    <button type="button" onclick="abrirPedidoParaEditar(<?= $pedido['id'] ?>)" style="flex: 1; text-align: left; padding: 8px; cursor: pointer;">
-                        Pedido <?= $pedido['id'] ?> — <?= htmlspecialchars($pedido['nome_cliente']) ?>
-                    </button>
-                    <button type="button" onclick="abrirModalFecharContaDireto(<?= $pedido['id'] ?>)" style="padding: 8px; background: #e6f2ff; cursor: pointer; font-weight: bold;" title="Fechar Conta / Imprimir Pré-conta">🖨️ Fechar Conta</button>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+            <div style="display: flex; gap: 4px;">
+                <button type="button" id="btnAbaMeus" class="aba-ativa" onclick="alternarFiltroLocal('meus')" style="padding: 6px 12px; cursor: pointer; border: 1px solid #ccc; background: #f8f9fa;">Meus</button>
+                <button type="button" id="btnAbaTodos" onclick="alternarFiltroLocal('todos')" style="padding: 6px 12px; cursor: pointer; border: 1px solid #ccc; background: #f8f9fa;">Todos</button>
+            </div>
+        </div>
+
+        <div id="listaLocaisMeus">
+            <div style="margin-bottom: 10px;">
+                <button type="button" onclick="abrirModalCadastro('local')">+ Novo Pedido Local</button>
+            </div>
+            <?php if (empty($locaisMeus)): ?>
+                <p>Nenhum pedido local seu aberto.</p>
+            <?php else: ?>
+                <?php foreach ($locaisMeus as $pedido): ?>
+                    <div style="display: flex; gap: 5px; margin-top: 5px; align-items: center;">
+                        <button type="button" onclick="abrirPedidoParaEditar(<?= $pedido['id'] ?>)" style="flex: 1; text-align: left; padding: 8px; cursor: pointer;">
+                            <strong>Mesa <?= $pedido['numero_mesa'] ?? 'N/A' ?></strong> — Pedido #<?= $pedido['id'] ?> (<?= htmlspecialchars($pedido['nome_cliente']) ?>)
+                        </button>
+                        <button type="button" onclick="abrirModalFecharContaDireto(<?= $pedido['id'] ?>)" style="padding: 8px; background: #e6f2ff; cursor: pointer; font-weight: bold;" title="Fechar Conta / Imprimir Pré-conta">🖨️ Fechar Conta</button>
+                        <button type="button" onclick="abrirModalCancelarPedido(<?= $pedido['id'] ?>)" style="padding: 8px; background: #ffe6e6; cursor: pointer; font-weight: bold;" title="Cancelar / Relatar Ocorrência">❌ Cancelar</button>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div id="listaLocaisTodos" style="display: none;">
+            <?php if (empty($locaisTodos)): ?>
+                <p>Nenhum pedido local aberto no sistema.</p>
+            <?php else: ?>
+                <?php foreach ($locaisTodos as $pedido): ?>
+                    <div style="display: flex; gap: 5px; margin-top: 5px; align-items: center;">
+                        <button type="button" onclick="abrirPedidoParaEditar(<?= $pedido['id'] ?>)" style="flex: 1; text-align: left; padding: 8px; cursor: pointer;">
+                            <strong>Mesa <?= $pedido['numero_mesa'] ?? 'N/A' ?></strong> — Pedido #<?= $pedido['id'] ?> (<?= htmlspecialchars($pedido['nome_cliente']) ?>)
+                        </button>
+                        <button type="button" onclick="abrirModalFecharContaDireto(<?= $pedido['id'] ?>)" style="padding: 8px; background: #e6f2ff; cursor: pointer; font-weight: bold;" title="Fechar Conta / Imprimir Pré-conta">🖨️ Fechar Conta</button>
+                        <button type="button" onclick="abrirModalCancelarPedido(<?= $pedido['id'] ?>)" style="padding: 8px; background: #ffe6e6; cursor: pointer; font-weight: bold;" title="Cancelar / Relatar Ocorrência">❌ Cancelar</button>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
     
 <dialog id="modalCadastro">
-    <h1 id="modalTituloCadastro">Fazer Novo Pedido</h1>
+    <h1 id="modalTituloCadastro">Fazer Novo Pedido Local</h1>
 
     <form id="formCadastroPedido" method="POST" action="" onsubmit="interceptarEnvioFormulario(event)">
         <input type="hidden" id="form_acao" name="acao" value="cadastrar">
         <input type="hidden" id="form_id_pedido" name="id_pedido" value="">
-        
         <input type="hidden" id="tipo" name="tipo" value="local">
 
         <div>
@@ -333,9 +442,9 @@ try {
             <input type="text" id="nome_cliente" name="nome_cliente" required>
         </div>
 
-        <div id="secao-mesas" style="display: none;">
+        <div>
             <label for="mesa_id">Mesa</label>
-            <select id="mesa_id" name="mesa_id">
+            <select id="mesa_id" name="mesa_id" required>
                 <option value="" hidden>Selecione uma mesa</option>
                 <?php foreach ($mesas as $mesa): ?>
                 <option value="<?= $mesa['id'] ?>">Mesa <?= htmlspecialchars($mesa['numero']) ?></option>
@@ -414,6 +523,15 @@ try {
         <p><strong>Especificações / Ingredientes:</strong></p>
         <p id="descricaoProdutoCustomizacao" style="margin: 5px 0 0 0; color: #555;"></p>
     </div>
+
+    <div style="margin: 15px 0; padding: 12px; background: #eef2f7; border-radius: 6px; text-align: center;">
+        <label style="font-weight: bold; display: block; margin-bottom: 8px;">Quantidade do Item:</label>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+            <button type="button" onclick="mudarQtdProdutoCustomizacao(-1)" style="padding: 6px 16px; font-weight: bold; font-size: 1.1em; cursor: pointer; background: #ddd; border: none; border-radius: 4px;">−</button>
+            <span id="qtdProdutoCustomizacao" style="min-width: 35px; text-align: center; font-weight: bold; font-size: 1.2em;">1</span>
+            <button type="button" onclick="mudarQtdProdutoCustomizacao(1)" style="padding: 6px 16px; font-weight: bold; font-size: 1.1em; cursor: pointer; background: #ddd; border: none; border-radius: 4px;">+</button>
+        </div>
+    </div>
     
     <hr>
     <h3>Adicionais (Extras)</h3>
@@ -448,7 +566,6 @@ try {
     <button type="button" onclick="fecharCustomizacao()">Cancelar</button>
 </dialog>
 
-<!-- DIALOG DE CONFIRMAÇÃO GERAL SEGURA -->
 <dialog id="modalConfirmacaoSegura">
     <h3 id="tituloConfirmacaoSegura">Confirmação</h3>
     <p id="textoConfirmacaoSegura" style="margin: 15px 0;">Tem certeza que deseja realizar esta ação?</p>
@@ -456,6 +573,30 @@ try {
         <button type="button" id="btnSimConfirmacao" style="color: green; font-weight: bold;">Sim, Continuar</button>
         <button type="button" onclick="document.getElementById('modalConfirmacaoSegura').close()">Cancelar</button>
     </div>
+</dialog>
+
+<dialog id="modalCancelarPedido">
+    <h3>Cancelar Pedido / Relatar Ocorrência</h3>
+    <form id="formCancelarPedido" onsubmit="enviarCancelamentoPedido(event)">
+        <input type="hidden" id="cancelar_id_pedido" name="id_pedido" value="">
+        
+        <div style="margin: 10px 0;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Itens do Pedido (Quantidade Retornada ao Estoque):</label>
+            <div id="listaItensCancelamento" style="background: #f9f9f9; padding: 10px; border: 1px solid #ddd; max-height: 150px; overflow-y: auto; margin-bottom: 10px;">
+                <!-- Itens carregados dinamicamente -->
+            </div>
+        </div>
+
+        <div style="margin: 10px 0;">
+            <label for="motivoCancelamento" style="display: block; font-weight: bold; margin-bottom: 5px;">Motivo da Ocorrência:</label>
+            <textarea id="motivoCancelamento" name="motivo" rows="3" style="width: 100%; padding: 8px;" required placeholder="Descreva o motivo do cancelamento..."></textarea>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <button type="submit" style="color: red; font-weight: bold; padding: 6px 12px; cursor: pointer;">Confirmar Cancelamento</button>
+            <button type="button" onclick="document.getElementById('modalCancelarPedido').close()" style="padding: 6px 12px; cursor: pointer;">Fechar</button>
+        </div>
+    </form>
 </dialog>
 
 <div id="areaRecibo" style="display: none;">
@@ -474,7 +615,6 @@ try {
     </p>
 </div>
 
-<!-- DIALOG COM A MENSAGEM EXATA SOLICITADA -->
 <dialog id="ModalFecharConta">
     <h3>Fechar Conta</h3>
     <p><strong>Você deseja realmente fechar essa conta?</strong></p>
@@ -492,11 +632,30 @@ let produtoCustomizando = null;
 let snapshotInicialForm = '';
 let pedidoFechamentoTemp = null;
 
+function alternarFiltroLocal(tipo) {
+    const divMeus = document.getElementById('listaLocaisMeus');
+    const divTodos = document.getElementById('listaLocaisTodos');
+    const btnMeus = document.getElementById('btnAbaMeus');
+    const btnTodos = document.getElementById('btnAbaTodos');
+
+    if (tipo === 'meus') {
+        divMeus.style.display = 'block';
+        divTodos.style.display = 'none';
+        btnMeus.classList.add('aba-ativa');
+        btnTodos.classList.remove('aba-ativa');
+    } else {
+        divMeus.style.display = 'none';
+        divTodos.style.display = 'block';
+        btnTodos.classList.add('aba-ativa');
+        btnMeus.classList.remove('aba-ativa');
+    }
+}
+
 function gerarSnapshotForm() {
     return JSON.stringify({
         nome: document.getElementById('nome_cliente').value.trim(),
         mesa: document.getElementById('mesa_id').value,
-        tipo: document.getElementById('tipo').value,
+        tipo: 'local',
         itens: produtosPedido
     });
 }
@@ -513,19 +672,10 @@ function abrirPedidoParaEditar(pedidoId) {
                 resetarFormulario();
                 document.getElementById('form_acao').value = 'editar';
                 document.getElementById('form_id_pedido').value = pedido.id;
-                document.getElementById('tipo').value = pedido.tipo;
                 document.getElementById('nome_cliente').value = pedido.nome_cliente;
-
-                if (pedido.tipo === 'local') {
-                    document.getElementById('modalTituloCadastro').innerText = 'Editar Pedido Local - #' + pedido.id;
-                    document.getElementById('secao-mesas').style.display = 'block';
-                    document.getElementById('mesa_id').value = pedido.mesa_id || '';
-                    document.getElementById('mesa_id').required = true;
-                } else {
-                    document.getElementById('modalTituloCadastro').innerText = 'Editar Pedido Delivery - #' + pedido.id;
-                    document.getElementById('secao-mesas').style.display = 'none';
-                    document.getElementById('mesa_id').required = false;
-                }
+                document.getElementById('modalTituloCadastro').innerText = 'Editar Pedido Local - #' + pedido.id;
+                document.getElementById('mesa_id').value = pedido.mesa_id || '';
+                document.getElementById('mesa_id').required = true;
 
                 document.getElementById('btnSubmitModal').innerText = 'Salvar Alterações';
 
@@ -553,7 +703,6 @@ function abrirPedidoParaEditar(pedidoId) {
         .catch(error => console.error('Erro:', error));
 }
 
-// Abre o modal de fechar conta diretamente a partir da lista de pedidos
 function abrirModalFecharContaDireto(pedidoId) {
     fetch(`?obter_pedido=${pedidoId}`)
         .then(response => response.json())
@@ -572,18 +721,91 @@ function abrirModalFecharContaDireto(pedidoId) {
         });
 }
 
-// Executa a escolha do usuário no diálogo "Você deseja realmente fechar essa conta?"
+function abrirModalCancelarPedido(pedidoId) {
+    document.getElementById('cancelar_id_pedido').value = pedidoId;
+    document.getElementById('motivoCancelamento').value = '';
+    
+    const containerItens = document.getElementById('listaItensCancelamento');
+    containerItens.innerHTML = 'Carregando itens...';
+
+    fetch(`?obter_pedido=${pedidoId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.itens && data.itens.length > 0) {
+                let html = '';
+                data.itens.forEach((item) => {
+                    const qtdMax = Number(item.quantidade);
+                    html += `
+                        <div style="margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed #ddd; padding-bottom: 6px;">
+                            <div>
+                                <strong>${qtdMax}x</strong> ${escapeHtml(item.nome)}
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;">
+                                <label style="font-size: 0.85em; color: #555;">Qtd p/ Estoque:</label>
+                                <input type="number" name="qtd_retorno[${item.id}]" value="${qtdMax}" min="0" max="${qtdMax}" style="width: 55px; padding: 4px; text-align: center;" title="Máximo: ${qtdMax}">
+                                <span style="font-size: 0.85em; color: #777;">/ ${qtdMax}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                containerItens.innerHTML = html;
+            } else {
+                containerItens.innerHTML = 'Nenhum item encontrado para este pedido.';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            containerItens.innerHTML = 'Erro ao carregar itens.';
+        });
+
+    document.getElementById('modalCancelarPedido').showModal();
+}
+
+function enviarCancelamentoPedido(event) {
+    event.preventDefault();
+    const pedidoId = document.getElementById('cancelar_id_pedido').value;
+    const motivo = document.getElementById('motivoCancelamento').value.trim();
+
+    if (!motivo) {
+        alert('Informe o motivo.');
+        return;
+    }
+
+    const form = document.getElementById('formCancelarPedido');
+    const formData = new FormData(form);
+    formData.append('acao', 'cancelar_pedido');
+    formData.append('id_pedido', pedidoId);
+
+    fetch('', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(resData => {
+        document.getElementById('modalCancelarPedido').close();
+        if (resData.sucesso) {
+            alert('Pedido cancelado e ocorrência registrada com sucesso.');
+            location.reload();
+        } else {
+            alert('Erro ao cancelar pedido: ' + (resData.erro || 'Erro desconhecido'));
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        document.getElementById('modalCancelarPedido').close();
+        alert('Erro ao processar solicitação.');
+    });
+}
+
 function executarFechamentoConta(confirmado) {
     const modal = document.getElementById('ModalFecharConta');
     
-    // Se apertar "Não", não faz nada e apenas fecha o modal
     if (!confirmado) {
         modal.close();
         pedidoFechamentoTemp = null;
         return;
     }
 
-    // Se apertar "Sim", imprime e envia ao caixa
     const data = pedidoFechamentoTemp;
     if (!data || !data.pedido) {
         modal.close();
@@ -593,10 +815,9 @@ function executarFechamentoConta(confirmado) {
     const pedido = data.pedido;
     const itens = data.itens;
 
-    // Preenche e imprime o recibo
     document.getElementById('reciboPedidoId').innerText = pedido.id;
     document.getElementById('reciboCliente').innerText = pedido.nome_cliente;
-    document.getElementById('reciboTipo').innerText = pedido.tipo === 'local' ? 'Mesa ' + (pedido.mesa_id || 'N/A') : 'Delivery';
+    document.getElementById('reciboTipo').innerText = 'Mesa ' + (pedido.mesa_id || 'N/A');
     document.getElementById('reciboChaveValidacao').innerText = pedido.chave_validacao || '---';
 
     let htmlItens = '<ul>';
@@ -629,7 +850,6 @@ function executarFechamentoConta(confirmado) {
     window.print();
     document.getElementById('areaRecibo').style.display = 'none';
 
-    // Atualiza status no banco via requisição AJAX
     const formData = new FormData();
     formData.append('acao', 'solicitar_fechamento');
     formData.append('id_pedido', pedido.id);
@@ -717,25 +937,13 @@ function resetarFormulario() {
     document.getElementById('valorTotalTexto').innerText = 'R$ 0,00';
     document.getElementById('valor_total').value = '0.00';
     document.getElementById('itens_pedido').value = '';
-    document.getElementById('secao-mesas').style.display = 'none';
     document.getElementById('modalCustomizacao').close();
 }
 
-function abrirModalCadastro(tipo = 'local') {
+function abrirModalCadastro() {
     resetarFormulario();
     document.getElementById('form_acao').value = 'cadastrar';
-    document.getElementById('tipo').value = tipo;
-
-    if (tipo === 'delivery') {
-        document.getElementById('modalTituloCadastro').innerText = 'Novo Pedido - Delivery';
-        document.getElementById('secao-mesas').style.display = 'none';
-        document.getElementById('mesa_id').required = false;
-    } else {
-        document.getElementById('modalTituloCadastro').innerText = 'Novo Pedido - Local';
-        document.getElementById('secao-mesas').style.display = 'block';
-        document.getElementById('mesa_id').required = true;
-    }
-
+    document.getElementById('modalTituloCadastro').innerText = 'Novo Pedido - Local';
     document.getElementById('btnSubmitModal').innerText = 'Enviar Para a Cozinha';
     snapshotInicialForm = gerarSnapshotForm();
     document.getElementById('modalCadastro').showModal();
@@ -752,6 +960,7 @@ function adicionarProduto(id, nome, preco, descricao, imagem) {
 
     document.getElementById('nomeProdutoCustomizacao').innerText = nome;
     document.getElementById('descricaoProdutoCustomizacao').innerText = descricao || 'Nenhuma especificação cadastrada.';
+    document.getElementById('qtdProdutoCustomizacao').innerText = '1';
     
     const imgElement = document.getElementById('imagemProdutoCustomizacao');
     if (imagem && imagem.trim() !== '') {
@@ -765,6 +974,15 @@ function adicionarProduto(id, nome, preco, descricao, imagem) {
     document.querySelectorAll('[id^="qtd_extra_"]').forEach(el => el.innerText = '0');
 
     document.getElementById('modalCustomizacao').showModal();
+}
+
+function mudarQtdProdutoCustomizacao(delta) {
+    if (!produtoCustomizando) return;
+    produtoCustomizando.quantidade += delta;
+    if (produtoCustomizando.quantidade < 1) {
+        produtoCustomizando.quantidade = 1;
+    }
+    document.getElementById('qtdProdutoCustomizacao').innerText = produtoCustomizando.quantidade;
 }
 
 function mudarQtdExtra(id, nome, preco, delta) {

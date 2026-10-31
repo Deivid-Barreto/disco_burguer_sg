@@ -1,4 +1,4 @@
--- Active: 1793239479043@@127.0.0.1@3306
+-- Active: 1793420297723@@127.0.0.1@3306
 
 CREATE DATABASE IF NOT EXISTS `discoburguer` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
     `preco_venda` DECIMAL(10, 2) NOT NULL CHECK (`preco_venda` >= 0),
     `imagem_caminho` VARCHAR(255) NULL,
     `visivel` TINYINT(1) NOT NULL DEFAULT 0 CHECK (`visivel` IN (0, 1)),
-    `make_or_buy` ENUM('produto_acabado', 'revenda') NOT NULL,
+    `make_or_buy` ENUM('produto_acabado', 'revenda') NOT NULL DEFAULT 'produto_acabado',
     PRIMARY KEY (`id`),
     INDEX `idx_produtos_categorias` (`categorias`),
     INDEX `idx_produtos_status` (`ativo`, `visivel`),
@@ -213,6 +213,8 @@ CREATE TABLE IF NOT EXISTS `pagamentos_pedido` (
         'pix'
     ) NOT NULL,
     `valor` DECIMAL(10, 2) NOT NULL CHECK (`valor` > 0),
+    `valor_recebido` DECIMAL(10, 2) NULL DEFAULT 0.00,
+    `troco` DECIMAL(10, 2) NULL DEFAULT 0.00,
     `data_pagamento` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `data_compensacao_prevista` DATE NULL,
     `status_compensacao` ENUM(
@@ -266,6 +268,7 @@ CREATE TABLE IF NOT EXISTS `ocorrencias_pedido` (
     ) NOT NULL,
     `motivo` TEXT NOT NULL,
     `retornou_estoque` TINYINT(1) NOT NULL DEFAULT 0 CHECK (`retornou_estoque` IN (0, 1)),
+    `quantidade_retornada` DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     `data_ocorrencia` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     INDEX `idx_ocorrencias_pedido` (`pedido_id`),
